@@ -4,6 +4,15 @@ using UnityEngine;
 
 public class Particle2D : MonoBehaviour
 {
+    // Bonus
+    public enum IntegrationType
+    {
+        EULER,
+        KINEMATIC
+    }
+        
+    public IntegrationType integrationType;
+
     // Step 1
     public Vector2 position, velocity, acceleration;
     public float rotation, angularVelocity, angularAccel;
@@ -50,12 +59,20 @@ public class Particle2D : MonoBehaviour
 
         // step 3
         // choose integrator
-       UpdatePositionExplicitEuler(dt);
-       UpdatePositionKinematic(dt);
-       UpdateRotationEulerExplicit(dt);
-        UpdateRotationKinematic(dt);
+        if (integrationType.Equals(IntegrationType.EULER))
+        {
+            UpdatePositionExplicitEuler(dt);
+            UpdateRotationEulerExplicit(dt);
+        }
+        else
+        {
+            UpdatePositionKinematic(dt);
+            UpdateRotationKinematic(dt);
+        }
+
         // update transform
         transform.position = position;
+        // update rotation
         transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, rotation));
 
         // step4
