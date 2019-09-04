@@ -32,12 +32,16 @@ public class Particle2D : MonoBehaviour
 
     void UpdateRotationEulerExplicit(float dt)
     {
+        rotation += angularVelocity * dt;
 
+        angularVelocity += angularAccel * dt;
     }
 
     void UpdateRotationKinematic(float dt)
     {
+        rotation += (angularVelocity * dt) + (0.5f * angularAccel * dt * (dt * dt));
 
+        angularVelocity += angularAccel * dt;
     }
 
     private void FixedUpdate()
@@ -46,10 +50,13 @@ public class Particle2D : MonoBehaviour
 
         // step 3
         // choose integrator
-        // UpdatePositionExplicitEuler(dt);
-        UpdatePositionKinematic(dt);
+       UpdatePositionExplicitEuler(dt);
+       UpdatePositionKinematic(dt);
+       UpdateRotationEulerExplicit(dt);
+        UpdateRotationKinematic(dt);
         // update transform
         transform.position = position;
+        transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, rotation));
 
         // step4
         // test by faking motion along a curve
