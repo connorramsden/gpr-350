@@ -3,26 +3,38 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "GameFramework/Actor.h"
 #include "Particle2D.generated.h"
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PHYSLABFRAMEWORK_API UParticle2D : public UActorComponent
+UCLASS()
+class PHYSLABFRAMEWORK_API AParticle2D : public AActor
 {
 	GENERATED_BODY()
-
+	
 public:	
-	// Sets default values for this component's properties
-	UParticle2D();
+	// Sets default values for this actor's properties
+	AParticle2D();
 
 protected:
-	// Called when the game starts
+	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void Tick(float DeltaTime) override;
 
-		
+	virtual void UpdatePositionExplicitEuler(float dt);
+
+	UPROPERTY(EditAnywhere)
+		FVector position; 
+	UPROPERTY(EditAnywhere)
+		FVector velocity; 
+	UPROPERTY(EditAnywhere)
+		FVector acceleration; 
+		enum IntegrationType
+	{
+		EULER,
+		KINEMATIC
+	};
+	// float rotation, angularVelocity, angularAcceleration;
 };
