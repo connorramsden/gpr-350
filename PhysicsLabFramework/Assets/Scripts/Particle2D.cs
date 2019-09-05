@@ -10,12 +10,19 @@ public class Particle2D : MonoBehaviour
         EULER,
         KINEMATIC
     }
-        
-    public IntegrationType integrationType;
+
+    [Header("Integration Type")]
+    public IntegrationType currentIntegration;
 
     // Step 1
-    public Vector2 position, velocity, acceleration;
-    public float rotation, angularVelocity, angularAccel;
+    [Header("Position Properties")]
+    public Vector2 position;
+    public Vector2 velocity;
+    public Vector2 acceleration;
+    [Header("Rotation Properties")]
+    public float rotation;
+    public float angularVelocity;
+    public float angularAccel;
 
     // step 2
     void UpdatePositionExplicitEuler(float dt)
@@ -34,7 +41,7 @@ public class Particle2D : MonoBehaviour
     void UpdatePositionKinematic(float dt)
     {
         // x(t+dt) = x(t) + v(t)dt + 0.5(a(t)dt^2)
-        position += (velocity * dt) + (0.5f * (acceleration * dt) * (dt * dt));
+        position += (velocity * dt) + (0.5f * acceleration * (dt * dt));
 
         velocity += acceleration * dt;
     }
@@ -48,7 +55,7 @@ public class Particle2D : MonoBehaviour
 
     void UpdateRotationKinematic(float dt)
     {
-        rotation += (angularVelocity * dt) + (0.5f * angularAccel * dt * (dt * dt));
+        rotation += (angularVelocity * dt) + (0.5f * angularAccel * (dt * dt));
 
         angularVelocity += angularAccel * dt;
     }
@@ -59,7 +66,7 @@ public class Particle2D : MonoBehaviour
 
         // step 3
         // choose integrator
-        if (integrationType.Equals(IntegrationType.EULER))
+        if (currentIntegration.Equals(IntegrationType.EULER))
         {
             UpdatePositionExplicitEuler(dt);
             UpdateRotationEulerExplicit(dt);
@@ -71,7 +78,8 @@ public class Particle2D : MonoBehaviour
         }
 
         // update transform
-        transform.position = position;
+        transform.position = new Vector3(position.x, transform.position.y);
+        // Debug.Log($"{gameObject.name}'s position is {gameObject.transform.position.x}");
         // update rotation
         transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, rotation));
 
