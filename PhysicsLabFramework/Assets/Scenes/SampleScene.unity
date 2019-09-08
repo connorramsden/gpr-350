@@ -200,6 +200,7 @@ MonoBehaviour:
   rotation: 0
   angularVelocity: 1
   angularAccel: 0
+  shouldOscillate: 0
   shouldMove: 0
   shouldRotate: 1
   currentIntegration: 0
@@ -544,7 +545,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Euler Explicit Oscillation
+  m_Text: Euler Explicit Movement
 --- !u!222 &629951498
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -681,6 +682,7 @@ MonoBehaviour:
   rotation: 0
   angularVelocity: 1
   angularAccel: 0
+  shouldOscillate: 0
   shouldMove: 0
   shouldRotate: 1
   currentIntegration: 1
@@ -814,7 +816,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Euler Explicit Oscillation
+  m_Text: Euler Explicit Rotation
 --- !u!222 &877145787
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -976,7 +978,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Kinematic Oscillation
+  m_Text: Kinematic Movement
 --- !u!222 &1097100030
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1064,7 +1066,7 @@ GameObject:
   - component: {fileID: 1528213515}
   - component: {fileID: 1528213514}
   m_Layer: 0
-  m_Name: Kinematic Oscillation Particle
+  m_Name: Kinematic Movement Particle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1088,6 +1090,7 @@ MonoBehaviour:
   rotation: 0
   angularVelocity: 0
   angularAccel: 0
+  shouldOscillate: 0
   shouldMove: 1
   shouldRotate: 0
   currentIntegration: 1
@@ -1194,7 +1197,7 @@ GameObject:
   - component: {fileID: 1818725942}
   - component: {fileID: 1818725941}
   m_Layer: 0
-  m_Name: Euler Oscillation Particle
+  m_Name: Euler Movement Particle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1218,6 +1221,7 @@ MonoBehaviour:
   rotation: 0
   angularVelocity: 0
   angularAccel: 0
+  shouldOscillate: 0
   shouldMove: 1
   shouldRotate: 0
   currentIntegration: 0

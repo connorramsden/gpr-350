@@ -2,15 +2,31 @@
 
 public class Particle2DComponent : MonoBehaviour
 {
+    private const float MAX_VELOCITY = 10.0f;
+    private const float MAX_ACCELERATION = 10.0f;
+
     // Position Components
-    public Vector2 position, velocity, acceleration;
+    [Header("Position Attributes")]
+    public Vector2 position;    
+    public Vector2 velocity;
+    public Vector2 acceleration;
+
     // Rotation Components
-    public float rotation, angularVelocity, angularAccel;
+    [Header("Rotation Attributes")]
+    public float rotation;
+    [Range(0, MAX_VELOCITY)]
+    public float angularVelocity;
+    [Range(0, MAX_ACCELERATION)]
+    public float angularAccel;
 
-    [Header("Move || Rotate")]
+    [Header("Additional Movement Attributes")]
+    [Tooltip("Should the particle oscillate?")]
+    public bool shouldOscillate;
+    [Tooltip("Should the particle be able to move?")]
     public bool shouldMove;
+    [Tooltip("Should the particle be able to rotate?")]
     public bool shouldRotate;
-
+    
     // Bonus Bell's and Whistles
     public enum IntegrationType
     {
@@ -41,7 +57,8 @@ public class Particle2DComponent : MonoBehaviour
 
         // step4
         // test by faking motion along a curve
-        acceleration.x = -Mathf.Sin(Time.time);
+        if(shouldOscillate)
+            acceleration.x = -Mathf.Sin(Time.time);
 
         transform.position = new Vector3(position.x, transform.position.y);
     }
@@ -60,6 +77,9 @@ public class Particle2DComponent : MonoBehaviour
         }
 
         angularVelocity += angularAccel * dt;
+
+        if(shouldOscillate)
+            angularAccel = -Mathf.Sin(Time.time);
 
         transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, rotation));
     }
