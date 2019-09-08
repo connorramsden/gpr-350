@@ -72,5 +72,8 @@ public class Particle2DComponent : MonoBehaviour
         {
             gameObject.tag = "Particle";
         }
+
+        position = transform.position;
+        rotation = transform.rotation.eulerAngles.z;
     }
 }

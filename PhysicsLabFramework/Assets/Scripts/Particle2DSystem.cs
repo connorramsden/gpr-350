@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Particle2DSystem : MonoBehaviour
@@ -9,14 +8,14 @@ public class Particle2DSystem : MonoBehaviour
     // Trying to mimic ECS-style updating all entities
     private void UpdateAllParticles(float dt)
     {
-        foreach(GameObject particle in particleList)
+        foreach (GameObject particle in particleList)
         {
             Particle2DComponent p2d = particle.GetComponent<Particle2DComponent>();
 
-            if(p2d.shouldMove)
+            if (p2d.shouldMove)
                 p2d.UpdatePosition(dt);
-            if(p2d.shouldRotate)
-                p2d.UpdateRotation(dt);           
+            if (p2d.shouldRotate)
+                p2d.UpdateRotation(dt);
         }
     }
 
@@ -35,7 +34,7 @@ public class Particle2DSystem : MonoBehaviour
     private void FixedUpdate()
     {
         float dt = Time.fixedDeltaTime;
-        
+
         UpdateAllParticles(dt);
     }
 }
