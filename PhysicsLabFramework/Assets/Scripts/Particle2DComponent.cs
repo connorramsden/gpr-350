@@ -89,12 +89,14 @@ public class Particle2DComponent : MonoBehaviour
         // x(t+dt) = x(t) + v(t)dt + 1/2(a(t)dt^2)
         position += (velocity * dt) + (0.5f * acceleration * (dt * dt));
 
+        // Update velocity based on acceleration
         velocity += acceleration * dt;
 
+        // Update Particle's world position based on local (script) position
         transform.position = position;
 
         // SET AS CONSTANT LATER
-        // Vector2 fGravity = mass * new Vector2(0.0f, -9.8f);
+        // Vector2 f_gravity = mass * new Vector2(0.0f, -9.8f);
 
         // Must pass negative gravitationalConstant
         AddForce(ForceGenerator.GenerateForce_Gravity(mass, -9.8f, Vector2.up));
