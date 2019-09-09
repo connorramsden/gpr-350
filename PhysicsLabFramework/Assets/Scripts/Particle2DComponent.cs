@@ -19,9 +19,10 @@ public class Particle2DComponent : MonoBehaviour
     [Range(0, MAX_ACCELERATION)]
     public float angularAccel;
 
-    [Header("Additional Movement Attributes")]
-    [Tooltip("Should the particle oscillate?")]
+    
+    [HideInInspector]
     public bool shouldOscillate;
+    [Header("Additional Movement Attributes")]
     [Tooltip("Should the particle be able to move?")]
     public bool shouldMove;
     [Tooltip("Should the particle be able to rotate?")]

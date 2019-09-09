@@ -6,6 +6,8 @@ public class Particle2DSystem : MonoBehaviour
 {
     List<GameObject> particleList;
 
+    public bool shouldOscillate;
+
     // Trying to mimic ECS-style updating all entities
     private void UpdateAllParticles(float dt)
     {
@@ -30,6 +32,14 @@ public class Particle2DSystem : MonoBehaviour
     {
         // Snag all GO's with tag Particle for particleList
         particleList.AddRange(GameObject.FindGameObjectsWithTag("Particle"));
+
+        foreach(GameObject particle in particleList)
+        {
+            if (shouldOscillate)
+                particle.GetComponent<Particle2DComponent>().shouldOscillate = true;
+            else
+                particle.GetComponent<Particle2DComponent>().shouldOscillate = false;
+        }
     }
 
     private void FixedUpdate()
