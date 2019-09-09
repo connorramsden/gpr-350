@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Particle2DSystem : MonoBehaviour
 {
     List<GameObject> particleList;
-
-    public bool shouldOscillate;
-
-    // Trying to mimic ECS-style updating all entities
+    
+    // Trying to mimic ECS-style updating all entities in a single, system-based update call
     private void UpdateAllParticles(float dt)
     {
         foreach (GameObject particle in particleList)
@@ -16,7 +13,10 @@ public class Particle2DSystem : MonoBehaviour
             Particle2DComponent p2d = particle.GetComponent<Particle2DComponent>();
 
             if (p2d.shouldMove)
+            {
                 p2d.UpdatePosition(dt);
+                p2d.UpdateAcceleration();
+            }
             if (p2d.shouldRotate)
                 p2d.UpdateRotation(dt);
         }
@@ -35,10 +35,10 @@ public class Particle2DSystem : MonoBehaviour
 
         foreach(GameObject particle in particleList)
         {
-            if (shouldOscillate)
-                particle.GetComponent<Particle2DComponent>().shouldOscillate = true;
-            else
-                particle.GetComponent<Particle2DComponent>().shouldOscillate = false;
+            Particle2DComponent p2d = particle.GetComponent<Particle2DComponent>();
+
+            // Set all particle's starting mass to their editor valus
+            p2d.SetMass(p2d.startingMass);
         }
     }
 

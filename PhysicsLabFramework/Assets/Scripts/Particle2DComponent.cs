@@ -5,6 +5,7 @@ public class Particle2DComponent : MonoBehaviour
     private const float MAX_VELOCITY = 10.0f;
     private const float MAX_ACCELERATION = 10.0f;
 
+    // Lab 01 Step 01
     // Position Components
     [Header("Position Attributes")]
     [Tooltip("The current world position of the particle")]
@@ -14,6 +15,7 @@ public class Particle2DComponent : MonoBehaviour
     [Tooltip("Multiplier for particle movement speed)")]
     public Vector2 acceleration;
 
+    // Lab 01 Step 01
     // Rotation Components
     [Header("Rotation Attributes"), Tooltip("Amount of rotation per tick")]
     public float rotation;
@@ -22,16 +24,54 @@ public class Particle2DComponent : MonoBehaviour
     [Range(0, MAX_ACCELERATION), Tooltip("Multiplier for speed of rotation")]
     public float angularAccel;
 
-    
-    [HideInInspector]
-    public bool shouldOscillate;
+    // Lab 02 Step 01
+    [Header("Force Attributes")]
+    [Range(0.0f, 10.0f)]
+    public float startingMass = 1.0f;
+
+    public float mass
+    {
+        get; private set;
+    }
+
+    public float massInv
+    {
+        get; private set;
+    }
+
+    public void SetMass(float newMass)
+    {
+        mass = Mathf.Max(0.0f, newMass);
+        massInv = mass > 0.0f ? 1.0f / mass : 0.0f;
+
+    }
+
+    // Lab 02 Step 02
+    // Total force acting on a particle
+    Vector2 force;
+
+    public void AddForce(Vector2 newForce)
+    {
+        // D'Alembert's Law (French Guy!)
+        force += newForce;
+    }
+
+    public void UpdateAcceleration()
+    {
+        // Newton2
+        acceleration = force * massInv;
+
+        // reset because they're coming back next frame probably
+        force = Vector2.zero;
+    }
+
     [Header("Additional Movement Attributes")]
     [Tooltip("Should the particle be able to move?")]
     public bool shouldMove;
     [Tooltip("Should the particle be able to rotate?")]
     public bool shouldRotate;
-    
-    // Bonus Bell's and Whistles
+
+    /*
     public enum IntegrationType
     {
         EULER,
@@ -40,50 +80,32 @@ public class Particle2DComponent : MonoBehaviour
 
     [Header("Integration Type")]
     public IntegrationType currentIntegration;
+    */
 
-    // Updates a particle's position based on current i+ntegration type
+    // Updates a Particle's position based on KINEMATIC integration
     public void UpdatePosition(float dt)
     {
-        // Utilize Euler Explicit Integration formula
-        // x(t+dt) = x(t) + v(t)dt
-        if (currentIntegration.Equals(IntegrationType.EULER))
-        {
-            position += velocity * dt;
-        }
         // Use the Kinematic formula for movement integration
         // x(t+dt) = x(t) + v(t)dt + 1/2(a(t)dt^2)
-        else if (currentIntegration.Equals(IntegrationType.KINEMATIC))
-        {
-            position += (velocity * dt) + (0.5f * acceleration * (dt * dt));
-        }
+        position += (velocity * dt) + (0.5f * acceleration * (dt * dt));
 
         velocity += acceleration * dt;
 
-        // step4
-        // test by faking motion along a curve
-        if(shouldOscillate)
-            acceleration.x = -Mathf.Sin(Time.time);
+        transform.position = position;
 
-        transform.position = new Vector3(position.x, transform.position.y);
+        // SET AS CONSTANT LATER
+        // Vector2 fGravity = mass * new Vector2(0.0f, -9.8f);
+
+        // Must pass negative gravitationalConstant
+        AddForce(ForceGenerator.GenerateForce_Gravity(mass, -9.8f, Vector2.up));
     }
 
+    // Update's a particle's rotation based on KINEMATIC integration
     public void UpdateRotation(float dt)
     {
-        // Utilize Euler Explicit Integration formula for rotation
-        if (currentIntegration.Equals(IntegrationType.EULER))
-        {
-            rotation += angularVelocity * dt;
-        }
-        // Utilize Kinematic formula for rotation integration
-        else if (currentIntegration.Equals(IntegrationType.KINEMATIC))
-        {
-            rotation += (angularVelocity * dt) + (0.5f * angularAccel * (dt * dt));
-        }
+        rotation += (angularVelocity * dt) + (0.5f * angularAccel * (dt * dt));
 
         angularVelocity += angularAccel * dt;
-
-        if(shouldOscillate)
-            angularAccel = -Mathf.Sin(Time.time);
 
         transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, rotation));
     }
