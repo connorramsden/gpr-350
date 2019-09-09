@@ -7,16 +7,19 @@ public class Particle2DComponent : MonoBehaviour
 
     // Position Components
     [Header("Position Attributes")]
-    public Vector2 position;    
+    [Tooltip("The current world position of the particle")]
+    public Vector2 position;
+    [Tooltip("How fast the particle will move")]
     public Vector2 velocity;
+    [Tooltip("Multiplier for particle movement speed)")]
     public Vector2 acceleration;
 
     // Rotation Components
-    [Header("Rotation Attributes")]
+    [Header("Rotation Attributes"), Tooltip("Amount of rotation per tick")]
     public float rotation;
-    [Range(0, MAX_VELOCITY)]
+    [Range(0, MAX_VELOCITY), Tooltip("Speed of rotation per tick")]
     public float angularVelocity;
-    [Range(0, MAX_ACCELERATION)]
+    [Range(0, MAX_ACCELERATION), Tooltip("Multiplier for speed of rotation")]
     public float angularAccel;
 
     
