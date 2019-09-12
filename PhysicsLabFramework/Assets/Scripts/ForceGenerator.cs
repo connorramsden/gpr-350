@@ -14,7 +14,7 @@ public class ForceGenerator : MonoBehaviour
     public static Vector2 GenerateForce_Normal(Vector2 f_gravity, Vector2 surfaceNormal_unit)
     {
         // f = proj(f_gravity, surfaceNormal_unit)
-        Vector2 f_normal = Vector2.zero;
+        Vector2 f_normal = Vector3.Project(f_gravity, surfaceNormal_unit);
 
         return f_normal;
     }
@@ -29,9 +29,12 @@ public class ForceGenerator : MonoBehaviour
 
     public static Vector2 GenerateForce_Friction_Static(Vector2 f_normal, Vector2 f_opposing, float frictionCoefficient_static)
     {
-        // f = -f_opposing if less than max, else -coeff*f_normal
-        Vector2 f_friction_static = Vector2.zero;
+        // f_friction_s = -f_opposing if less than max, else -coeff*f_normal (max amount is coeff*|f_normal|)
 
+        Vector2 f_friction_static;
+
+        float max = frictionCoefficient_static * Mathf.Abs(f_normal.magnitude);
+        
         return f_friction_static;
     }
 

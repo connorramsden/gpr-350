@@ -4,6 +4,7 @@ public class Particle2DComponent : MonoBehaviour
 {
     private const float MAX_VELOCITY = 10.0f;
     private const float MAX_ACCELERATION = 10.0f;
+    private const float GRAVITY = 9.8f;
 
     // Lab 01 Step 01
     // Position Components
@@ -71,17 +72,6 @@ public class Particle2DComponent : MonoBehaviour
     [Tooltip("Should the particle be able to rotate?")]
     public bool shouldRotate;
 
-    /*
-    public enum IntegrationType
-    {
-        EULER,
-        KINEMATIC
-    }
-
-    [Header("Integration Type")]
-    public IntegrationType currentIntegration;
-    */
-
     // Updates a Particle's position based on KINEMATIC integration
     public void UpdatePosition(float dt)
     {
@@ -95,11 +85,9 @@ public class Particle2DComponent : MonoBehaviour
         // Update Particle's world position based on local (script) position
         transform.position = position;
 
-        // SET AS CONSTANT LATER
-        // Vector2 f_gravity = mass * new Vector2(0.0f, -9.8f);
-
         // Must pass negative gravitationalConstant
-        AddForce(ForceGenerator.GenerateForce_Gravity(mass, -9.8f, Vector2.up));
+        Vector2 f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector2.up);
+        Vector2 surfaceNormal_unit;
     }
 
     // Update's a particle's rotation based on KINEMATIC integration
