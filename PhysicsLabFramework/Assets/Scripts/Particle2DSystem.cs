@@ -15,6 +15,11 @@ public class Particle2DSystem : MonoBehaviour
         {
             Particle2DComponent p2d = particle.GetComponent<Particle2DComponent>();
 
+            if (shouldOscillate)
+                p2d.shouldOscillate = true;
+            else
+                p2d.shouldOscillate = false;
+
             if (p2d.shouldMove)
                 p2d.UpdatePosition(dt);
             if (p2d.shouldRotate)
