@@ -5,6 +5,20 @@ public class Particle2DComponent : MonoBehaviour
     private const float MAX_VELOCITY = 10.0f;
     private const float MAX_ACCELERATION = 10.0f;
     private const float GRAVITY = 9.8f;
+    public GameObject ramp;
+
+    public enum ForceType
+    {
+        F_GRAVITY,
+        F_NORMAL,
+        F_SLIDING,
+        F_FRICTION_STATIC,
+        F_FRICTION_KINETIC,
+        F_DRAG,
+        F_SPRING
+    }
+
+    public ForceType forceToUse;
 
     // Lab 01 Step 01
     // Position Components
@@ -87,7 +101,20 @@ public class Particle2DComponent : MonoBehaviour
 
         // Must pass negative gravitationalConstant
         Vector2 f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector2.up);
-        Vector2 surfaceNormal_unit;
+        float rampAngle = ramp.GetComponent<Transform>().eulerAngles.x;
+        Vector2 surfaceNormal_unit = new Vector2(Mathf.Sin(rampAngle), Mathf.Cos(rampAngle));
+        Vector2 f_normal = ForceGenerator.GenerateForce_Normal(f_gravity, surfaceNormal_unit);
+
+        if (forceToUse.Equals(ForceType.F_GRAVITY))
+        {
+            Debug.Log("Using gravity!");
+            AddForce(f_gravity);
+        }
+        else if (forceToUse.Equals(ForceType.F_NORMAL))
+        {
+            Debug.Log("Using NormalForce");
+            AddForce(f_normal);
+        }
     }
 
     // Update's a particle's rotation based on KINEMATIC integration
@@ -111,5 +138,14 @@ public class Particle2DComponent : MonoBehaviour
 
         position = transform.position;
         rotation = transform.rotation.eulerAngles.z;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        forceToUse = ForceType.F_NORMAL;
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        forceToUse = ForceType.F_GRAVITY;
     }
 }

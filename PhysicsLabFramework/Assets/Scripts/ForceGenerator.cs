@@ -31,17 +31,19 @@ public class ForceGenerator : MonoBehaviour
     {
         // f_friction_s = -f_opposing if less than max, else -coeff*f_normal (max amount is coeff*|f_normal|)
 
-        Vector2 f_friction_static;
+        float max = frictionCoefficient_static * f_normal.magnitude;
 
-        float max = frictionCoefficient_static * Mathf.Abs(f_normal.magnitude);
-        
-        return f_friction_static;
+        if (frictionCoefficient_static < max)
+            return -f_opposing;
+        else
+            return -frictionCoefficient_static * f_normal;
     }
 
     public static Vector2 GenerateForce_Friction_Kinetic(Vector2 f_normal, Vector2 particleVelocity, float frictionCoefficient_kinetic)
     {
         // f = -coeff*abs(f_normal) * unit(vel)
-        Vector2 f_friction_kinetic = Vector2.zero;
+        Vector2 f_friction_kinetic = -frictionCoefficient_kinetic * f_normal.magnitude * particleVelocity.normalized;
+
         return f_friction_kinetic;
     }
 
@@ -56,7 +58,7 @@ public class ForceGenerator : MonoBehaviour
     public static Vector2 GenerateForce_Spring(Vector2 particlePosition, Vector2 anchorPosition, float springRestingLength, float springStiffnessCoefficient)
     {
         // f = -coeff*(spring length - spring resting length)
-        Vector2 f_spring = Vector2.zero;
+        Vector2 f_spring = Vector2.zero; // -springStiffnessCoefficient * (particlePosition - anchorPosition - springRestingLength);
 
         return f_spring;
     }
