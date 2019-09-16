@@ -24,11 +24,11 @@ public class Particle2DComponent : MonoBehaviour
     // Position Components
     [Header("Position Attributes")]
     [Tooltip("The current world position of the particle")]
-    public Vector2 position;
+    public Vector3 position;
     [Tooltip("How fast the particle will move")]
-    public Vector2 velocity;
+    public Vector3 velocity;
     [Tooltip("Multiplier for particle movement speed)")]
-    public Vector2 acceleration;
+    public Vector3 acceleration;
 
     // Lab 01 Step 01
     // Rotation Components
@@ -56,6 +56,7 @@ public class Particle2DComponent : MonoBehaviour
 
     public void SetMass(float newMass)
     {
+        // Newton-2 Integration for Force
         mass = Mathf.Max(0.0f, newMass);
         massInv = mass > 0.0f ? 1.0f / mass : 0.0f;
 
@@ -63,9 +64,9 @@ public class Particle2DComponent : MonoBehaviour
 
     // Lab 02 Step 02
     // Total force acting on a particle
-    Vector2 force;
+    Vector3 force;
 
-    public void AddForce(Vector2 newForce)
+    public void AddForce(Vector3 newForce)
     {
         // D'Alembert's Law (French Guy!)
         force += newForce;
@@ -77,7 +78,7 @@ public class Particle2DComponent : MonoBehaviour
         acceleration = force * massInv;
 
         // reset because they're coming back next frame probably
-        force = Vector2.zero;
+        force = Vector3.zero;
     }
 
     [Header("Additional Movement Attributes")]
@@ -100,20 +101,22 @@ public class Particle2DComponent : MonoBehaviour
         transform.position = position;
 
         // Must pass negative gravitationalConstant
-        Vector2 f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector2.up);
+        Vector3 f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector3.up);
         float rampAngle = ramp.GetComponent<Transform>().eulerAngles.x;
-        Vector2 surfaceNormal_unit = new Vector2(Mathf.Sin(rampAngle), Mathf.Cos(rampAngle));
-        Vector2 f_normal = ForceGenerator.GenerateForce_Normal(f_gravity, surfaceNormal_unit);
 
-        if (forceToUse.Equals(ForceType.F_GRAVITY))
+        Vector3 surfaceNormal_unit = new Vector3(Mathf.Sin(rampAngle), Mathf.Cos(rampAngle));
+        Vector3 f_normal = ForceGenerator.GenerateForce_Normal(f_gravity, surfaceNormal_unit);
+
+        switch (forceToUse)
         {
-            Debug.Log("Using gravity!");
-            AddForce(f_gravity);
-        }
-        else if (forceToUse.Equals(ForceType.F_NORMAL))
-        {
-            Debug.Log("Using NormalForce");
-            AddForce(f_normal);
+            case ForceType.F_NORMAL:
+                Debug.Log("Applying normal force");
+                AddForce(f_normal);
+                break;
+            case ForceType.F_GRAVITY:
+            default:
+                AddForce(f_gravity);
+                break;
         }
     }
 
@@ -138,14 +141,5 @@ public class Particle2DComponent : MonoBehaviour
 
         position = transform.position;
         rotation = transform.rotation.eulerAngles.z;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        forceToUse = ForceType.F_NORMAL;
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        forceToUse = ForceType.F_GRAVITY;
     }
 }
