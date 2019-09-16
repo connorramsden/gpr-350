@@ -13,7 +13,7 @@ public class ForceGenerator : MonoBehaviour
 
     public static Vector3 GenerateForce_Normal(Vector3 f_gravity, Vector3 surfaceNormal_unit)
     {
-        // f = proj(f_gravity, surfaceNormal_unit)
+        // f = proj(f_gravity2, surfaceNormal_unit)
         return Vector3.ProjectOnPlane(f_gravity, surfaceNormal_unit);
     }
 
@@ -24,20 +24,20 @@ public class ForceGenerator : MonoBehaviour
 
         return f_sliding;
     }
-                        
+
     public static Vector3 GenerateForce_Friction_Static(Vector3 f_normal, Vector3 f_opposing, float frictionCoefficient_static)
     {
         // f_friction_s = -f_opposing if less than max, else -coeff*f_normal (max amount is coeff*|f_normal|)
 
         float max = frictionCoefficient_static * f_normal.magnitude;
-
-        if (f_opposing.magnitude < max)
+        
+        if (f_normal.magnitude < max)
             return -f_opposing;
         else
             return -frictionCoefficient_static * f_normal;
 
     }
-                        
+
     public static Vector3 GenerateForce_Friction_Kinetic(Vector3 f_normal, Vector3 particleVelocity, float frictionCoefficient_kinetic)
     {
         // f = -coeff*abs(f_normal) * unit(vel)
@@ -45,7 +45,7 @@ public class ForceGenerator : MonoBehaviour
 
         return f_friction_kinetic;
     }
-                        
+
     public static Vector3 GenerateForce_Drag(Vector3 particleVelocity, Vector3 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
     {
         // f = (p * v^2 * area * coeff) / 2
@@ -53,7 +53,7 @@ public class ForceGenerator : MonoBehaviour
 
         return 0.5f * objectDragCoefficient * fluidDensity * Vector3.Scale(velocity, velocity) * objectArea_crossSection;
     }
-                        
+
     public static Vector3 GenerateForce_Spring(Vector3 particlePosition, Vector3 anchorPosition, float springRestingLength, float springStiffnessCoefficient)
     {
         // f = -coeff*(spring length - spring resting length)

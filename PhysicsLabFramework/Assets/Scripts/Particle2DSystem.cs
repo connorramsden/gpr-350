@@ -15,6 +15,7 @@ public class Particle2DSystem : MonoBehaviour
             if (p2d.shouldMove)
             {
                 p2d.UpdatePosition(dt);
+                p2d.ApplyForces();
                 p2d.UpdateAcceleration();
             }
             if (p2d.shouldRotate)

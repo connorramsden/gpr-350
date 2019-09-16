@@ -5,21 +5,7 @@ public class Particle2DComponent : MonoBehaviour
     private const float MAX_VELOCITY = 10.0f;
     private const float MAX_ACCELERATION = 10.0f;
     private const float GRAVITY = 9.8f;
-    public GameObject ramp;
-
-    public enum ForceType
-    {
-        F_GRAVITY,
-        F_NORMAL,
-        F_SLIDING,
-        F_FRICTION_STATIC,
-        F_FRICTION_KINETIC,
-        F_DRAG,
-        F_SPRING
-    }
-
-    public ForceType forceToUse;
-
+    
     // Lab 01 Step 01
     // Position Components
     [Header("Position Attributes")]
@@ -40,9 +26,19 @@ public class Particle2DComponent : MonoBehaviour
     public float angularAccel;
 
     // Lab 02 Step 01
+    [Header("Forces to Apply")]
+    public bool useGravity;
+    public bool useNormal;
+    public bool useSliding;
+    public bool useFrictionStatic;
+    public bool useFrictionKinetic;
+    public bool useDrag;
+    public bool useSpring;
+    
     [Header("Force Attributes")]
     [Range(0.0f, 10.0f)]
     public float startingMass = 1.0f;
+    public float surfaceAngle;
 
     public float mass
     {
@@ -66,13 +62,13 @@ public class Particle2DComponent : MonoBehaviour
     // Total force acting on a particle
     private Vector3 force;
 
-    private Vector3 f_gravity;                     
-    private Vector3 f_normal;                      
-    private Vector3 f_sliding;                     
-    private Vector3 f_friction_static;             
-    private Vector3 f_friction_kinetic;            
-    private Vector3 f_drag;                        
-    private Vector3 f_spring;                      
+    private Vector3 f_gravity;
+    private Vector3 f_normal;
+    private Vector3 f_sliding;
+    private Vector3 f_friction_static;
+    private Vector3 f_friction_kinetic;
+    private Vector3 f_drag;
+    private Vector3 f_spring;
 
     public void AddForce(Vector3 newForce)
     {
@@ -80,33 +76,22 @@ public class Particle2DComponent : MonoBehaviour
         force += newForce;
     }
 
-    public void UtilizeForce()
+    public void ApplyForces()
     {
-        switch (forceToUse)
-        {
-            case ForceType.F_NORMAL:
-                AddForce(f_normal);
-                break;
-            case ForceType.F_SLIDING:
-                AddForce(f_sliding);
-                break;
-            case ForceType.F_FRICTION_STATIC:
-                AddForce(f_friction_static);
-                break;
-            case ForceType.F_FRICTION_KINETIC:
-                AddForce(f_friction_kinetic);
-                break;
-            case ForceType.F_DRAG:
-                AddForce(f_drag);
-                break;
-            case ForceType.F_SPRING:
-                AddForce(f_spring);
-                break;
-            case ForceType.F_GRAVITY:
-            default:
-                AddForce(f_gravity);
-                break;
-        }
+        if (useGravity)
+            AddForce(f_gravity);
+        if (useNormal)
+            AddForce(f_normal);
+        if (useSliding)
+            AddForce(f_sliding);
+        if (useFrictionStatic)
+            AddForce(f_friction_static);
+        if (useFrictionKinetic)
+            AddForce(f_friction_kinetic);
+        if (useDrag)
+            AddForce(f_drag);
+        if (useSpring)
+            AddForce(f_spring);
     }
 
     public void UpdateAcceleration()
@@ -140,20 +125,15 @@ public class Particle2DComponent : MonoBehaviour
 
         // Must pass negative gravitationalConstant
         f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector3.up);
-        float rampAngle = 0.0f;
 
-        if (ramp)
-        {
-            rampAngle = ramp.GetComponent<Transform>().eulerAngles.x;
-        }
-
-        Vector3 surfaceNormal_unit = new Vector3(Mathf.Sin(rampAngle), Mathf.Cos(rampAngle));
+        Vector3 surfaceNormal_unit = new Vector3(Mathf.Sin(surfaceAngle), Mathf.Cos(surfaceAngle));
 
         f_normal = ForceGenerator.GenerateForce_Normal(f_gravity, surfaceNormal_unit);
         f_sliding = ForceGenerator.GenerateForce_Sliding(f_gravity, f_normal);
-
-
-        UtilizeForce();
+        f_friction_static = ForceGenerator.GenerateForce_Friction_Static(f_normal, velocity, 0.1f);
+        f_friction_kinetic = ForceGenerator.GenerateForce_Friction_Kinetic(f_normal, velocity, 0.1f);
+        f_drag = ForceGenerator.GenerateForce_Drag(velocity, velocity, 1.0f, 2.0f, 1.0f);
+        // f_spring = ForceGenerator.GenerateForce_Spring(position, new Vector3()), 1.0f, 1.0f);
     }
 
     // Update's a particle's rotation based on KINEMATIC integration
