@@ -62,14 +62,51 @@ public class Particle2DComponent : MonoBehaviour
 
     }
 
-    // Lab 02 Step 02
+    // Lab 02 Step 02 - Declaring Forces
     // Total force acting on a particle
-    Vector3 force;
+    private Vector3 force;
+
+    private Vector3 f_gravity;                     
+    private Vector3 f_normal;                      
+    private Vector3 f_sliding;                     
+    private Vector3 f_friction_static;             
+    private Vector3 f_friction_kinetic;            
+    private Vector3 f_drag;                        
+    private Vector3 f_spring;                      
 
     public void AddForce(Vector3 newForce)
     {
         // D'Alembert's Law (French Guy!)
         force += newForce;
+    }
+
+    public void UtilizeForce()
+    {
+        switch (forceToUse)
+        {
+            case ForceType.F_NORMAL:
+                AddForce(f_normal);
+                break;
+            case ForceType.F_SLIDING:
+                AddForce(f_sliding);
+                break;
+            case ForceType.F_FRICTION_STATIC:
+                AddForce(f_friction_static);
+                break;
+            case ForceType.F_FRICTION_KINETIC:
+                AddForce(f_friction_kinetic);
+                break;
+            case ForceType.F_DRAG:
+                AddForce(f_drag);
+                break;
+            case ForceType.F_SPRING:
+                AddForce(f_spring);
+                break;
+            case ForceType.F_GRAVITY:
+            default:
+                AddForce(f_gravity);
+                break;
+        }
     }
 
     public void UpdateAcceleration()
@@ -87,6 +124,7 @@ public class Particle2DComponent : MonoBehaviour
     [Tooltip("Should the particle be able to rotate?")]
     public bool shouldRotate;
 
+
     // Updates a Particle's position based on KINEMATIC integration
     public void UpdatePosition(float dt)
     {
@@ -101,23 +139,21 @@ public class Particle2DComponent : MonoBehaviour
         transform.position = position;
 
         // Must pass negative gravitationalConstant
-        Vector3 f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector3.up);
-        float rampAngle = ramp.GetComponent<Transform>().eulerAngles.x;
+        f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector3.up);
+        float rampAngle = 0.0f;
+
+        if (ramp)
+        {
+            rampAngle = ramp.GetComponent<Transform>().eulerAngles.x;
+        }
 
         Vector3 surfaceNormal_unit = new Vector3(Mathf.Sin(rampAngle), Mathf.Cos(rampAngle));
-        Vector3 f_normal = ForceGenerator.GenerateForce_Normal(f_gravity, surfaceNormal_unit);
 
-        switch (forceToUse)
-        {
-            case ForceType.F_NORMAL:
-                Debug.Log("Applying normal force");
-                AddForce(f_normal);
-                break;
-            case ForceType.F_GRAVITY:
-            default:
-                AddForce(f_gravity);
-                break;
-        }
+        f_normal = ForceGenerator.GenerateForce_Normal(f_gravity, surfaceNormal_unit);
+        f_sliding = ForceGenerator.GenerateForce_Sliding(f_gravity, f_normal);
+
+
+        UtilizeForce();
     }
 
     // Update's a particle's rotation based on KINEMATIC integration

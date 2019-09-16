@@ -14,9 +14,7 @@ public class ForceGenerator : MonoBehaviour
     public static Vector3 GenerateForce_Normal(Vector3 f_gravity, Vector3 surfaceNormal_unit)
     {
         // f = proj(f_gravity, surfaceNormal_unit)
-        Vector3 f_normal = Vector3.ProjectOnPlane(f_gravity, surfaceNormal_unit);
-
-        return f_normal;
+        return Vector3.ProjectOnPlane(f_gravity, surfaceNormal_unit);
     }
 
     public static Vector3 GenerateForce_Sliding(Vector3 f_gravity, Vector3 f_normal)
@@ -52,9 +50,8 @@ public class ForceGenerator : MonoBehaviour
     {
         // f = (p * v^2 * area * coeff) / 2
         Vector3 velocity = particleVelocity - fluidVelocity;
-        Vector3 f_drag = (fluidDensity * (velocity.sqrMagnitude) * objectArea_crossSection * objectDragCoefficient) / 2.0f;
 
-        return f_drag;
+        return 0.5f * objectDragCoefficient * fluidDensity * Vector3.Scale(velocity, velocity) * objectArea_crossSection;
     }
                         
     public static Vector3 GenerateForce_Spring(Vector3 particlePosition, Vector3 anchorPosition, float springRestingLength, float springStiffnessCoefficient)
