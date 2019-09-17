@@ -10,11 +10,11 @@ public class Particle2DComponent : MonoBehaviour
     // Position Components
     [Header("Position Attributes")]
     [Tooltip("The current world position of the particle")]
-    public Vector3 position;
+    public Vector2 position;
     [Tooltip("How fast the particle will move")]
-    public Vector3 velocity;
+    public Vector2 velocity;
     [Tooltip("Multiplier for particle movement speed)")]
-    public Vector3 acceleration;
+    public Vector2 acceleration;
 
     // Lab 01 Step 01
     // Rotation Components
@@ -39,6 +39,7 @@ public class Particle2DComponent : MonoBehaviour
     [Range(0.0f, 10.0f)]
     public float startingMass = 1.0f;
     public float surfaceAngle;
+    public Vector2 additionalForce = Vector2.zero;
 
     public float mass
     {
@@ -60,17 +61,17 @@ public class Particle2DComponent : MonoBehaviour
 
     // Lab 02 Step 02 - Declaring Forces
     // Total force acting on a particle
-    private Vector3 force;
+    private Vector2 force;
 
-    private Vector3 f_gravity;
-    private Vector3 f_normal;
-    private Vector3 f_sliding;
-    private Vector3 f_friction_static;
-    private Vector3 f_friction_kinetic;
-    private Vector3 f_drag;
-    private Vector3 f_spring;
+    private Vector2 f_gravity;
+    private Vector2 f_normal;
+    private Vector2 f_sliding;
+    private Vector2 f_friction_static;
+    private Vector2 f_friction_kinetic;
+    private Vector2 f_drag;
+    private Vector2 f_spring;
 
-    public void AddForce(Vector3 newForce)
+    public void AddForce(Vector2 newForce)
     {
         // D'Alembert's Law (French Guy!)
         force += newForce;
@@ -92,6 +93,7 @@ public class Particle2DComponent : MonoBehaviour
             AddForce(f_drag);
         if (useSpring)
             AddForce(f_spring);
+        AddForce(additionalForce);
     }
 
     public void UpdateAcceleration()
@@ -100,7 +102,7 @@ public class Particle2DComponent : MonoBehaviour
         acceleration = force * massInv;
 
         // reset because they're coming back next frame probably
-        force = Vector3.zero;
+        force = Vector2.zero;
     }
 
     [Header("Additional Movement Attributes")]
@@ -124,16 +126,16 @@ public class Particle2DComponent : MonoBehaviour
         transform.position = position;
 
         // Must pass negative gravitationalConstant
-        f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector3.up);
+        f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector2.up);
 
-        Vector3 surfaceNormal_unit = new Vector3(Mathf.Sin(surfaceAngle), Mathf.Cos(surfaceAngle));
+        Vector2 surfaceNormal_unit = new Vector2(Mathf.Sin(surfaceAngle), Mathf.Cos(surfaceAngle));
 
         f_normal = ForceGenerator.GenerateForce_Normal(f_gravity, surfaceNormal_unit);
         f_sliding = ForceGenerator.GenerateForce_Sliding(f_gravity, f_normal);
         f_friction_static = ForceGenerator.GenerateForce_Friction_Static(f_normal, velocity, 0.1f);
         f_friction_kinetic = ForceGenerator.GenerateForce_Friction_Kinetic(f_normal, velocity, 0.1f);
         f_drag = ForceGenerator.GenerateForce_Drag(velocity, velocity, 1.0f, 2.0f, 1.0f);
-        // f_spring = ForceGenerator.GenerateForce_Spring(position, new Vector3()), 1.0f, 1.0f);
+        // f_spring = ForceGenerator.GenerateForce_Spring(position, new Vector2()), 1.0f, 1.0f);
     }
 
     // Update's a particle's rotation based on KINEMATIC integration
