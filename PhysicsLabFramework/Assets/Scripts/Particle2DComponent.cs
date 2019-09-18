@@ -30,8 +30,7 @@ public class Particle2DComponent : MonoBehaviour
     public bool useGravity;
     public bool useNormal;
     public bool useSliding;
-    public bool useFrictionStatic;
-    public bool useFrictionKinetic;
+    public bool useFriction;
     public bool useDrag;
     public bool useSpring;
     
@@ -39,7 +38,6 @@ public class Particle2DComponent : MonoBehaviour
     [Range(0.0f, 10.0f)]
     public float startingMass = 1.0f;
     public float surfaceAngle;
-    public Vector2 additionalForce = Vector2.zero;
 
     public float mass
     {
@@ -62,16 +60,13 @@ public class Particle2DComponent : MonoBehaviour
     // Lab 02 Step 02 - Declaring Forces
     // Total force acting on a particle
     private Vector2 force;
+    public GameObject anchorObject;
+    public Vector2 anchorPoint;
 
-    private Vector2 f_gravity;
-    private Vector2 f_normal;
-    private Vector2 f_sliding;
-    private Vector2 f_friction_static;
-    private Vector2 f_friction_kinetic;
-    private Vector2 f_drag;
-    private Vector2 f_spring;
+    // Variables to store possible forces
+    private Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
 
-    public void AddForce(Vector2 newForce)
+    private void AddForce(Vector2 newForce)
     {
         // D'Alembert's Law (French Guy!)
         force += newForce;
@@ -79,21 +74,76 @@ public class Particle2DComponent : MonoBehaviour
 
     public void ApplyForces()
     {
+        // Calculate the surface normal based on the surface angle
+        Vector2 surfaceNormal = new Vector2(Mathf.Cos(surfaceAngle * Mathf.Deg2Rad), Mathf.Sin(surfaceAngle * Mathf.Deg2Rad));
+
         if (useGravity)
+        {
+            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector2.up);
             AddForce(f_gravity);
+        }
+        else
+        {
+            f_gravity = Vector2.zero;
+        }
+
         if (useNormal)
+        {
+            // Gravity used in this formula, must be ticked on
+            if (!useGravity && surfaceAngle > 0.0f)
+                useGravity = true;
+            f_normal = ForceGenerator.GenerateForce_Normal(f_gravity, surfaceNormal);
             AddForce(f_normal);
+        }
+        else
+        {
+            f_normal = Vector2.zero;
+        }
+
         if (useSliding)
+        {
+            // Gravity used in this formula, must be ticked on
+            if (!useGravity)
+                useGravity = true;
+            // Normal used in this formula, must be ticked on
+            if (!useNormal)
+                useNormal = true;
+            f_sliding = ForceGenerator.GenerateForce_Sliding(f_gravity, f_normal);
             AddForce(f_sliding);
-        if (useFrictionStatic)
-            AddForce(f_friction_static);
-        if (useFrictionKinetic)
-            AddForce(f_friction_kinetic);
+        }
+        else
+        {
+            f_sliding = Vector2.zero;
+        }
+
+        if (useFriction)
+        {
+            // Normal used in this formula, must be ticked on
+            if (!useNormal)
+                useNormal = true;
+            f_friction = ForceGenerator.GenerateForce_Friction_Standard(f_normal, velocity, f_sliding, 0.61f, 0.47f);
+            AddForce(f_friction);
+        }
+
         if (useDrag)
+        {
+            f_drag = ForceGenerator.GenerateForce_Drag(velocity, velocity, 0.001225f, 1.0f, 1.05f);
             AddForce(f_drag);
+        }
+        else
+        {
+            f_drag = Vector2.zero;
+        }
+
         if (useSpring)
+        {
+            f_spring = ForceGenerator.GenerateForce_Spring(position, anchorPoint, 5.0f, 6.4f);
             AddForce(f_spring);
-        AddForce(additionalForce);
+        }
+        else
+        {
+            f_spring = Vector2.zero;
+        }
     }
 
     public void UpdateAcceleration()
@@ -111,7 +161,6 @@ public class Particle2DComponent : MonoBehaviour
     [Tooltip("Should the particle be able to rotate?")]
     public bool shouldRotate;
 
-
     // Updates a Particle's position based on KINEMATIC integration
     public void UpdatePosition(float dt)
     {
@@ -122,29 +171,20 @@ public class Particle2DComponent : MonoBehaviour
         // Update velocity based on acceleration
         velocity += acceleration * dt;
 
-        // Update Particle's world position based on local (script) position
+        // Update GO position based on calculated rotational physics
         transform.position = position;
-
-        // Must pass negative gravitationalConstant
-        f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector2.up);
-
-        Vector2 surfaceNormal_unit = new Vector2(Mathf.Sin(surfaceAngle), Mathf.Cos(surfaceAngle));
-
-        f_normal = ForceGenerator.GenerateForce_Normal(f_gravity, surfaceNormal_unit);
-        f_sliding = ForceGenerator.GenerateForce_Sliding(f_gravity, f_normal);
-        f_friction_static = ForceGenerator.GenerateForce_Friction_Static(f_normal, velocity, 0.1f);
-        f_friction_kinetic = ForceGenerator.GenerateForce_Friction_Kinetic(f_normal, velocity, 0.1f);
-        f_drag = ForceGenerator.GenerateForce_Drag(velocity, velocity, 1.0f, 2.0f, 1.0f);
-        // f_spring = ForceGenerator.GenerateForce_Spring(position, new Vector2()), 1.0f, 1.0f);
     }
 
     // Update's a particle's rotation based on KINEMATIC integration
     public void UpdateRotation(float dt)
     {
+        // Use Kinematic formula for rotation integration
         rotation += (angularVelocity * dt) + (0.5f * angularAccel * (dt * dt));
 
+        // Update rotational velocity based on angular acceleration
         angularVelocity += angularAccel * dt;
 
+        // Update GO rotation based on calculated rotational physics
         transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, rotation));
     }
 
@@ -159,5 +199,11 @@ public class Particle2DComponent : MonoBehaviour
 
         position = transform.position;
         rotation = transform.rotation.eulerAngles.z;
+    }
+
+    private void Start()
+    {
+        // Initialize the anchor point to the passed GameObject's position
+        anchorPoint = anchorObject.transform.position;
     }
 }

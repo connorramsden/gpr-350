@@ -46,12 +46,25 @@ public class ForceGenerator : MonoBehaviour
         return f_friction_kinetic;
     }
 
+    public static Vector2 GenerateForce_Friction_Standard(Vector2 f_normal, Vector2 particleVelocity, Vector2 f_opposing, float frictionCoeff_static, float frictionCoeff_kinetic)
+    {
+
+        if(particleVelocity.magnitude <= 0.0f)
+        {
+            return GenerateForce_Friction_Static(f_normal, f_opposing, frictionCoeff_static);
+        }
+        else
+        {
+            return GenerateForce_Friction_Kinetic(f_normal, particleVelocity, frictionCoeff_static);
+        }
+    }
+
     public static Vector2 GenerateForce_Drag(Vector2 particleVelocity, Vector2 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
     {
         // f = (p * v^2 * area * coeff) / 2
-        Vector2 velocity = particleVelocity - fluidVelocity;
+        Vector2 velocity = particleVelocity * fluidVelocity;
 
-        return 0.5f * objectDragCoefficient * fluidDensity * Vector2.Scale(velocity, velocity) * objectArea_crossSection;
+        return -0.5f * fluidDensity * velocity * objectArea_crossSection * objectDragCoefficient;
     }
 
     public static Vector2 GenerateForce_Spring(Vector2 particlePosition, Vector2 anchorPosition, float springRestingLength, float springStiffnessCoefficient)
