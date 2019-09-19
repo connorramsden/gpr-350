@@ -14,7 +14,7 @@ public class ForceGenerator : MonoBehaviour
     public static Vector2 GenerateForce_Normal(Vector2 f_gravity, Vector2 surfaceNormal_unit)
     {
         // f = proj(f_gravity2, surfaceNormal_unit)
-        return Vector3.ProjectOnPlane(f_gravity, surfaceNormal_unit);
+        return Vector3.ProjectOnPlane(-f_gravity, surfaceNormal_unit);
     }
 
     public static Vector2 GenerateForce_Sliding(Vector2 f_gravity, Vector2 f_normal)
@@ -30,11 +30,12 @@ public class ForceGenerator : MonoBehaviour
         // f_friction_s = -f_opposing if less than max, else -coeff*f_normal (max amount is coeff*|f_normal|)
 
         float max = frictionCoefficient_static * f_normal.magnitude;
+        float opposingForce = f_opposing.magnitude;
         
-        if (-f_opposing.x < max)
+        if (opposingForce < max)
             return -f_opposing;
         else
-            return -frictionCoefficient_static * f_normal;
+            return -f_opposing * max / opposingForce;
 
     }
 
@@ -62,7 +63,7 @@ public class ForceGenerator : MonoBehaviour
     public static Vector2 GenerateForce_Drag(Vector2 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
     {
         // f = (p * v^2 * area * coeff) / 2
-        Vector2 newVelocity = fluidVelocity * fluidVelocity;
+        Vector2 newVelocity = fluidVelocity.magnitude * fluidVelocity;
 
         return -0.5f * fluidDensity * newVelocity * objectArea_crossSection * objectDragCoefficient;
     }
@@ -71,8 +72,8 @@ public class ForceGenerator : MonoBehaviour
     {
         // f = -coeff*(spring length - spring resting length)
         Vector2 springLengthVector = particlePosition - anchorPosition;
-        Vector2 springRestingLengthVector = new Vector2(0.0f, springRestingLength);
-        Vector2 f_spring = -springStiffnessCoefficient * (springLengthVector - springRestingLengthVector);
+        float springLength = springLengthVector.magnitude;
+        Vector2 f_spring = -springStiffnessCoefficient * (springLength - springRestingLength) * springLengthVector / springLength;
 
         return f_spring;
     }
