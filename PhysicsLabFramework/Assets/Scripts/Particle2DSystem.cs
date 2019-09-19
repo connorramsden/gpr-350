@@ -4,7 +4,7 @@ using UnityEngine;
 public class Particle2DSystem : MonoBehaviour
 {
     List<GameObject> particleList;
-    
+
     // Trying to mimic ECS-style updating all entities in a single, system-based update call
     private void UpdateAllParticles(float dt)
     {
@@ -34,12 +34,12 @@ public class Particle2DSystem : MonoBehaviour
         // Snag all GO's with tag Particle for particleList
         particleList.AddRange(GameObject.FindGameObjectsWithTag("Particle"));
 
-        foreach(GameObject particle in particleList)
+        foreach (GameObject particle in particleList)
         {
             Particle2DComponent p2d = particle.GetComponent<Particle2DComponent>();
 
             // Set all particle's starting mass to their editor valus
-            p2d.SetMass(p2d.particleMovement.startingMass);
+            p2d.SetMass(p2d.getStartingMass());
         }
     }
 

@@ -188,6 +188,8 @@ GameObject:
   - component: {fileID: 208387913}
   - component: {fileID: 208387912}
   - component: {fileID: 208387911}
+  - component: {fileID: 208387916}
+  - component: {fileID: 208387915}
   m_Layer: 0
   m_Name: Particle
   m_TagString: Untagged
@@ -207,26 +209,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d54f292974fd1c4182803f9da150c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  position: {x: 0, y: 0}
-  velocity: {x: 0, y: 0}
-  acceleration: {x: 0, y: 0}
-  rotation: 0
-  angularVelocity: 0
-  angularAccel: 0
-  useGravity: 0
-  useNormal: 0
-  useSliding: 0
-  useFriction: 0
-  useDrag: 0
-  useSpring: 0
-  startingMass: 1
-  surfaceAngle: -310
-  coeffStaticFriction: 0.6
-  coeffKineticFriction: 0.45
-  fluidDensity: 1.255
-  coeffDrag: 1.05
-  springRestingLength: 3
-  springStiffness: 6.2
   anchorObject: {fileID: 1861812734}
   shouldMove: 1
   shouldRotate: 0
@@ -290,6 +272,50 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &208387915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208387910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83caff84b003fd94c8d3800fb8f6f0c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotation: 0
+  angularVelocity: 0
+  angularAccel: 0
+--- !u!114 &208387916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208387910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7dab1b9015c4604f98953099be7c3b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: {x: 0, y: 0}
+  velocity: {x: 0, y: 0}
+  acceleration: {x: 0, y: 0}
+  useGravity: 0
+  useNormal: 0
+  useSliding: 0
+  useFriction: 0
+  useDrag: 0
+  useSpring: 0
+  startingMass: 1
+  surfaceAngle: 310
+  coeffStaticFriction: 0.6
+  coeffKineticFriction: 0.45
+  fluidDensity: 1.255
+  coeffDrag: 1.05
+  springRestingLength: 3
+  springStiffness: 6.2
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -453,7 +479,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 961209151}
   m_LocalRotation: {x: -0, y: 0, z: -0.42261845, w: -0.9063077}
-  m_LocalPosition: {x: 0.485, y: -1.627, z: 0}
+  m_LocalPosition: {x: 0.5, y: -1.5, z: 0}
   m_LocalScale: {x: 0.25, y: 4, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -655,7 +681,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1861812734}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

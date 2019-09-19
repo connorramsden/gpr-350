@@ -5,8 +5,8 @@ public class Particle2DComponent : MonoBehaviour
     // Gravitational Constant
     public const float GRAVITY = 9.8f;
 
-    public Particle2DMovement particleMovement;
-    public Particle2DRotation particleRotation;
+    private Particle2DMovement particleMovement;
+    private Particle2DRotation particleRotation;
 
     public float mass
     {
@@ -16,6 +16,11 @@ public class Particle2DComponent : MonoBehaviour
     public float massInv
     {
         get; private set;
+    }
+
+    public float getStartingMass()
+    {
+        return particleMovement.startingMass;
     }
 
     public void SetMass(float newMass)
@@ -165,6 +170,9 @@ public class Particle2DComponent : MonoBehaviour
         {
             gameObject.tag = "Particle";
         }
+
+        particleMovement = gameObject.GetComponent<Particle2DMovement>();
+        particleRotation = gameObject.GetComponent<Particle2DRotation>();
 
         particleMovement.position = transform.position;
         particleRotation.rotation = transform.rotation.eulerAngles.z;
