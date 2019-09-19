@@ -39,7 +39,7 @@ public class Particle2DSystem : MonoBehaviour
             Particle2DComponent p2d = particle.GetComponent<Particle2DComponent>();
 
             // Set all particle's starting mass to their editor valus
-            p2d.SetMass(p2d.startingMass);
+            p2d.SetMass(p2d.particleMovement.startingMass);
         }
     }
 
