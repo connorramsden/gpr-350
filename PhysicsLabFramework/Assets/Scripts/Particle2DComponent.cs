@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+// Require a Particle2D Movement & Rotation component on Particle2D objects
+[RequireComponent(typeof(Particle2DMovement), typeof(Particle2DRotation))]
 public class Particle2DComponent : MonoBehaviour
 {
     // Gravitational Constant
@@ -8,12 +10,38 @@ public class Particle2DComponent : MonoBehaviour
     private Particle2DMovement particleMovement;
     private Particle2DRotation particleRotation;
 
+    public enum ParticleShape
+    {
+        CUBOID,
+        SPHERE,
+        CYLINDER,
+        CONE
+    }
+
+    public ParticleShape particleShape;
+
+    // Particle's mass
     public float mass
     {
         get; private set;
     }
 
+    // Particle's inverse mass
     public float massInv
+    {
+        get; private set;
+    }
+
+    // Rotational Equivalent of Mass
+    // Moment of Inertia
+    // A measure of how difficult it is to change a particle's rotation speed  (Millington p.198)
+    public float inertia
+    {
+        get; private set;
+    }
+
+    // Particle's inverse Moment of Inertia
+    public float inertiaInv
     {
         get; private set;
     }
@@ -28,6 +56,11 @@ public class Particle2DComponent : MonoBehaviour
         // Newton-2 Integration for Force
         mass = Mathf.Max(0.0f, newMass);
         massInv = mass > 0.0f ? 1.0f / mass : 0.0f;
+
+    }
+
+    public void SetInertia(float newInertia)
+    {
 
     }
 
@@ -181,6 +214,9 @@ public class Particle2DComponent : MonoBehaviour
     private void Start()
     {
         // Initialize the anchor point to the passed GameObject's position
-        anchorPoint = anchorObject.transform.position;
+        if (anchorObject)
+            anchorPoint = anchorObject.transform.position;
+        else
+            anchorPoint = Vector2.zero;
     }
 }
