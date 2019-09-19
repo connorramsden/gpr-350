@@ -61,7 +61,7 @@ public class Particle2DComponent : MonoBehaviour
     // Total force acting on a particle
     private Vector2 force;
     public GameObject anchorObject;
-    public Vector2 anchorPoint;
+    private Vector2 anchorPoint;
 
     // Variables to store possible forces
     private Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
@@ -127,7 +127,7 @@ public class Particle2DComponent : MonoBehaviour
 
         if (useDrag)
         {
-            f_drag = ForceGenerator.GenerateForce_Drag(velocity, velocity, 0.001225f, 1.0f, 1.05f);
+            f_drag = ForceGenerator.GenerateForce_Drag(velocity, 1.225f, 1.0f, 1.05f);
             AddForce(f_drag);
         }
         else
@@ -137,7 +137,7 @@ public class Particle2DComponent : MonoBehaviour
 
         if (useSpring)
         {
-            f_spring = ForceGenerator.GenerateForce_Spring(position, anchorPoint, 5.0f, 6.4f);
+            f_spring = ForceGenerator.GenerateForce_Spring(position, anchorPoint, 3.0f, 6.4f);
             AddForce(f_spring);
         }
         else

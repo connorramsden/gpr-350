@@ -59,12 +59,12 @@ public class ForceGenerator : MonoBehaviour
         }
     }
 
-    public static Vector2 GenerateForce_Drag(Vector2 particleVelocity, Vector2 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
+    public static Vector2 GenerateForce_Drag(Vector2 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
     {
         // f = (p * v^2 * area * coeff) / 2
-        Vector2 velocity = particleVelocity * fluidVelocity;
+        Vector2 newVelocity = fluidVelocity * fluidVelocity;
 
-        return -0.5f * fluidDensity * velocity * objectArea_crossSection * objectDragCoefficient;
+        return -0.5f * fluidDensity * newVelocity * objectArea_crossSection * objectDragCoefficient;
     }
 
     public static Vector2 GenerateForce_Spring(Vector2 particlePosition, Vector2 anchorPosition, float springRestingLength, float springStiffnessCoefficient)
