@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+// Class containing Methods relevant to Force Generation
 public class ForceGenerator : MonoBehaviour
 {
     // Must pass negative gravitationalConstant

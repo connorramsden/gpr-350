@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+// Class containing Variables and Methods relevant to General Particle Operation
 // Require a Particle2D Movement & Rotation component on Particle2D objects
 [RequireComponent(typeof(Particle2DMovement), typeof(Particle2DRotation))]
 public class Particle2DComponent : MonoBehaviour
@@ -46,7 +47,7 @@ public class Particle2DComponent : MonoBehaviour
         get; private set;
     }
 
-    public float getStartingMass()
+    public float GetStartingMass()
     {
         return particleMovement.startingMass;
     }
@@ -56,15 +57,17 @@ public class Particle2DComponent : MonoBehaviour
         // Newton-2 Integration for Force
         mass = Mathf.Max(0.0f, newMass);
         massInv = mass > 0.0f ? 1.0f / mass : 0.0f;
-
     }
 
     public void SetInertia(float newInertia)
     {
+        // Inertia Calculations based on Shape from Millington (pg. 490 something)
 
+        inertia = Mathf.Max(0.0f, newInertia);
+        inertiaInv = inertia > 0.0f ? 1.0f / inertia : 0.0f;
     }
 
-    // Lab 02 Step 02 - Declaring Forces
+    // Lab 02 Step 02 - Declaring Force Variables
     // Total force acting on a particle
     private Vector2 force;
     public GameObject anchorObject;
@@ -72,13 +75,15 @@ public class Particle2DComponent : MonoBehaviour
 
     // Variables to store possible forces
     private Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
-
+    
+    // Adds the passed force to the current force vector
     private void AddForce(Vector2 newForce)
     {
         // D'Alembert's Law (French Guy!)
         force += newForce;
     }
 
+    // Applys all currently-enabled forces to the particle
     public void ApplyForces()
     {
         // Calculate the surface normal based on the surface angle
@@ -153,6 +158,7 @@ public class Particle2DComponent : MonoBehaviour
         }
     }
 
+    // Converts force and inverse mass to acceleration
     public void UpdateAcceleration()
     {
         // Newton2
@@ -160,6 +166,19 @@ public class Particle2DComponent : MonoBehaviour
 
         // reset because they're coming back next frame probably
         force = Vector2.zero;
+    }
+
+    // Converts torque to angular acceleration and then resets torque
+    public void UpdateAngularAcceleration()
+    {
+        //  Newton-2 Integration for AngularAcceleration
+        //  torque = inertia * alpha
+        //  alpha = inverseInertia * torque
+
+        float alpha = inertiaInv * particleRotation.torque;
+        particleRotation.angularAccel = inertia * alpha;
+
+        particleRotation.torque = 0.0f;
     }
 
     [Header("Additional Movement Attributes")]
@@ -195,6 +214,7 @@ public class Particle2DComponent : MonoBehaviour
         transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, particleRotation.rotation));
     }
 
+    // Initializes local variables
     private void Awake()
     {
         // Upon Awake(), set the object's tag to Particle
@@ -211,6 +231,7 @@ public class Particle2DComponent : MonoBehaviour
         particleRotation.rotation = transform.rotation.eulerAngles.z;
     }
 
+    // Initializes external variables
     private void Start()
     {
         // Initialize the anchor point to the passed GameObject's position

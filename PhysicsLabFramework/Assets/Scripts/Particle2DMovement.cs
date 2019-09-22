@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+// Class containing Variables relevant to Particle Movement
 public class Particle2DMovement : MonoBehaviour
 {
     // Lab 01 Step 01

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+// Class containing Variables relevant to Particle Rotation
 public class Particle2DRotation : MonoBehaviour
 {
     public const float MAX_VELOCITY = 10.0f;
@@ -13,4 +14,8 @@ public class Particle2DRotation : MonoBehaviour
     public float angularVelocity;
     [Range(0, MAX_ACCELERATION), Tooltip("Multiplier for speed of rotation")]
     public float angularAccel;
+
+    // Lab 03 Step 02
+    [Header("Torque Attributes")]
+    public float torque;
 }
