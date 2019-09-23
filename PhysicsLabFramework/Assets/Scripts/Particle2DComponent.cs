@@ -35,17 +35,20 @@ public class Particle2DComponent : MonoBehaviour
 
     // Rotational Equivalent of Mass
     // Moment of Inertia
-    // A measure of how difficult it is to change a particle's rotation speed  (Millington p.198)
-    public float inertia
+    // A measure of how difficult it is to change a particle's rotation speed (Millington p.198)
+    public Vector3 inertia
     {
         get; private set;
     }
 
     // Particle's inverse Moment of Inertia
-    public float inertiaInv
+    public Vector3 inertiaInv
     {
         get; private set;
     }
+
+    // Values necessary for Torque / Inertia / Rotation
+    public float length, width, height, radius;
 
     public float GetStartingMass()
     {
@@ -59,12 +62,62 @@ public class Particle2DComponent : MonoBehaviour
         massInv = mass > 0.0f ? 1.0f / mass : 0.0f;
     }
 
-    public void SetInertia(float newInertia)
+    public void SetInertia()
     {
-        // Inertia Calculations based on Shape from Millington (pg. 490 something)
+        // Inertia Calculations based on Shape from Millington Appendix A.3
 
-        inertia = Mathf.Max(0.0f, newInertia);
-        inertiaInv = inertia > 0.0f ? 1.0f / inertia : 0.0f;
+        float inertX = 0.0f;
+        float inertY = 0.0f;
+        float inertZ = 0.0f;
+
+        switch (particleShape)
+        {
+            case ParticleShape.CUBOID:
+            {
+                // inertia.x = 1/12 * mass * (dy^2) + (dz^2);
+                inertX = 1 / 12 * mass;
+                // inertia.y = 1/12 * mass * (dx^2) + (dz^2);
+                inertY = 1 / 12 * mass;
+                // inertia.z = 1/12 * mass * (dx^2) + (dy^2);
+                inertZ = 1 / 12 * mass;
+
+                break;
+            }
+            case ParticleShape.SPHERE:
+            {
+                // inertia.x = 2/5 * mass * radius * radius
+                inertX = 2 / 5 * mass * radius * radius;
+                // inertia.y = 2/5 * mass * radius * radius
+                inertY = 2 / 5 * mass * radius * radius;
+                // inertia.z = 2/5 * mass * radius * radius
+                inertZ = 2 / 5 * mass * radius * radius;
+                break;
+            }
+            case ParticleShape.CYLINDER:
+            {
+                // inertia.x = 1/12 * mass * height*height + 1/4 * mass * radius*radius
+                inertX = 1 / 12 * mass * height * height + 1 / 4 * mass * radius * radius;
+                // inertia.y = 1/12 * mass * height*height + 1/4 * mass * radius*radius
+                inertY = 1 / 12 * mass * height * height + 1 / 4 * mass * radius * radius;
+                // inertia.z = 1/2 * mass * radius*radius
+                inertZ = 1 / 2 * mass * radius * radius;
+                break;
+            }
+            case ParticleShape.CONE:
+            {
+                // inertia.x = 3/80 * mass * height*height + 3/20 * mass * radius*radius
+                inertX = 3 / 80 * mass * height * height + 3 / 20 * mass * radius * radius;
+                // inertia.y = 3/80 * mass * height*height + 3/20 * mass * radius*radius
+                inertY = 3 / 80 * mass * height * height + 3 / 20 * mass * radius * radius;
+                // inertia.z = 3/10 * mass * radius * radius
+                inertZ = 3 / 10 * mass * radius * radius;
+                break;
+            }
+            default:
+                break;
+        }
+
+        inertia.Set(inertX, inertY, inertZ);
     }
 
     // Lab 02 Step 02 - Declaring Force Variables
@@ -75,7 +128,7 @@ public class Particle2DComponent : MonoBehaviour
 
     // Variables to store possible forces
     private Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
-    
+
     // Adds the passed force to the current force vector
     private void AddForce(Vector2 newForce)
     {
@@ -175,8 +228,8 @@ public class Particle2DComponent : MonoBehaviour
         //  torque = inertia * alpha
         //  alpha = inverseInertia * torque
 
-        float alpha = inertiaInv * particleRotation.torque;
-        particleRotation.angularAccel = inertia * alpha;
+        // float alpha = inertiaInv * particleRotation.torque;
+        // particleRotation.angularAccel = inertia * alpha;
 
         particleRotation.torque = 0.0f;
     }
