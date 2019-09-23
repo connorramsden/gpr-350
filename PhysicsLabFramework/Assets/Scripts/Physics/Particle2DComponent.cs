@@ -120,6 +120,11 @@ public class Particle2DComponent : MonoBehaviour
         inertia.Set(inertX, inertY, inertZ);
     }
 
+    public Vector2 GetPosition()
+    {
+        return particleMovement.position;
+    }
+
     // Lab 02 Step 02 - Declaring Force Variables
     // Total force acting on a particle
     private Vector2 force;
@@ -228,6 +233,7 @@ public class Particle2DComponent : MonoBehaviour
         //  torque = inertia * alpha
         //  alpha = inverseInertia * torque
 
+        // 
         // float alpha = inertiaInv * particleRotation.torque;
         // particleRotation.angularAccel = inertia * alpha;
 
