@@ -13,10 +13,11 @@ public class Particle2DComponent : MonoBehaviour
 
     public enum ParticleShape
     {
-        CUBOID,
-        SPHERE,
-        CYLINDER,
-        CONE
+        INVALID_TYPE = -1,
+        DISK,
+        RING,
+        RECTANGLE,
+        ROD
     }
 
     public ParticleShape particleShape;
@@ -36,19 +37,19 @@ public class Particle2DComponent : MonoBehaviour
     // Rotational Equivalent of Mass
     // Moment of Inertia
     // A measure of how difficult it is to change a particle's rotation speed (Millington p.198)
-    public Vector3 inertia
+    public float inertia
     {
         get; private set;
     }
 
     // Particle's inverse Moment of Inertia
-    public Vector3 inertiaInv
+    public float inertiaInv
     {
         get; private set;
     }
 
     // Values necessary for Torque / Inertia / Rotation
-    public float length, width, height, radius;
+    public float length, height, radius, innerRadius, outerRadius;
 
     public float GetStartingMass()
     {
@@ -62,62 +63,44 @@ public class Particle2DComponent : MonoBehaviour
         massInv = mass > 0.0f ? 1.0f / mass : 0.0f;
     }
 
+    // Sets the inertia and inverse inertia of a particle based on shape
     public void SetInertia()
     {
-        // Inertia Calculations based on Shape from Millington Appendix A.3
-
-        float inertX = 0.0f;
-        float inertY = 0.0f;
-        float inertZ = 0.0f;
-
+        // Inertia Calculations based on Shape from Millington 2nd Ed. Appendix A (Useful Inertia Tensors)
         switch (particleShape)
         {
-            case ParticleShape.CUBOID:
-            {
-                // inertia.x = 1/12 * mass * (dy^2) + (dz^2);
-                inertX = 1 / 12 * mass;
-                // inertia.y = 1/12 * mass * (dx^2) + (dz^2);
-                inertY = 1 / 12 * mass;
-                // inertia.z = 1/12 * mass * (dx^2) + (dy^2);
-                inertZ = 1 / 12 * mass;
-
-                break;
-            }
-            case ParticleShape.SPHERE:
-            {
-                // inertia.x = 2/5 * mass * radius * radius
-                inertX = 2 / 5 * mass * radius * radius;
-                // inertia.y = 2/5 * mass * radius * radius
-                inertY = 2 / 5 * mass * radius * radius;
-                // inertia.z = 2/5 * mass * radius * radius
-                inertZ = 2 / 5 * mass * radius * radius;
-                break;
-            }
-            case ParticleShape.CYLINDER:
-            {
-                // inertia.x = 1/12 * mass * height*height + 1/4 * mass * radius*radius
-                inertX = 1 / 12 * mass * height * height + 1 / 4 * mass * radius * radius;
-                // inertia.y = 1/12 * mass * height*height + 1/4 * mass * radius*radius
-                inertY = 1 / 12 * mass * height * height + 1 / 4 * mass * radius * radius;
-                // inertia.z = 1/2 * mass * radius*radius
-                inertZ = 1 / 2 * mass * radius * radius;
-                break;
-            }
-            case ParticleShape.CONE:
-            {
-                // inertia.x = 3/80 * mass * height*height + 3/20 * mass * radius*radius
-                inertX = 3 / 80 * mass * height * height + 3 / 20 * mass * radius * radius;
-                // inertia.y = 3/80 * mass * height*height + 3/20 * mass * radius*radius
-                inertY = 3 / 80 * mass * height * height + 3 / 20 * mass * radius * radius;
-                // inertia.z = 3/10 * mass * radius * radius
-                inertZ = 3 / 10 * mass * radius * radius;
-                break;
-            }
+            case ParticleShape.DISK:
+                {
+                    // I = 1/2 * mass * radius * radius
+                    inertia = 0.5f * mass * radius * radius;
+                    break;
+                }
+            case ParticleShape.RING:
+                {
+                    // I = 1/2 * mass * (outerRadius * outerRadius + innerRadius*innerRadius)
+                    inertia = 0.5f * mass * outerRadius * outerRadius + innerRadius * innerRadius;
+                    break;
+                }
+            case ParticleShape.RECTANGLE:
+                {
+                    // I = 1/12 * mass * (dx*dx + dy*dy) where dx = length and dy = height
+                    inertia = 0.083f * mass * length * length + height * height;
+                    break;
+                }
+            case ParticleShape.ROD:
+                {
+                    // I + 1/12 * mass * length * length
+                    inertia = 0.083f * mass * length * length;
+                    break;
+                }
+            case ParticleShape.INVALID_TYPE:
             default:
+                Debug.LogError($"Particle Shape is of type {ParticleShape.INVALID_TYPE}. Please set a valid Particle Shape");
+                inertia = 0.0f;
                 break;
         }
 
-        inertia.Set(inertX, inertY, inertZ);
+        inertiaInv = inertia > 0.0f ? 1.0f / inertia : 0.0f;
     }
 
     // Lab 02 Step 02 - Declaring Force Variables
@@ -132,7 +115,7 @@ public class Particle2DComponent : MonoBehaviour
     // Adds the passed force to the current force vector
     private void AddForce(Vector2 newForce)
     {
-        // D'Alembert's Law (French Guy!)
+        // D'Alembert's Principle (French Guy!)
         force += newForce;
     }
 
@@ -211,6 +194,14 @@ public class Particle2DComponent : MonoBehaviour
         }
     }
 
+    public void ApplyTorque()
+    {
+        // D'Alembert's Principle:
+        // T = pf * F where T is torque, pf is moment arm, and F is applied force at pf
+        // Center of mass not necessarily object center
+        
+    }
+
     // Converts force and inverse mass to acceleration
     public void UpdateAcceleration()
     {
@@ -228,8 +219,7 @@ public class Particle2DComponent : MonoBehaviour
         //  torque = inertia * alpha
         //  alpha = inverseInertia * torque
 
-        // float alpha = inertiaInv * particleRotation.torque;
-        // particleRotation.angularAccel = inertia * alpha;
+        
 
         particleRotation.torque = 0.0f;
     }

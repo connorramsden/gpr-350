@@ -21,7 +21,6 @@ public class Particle2DSystem : MonoBehaviour
             if (p2d.shouldRotate)
             {
                 p2d.UpdateRotation(dt);
-                p2d.ApplyForces();
                 p2d.UpdateAngularAcceleration();
             }
         }
@@ -44,6 +43,7 @@ public class Particle2DSystem : MonoBehaviour
 
             // Set all particle's starting mass to their editor valus
             p2d.SetMass(p2d.GetStartingMass());
+            p2d.SetInertia();
         }
     }
 
