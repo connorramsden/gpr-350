@@ -215,9 +215,6 @@ MonoBehaviour:
   radius: 0
   innerRadius: 0
   outerRadius: 0
-  localCenterOfMass: {x: 0, y: 0}
-  worldCenterOfMass: {x: 0, y: 0}
-  momentArm: {x: 1, y: 0}
   anchorObject: {fileID: 0}
   shouldMove: 0
   shouldRotate: 1
@@ -297,6 +294,10 @@ MonoBehaviour:
   angularVelocity: 0
   angularAccel: 0
   torque: 0
+  localCenterOfMass: {x: 0, y: 0}
+  worldCenterOfMass: {x: 0, y: 0}
+  momentArm: {x: 1, y: 0}
+  torqueForce: 0.125
 --- !u!114 &694038396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -580,9 +581,6 @@ MonoBehaviour:
   radius: 5
   innerRadius: 4
   outerRadius: 10
-  localCenterOfMass: {x: 0, y: 0}
-  worldCenterOfMass: {x: 0, y: 0}
-  momentArm: {x: 1, y: 0}
   anchorObject: {fileID: 0}
   shouldMove: 0
   shouldRotate: 1
@@ -662,6 +660,10 @@ MonoBehaviour:
   angularVelocity: 0
   angularAccel: 0
   torque: 0
+  localCenterOfMass: {x: 0, y: 0}
+  worldCenterOfMass: {x: 0, y: 0}
+  momentArm: {x: 0, y: 0}
+  torqueForce: 0
 --- !u!114 &1369218203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -728,6 +730,10 @@ MonoBehaviour:
   angularVelocity: 0
   angularAccel: 0
   torque: 0
+  localCenterOfMass: {x: 0, y: 0}
+  worldCenterOfMass: {x: 0, y: 0}
+  momentArm: {x: 0, y: 0}
+  torqueForce: 0
 --- !u!114 &1742267060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -775,9 +781,6 @@ MonoBehaviour:
   radius: 5
   innerRadius: 4
   outerRadius: 10
-  localCenterOfMass: {x: 0, y: 0}
-  worldCenterOfMass: {x: 0, y: 0}
-  momentArm: {x: 1, y: 0}
   anchorObject: {fileID: 0}
   shouldMove: 0
   shouldRotate: 1

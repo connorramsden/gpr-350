@@ -21,8 +21,8 @@ public class Particle2DSystem : MonoBehaviour
             if (p2d.shouldRotate)
             {
                 p2d.UpdateRotation(dt);
+                p2d.ApplyTorque();
                 p2d.UpdateAngularAcceleration();
-                p2d.ApplyTorque(new Vector2(1.25f, 0.0f));
             }
         }
     }
