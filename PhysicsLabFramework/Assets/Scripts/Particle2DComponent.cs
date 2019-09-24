@@ -215,9 +215,8 @@ public class Particle2DComponent : MonoBehaviour
         // T = pf * F where T is torque, pf is moment arm, and F is applied force at pf
         // Center of mass not necessarily object center
 
-        if(Input.GetKeyDown(KeyCode.LeftArrow))
-            AddForce(newForce);
-            particleRotation.torque += force.magnitude * (momentArm - localCenterOfMass).magnitude;
+        AddForce(newForce);
+        particleRotation.torque += force.magnitude * (momentArm - localCenterOfMass).magnitude;
     }
 
     // Converts torque to angular acceleration and then resets torque
