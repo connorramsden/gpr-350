@@ -215,6 +215,9 @@ MonoBehaviour:
   radius: 0
   innerRadius: 0
   outerRadius: 0
+  localCenterOfMass: {x: 0, y: 0}
+  worldCenterOfMass: {x: -2, y: 0}
+  momentArm: {x: 0, y: 0}
   anchorObject: {fileID: 0}
   shouldMove: 0
   shouldRotate: 1
@@ -577,6 +580,9 @@ MonoBehaviour:
   radius: 5
   innerRadius: 4
   outerRadius: 10
+  localCenterOfMass: {x: 0, y: 0}
+  worldCenterOfMass: {x: 0, y: 0}
+  momentArm: {x: 0, y: 0}
   anchorObject: {fileID: 0}
   shouldMove: 0
   shouldRotate: 1

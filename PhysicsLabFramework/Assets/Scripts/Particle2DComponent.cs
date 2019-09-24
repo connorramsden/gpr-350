@@ -51,6 +51,11 @@ public class Particle2DComponent : MonoBehaviour
     // Values necessary for Torque / Inertia / Rotation
     public float length, height, radius, innerRadius, outerRadius;
 
+    // Object Center vs Center of Mass, but not the object center
+    public Vector2 localCenterOfMass, worldCenterOfMass;
+    // point of applied force relative to center of mass
+    public Vector2 momentArm;
+
     public float GetStartingMass()
     {
         return particleMovement.startingMass;
@@ -194,14 +199,6 @@ public class Particle2DComponent : MonoBehaviour
         }
     }
 
-    public void ApplyTorque()
-    {
-        // D'Alembert's Principle:
-        // T = pf * F where T is torque, pf is moment arm, and F is applied force at pf
-        // Center of mass not necessarily object center
-        
-    }
-
     // Converts force and inverse mass to acceleration
     public void UpdateAcceleration()
     {
@@ -212,14 +209,26 @@ public class Particle2DComponent : MonoBehaviour
         force = Vector2.zero;
     }
 
+    public void ApplyTorque(Vector2 newForce)
+    {
+        // D'Alembert's Principle:
+        // T = pf * F where T is torque, pf is moment arm, and F is applied force at pf
+        // Center of mass not necessarily object center
+
+        if(Input.GetKeyDown(KeyCode.LeftArrow))
+            AddForce(newForce);
+            particleRotation.torque += force.magnitude * (momentArm - localCenterOfMass).magnitude;
+    }
+
     // Converts torque to angular acceleration and then resets torque
     public void UpdateAngularAcceleration()
     {
         //  Newton-2 Integration for AngularAcceleration
         //  torque = inertia * alpha
         //  alpha = inverseInertia * torque
-
-        
+        float alpha = inertiaInv * particleRotation.torque;
+        particleRotation.torque = inertia * alpha;
+        particleRotation.angularAccel = particleRotation.torque;
 
         particleRotation.torque = 0.0f;
     }
