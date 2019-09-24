@@ -18,4 +18,10 @@ public class Particle2DRotation : MonoBehaviour
     // Lab 03 Step 02
     [Header("Torque Attributes")]
     public float torque;
+    // Object Center vs Center of Mass, but not the object center
+    public Vector2 localCenterOfMass, worldCenterOfMass;
+    // point of applied force relative to center of mass
+    public Vector2 momentArm;
+    [Tooltip("Amount of Torque to apply")]
+    public float torqueForce;
 }
