@@ -222,12 +222,14 @@ public class Particle2DComponent : MonoBehaviour
     public void ApplyTorque()
     {
         // D'Alembert's Principle:
-        // T = pf * F where T is torque being applied, pf is the moment-of-inertia-arm, and F is the force applied at the Moment ARm
+        // T = cross(pf, F) where T is torque being applied, pf is the moment-of-inertia-arm, and F is the force applied at the Moment ARm
         // Center of mass not necessarily object center, so two variables exist: localCenterOfMass & worldCenterOfMass
         // NOTE: Not totally sure which center of mass to use in this equation, or if this equation is correct
 
+        Vector2 momentArm = (particleRotation.pointOfAppliedForce - particleRotation.worldCenterOfMass);
+
         if(Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)){
-            particleRotation.torque += particleRotation.torqueForce * (particleRotation.momentArm - particleRotation.worldCenterOfMass).magnitude;
+            particleRotation.torque += momentArm.x * particleRotation.appliedForce.y - momentArm.y * particleRotation.appliedForce.x;
         }
     }
 

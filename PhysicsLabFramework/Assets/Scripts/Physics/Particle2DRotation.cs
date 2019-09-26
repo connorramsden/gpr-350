@@ -21,7 +21,8 @@ public class Particle2DRotation : MonoBehaviour
     // Object Center vs Center of Mass, but not the object center
     public Vector2 localCenterOfMass, worldCenterOfMass;
     // point of applied force relative to center of mass
-    public Vector2 momentArm;
+    public Vector2 pointOfAppliedForce;
     [Tooltip("Amount of Torque to apply")]
     public float torqueForce;
+    public Vector2 appliedForce;
 }
