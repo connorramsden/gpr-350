@@ -11,6 +11,7 @@ public class Particle2DComponent : MonoBehaviour
     private Particle2DMovement particleMovement;
     private Particle2DRotation particleRotation;
 
+    // Shapes for Torque-based rotation in 2D
     public enum ParticleShape
     {
         INVALID_TYPE = -1,
@@ -51,11 +52,13 @@ public class Particle2DComponent : MonoBehaviour
     // Values necessary for Torque / Inertia / Rotation
     public float length, height, radius, innerRadius, outerRadius;
 
+    // Return a particle's starting mass
     public float GetStartingMass()
     {
         return particleMovement.startingMass;
     }
 
+    // Set mass to the passed mass, and update inverse mass
     public void SetMass(float newMass)
     {
         // Newton-2 Integration for Force
@@ -63,36 +66,41 @@ public class Particle2DComponent : MonoBehaviour
         massInv = mass > 0.0f ? 1.0f / mass : 0.0f;
     }
 
-    // Sets the inertia and inverse inertia of a particle based on shape
+    // Sets inertia for objects in Two-Dimensional space.
     public void SetInertia()
     {
         // Inertia Calculations based on Shape from Millington 2nd Ed. Appendix A (Useful Inertia Tensors)
         switch (particleShape)
         {
+            // Inertia Formula for a Disk-like object
             case ParticleShape.DISK:
                 {
                     // I = 1/2 * mass * radius * radius
                     inertia = 0.5f * mass * radius * radius;
                     break;
                 }
+            // Inertia Formula for a Ring-like object
             case ParticleShape.RING:
                 {
                     // I = 1/2 * mass * (outerRadius * outerRadius + innerRadius*innerRadius)
                     inertia = 0.5f * mass * outerRadius * outerRadius + innerRadius * innerRadius;
                     break;
                 }
+            // Inertia Formula for a Rectangle-like object
             case ParticleShape.RECTANGLE:
                 {
                     // I = 1/12 * mass * (dx*dx + dy*dy) where dx = length and dy = height
                     inertia = 0.083f * mass * length * length + height * height;
                     break;
                 }
+            // Inertia formula for a Rod-like object
             case ParticleShape.ROD:
                 {
                     // I + 1/12 * mass * length * length
                     inertia = 0.083f * mass * length * length;
                     break;
                 }
+            // If the shape is invalid / default, log an Error for the user
             case ParticleShape.INVALID_TYPE:
             default:
                 Debug.LogError($"Particle Shape is of type {ParticleShape.INVALID_TYPE}. Please set a valid Particle Shape");
@@ -100,6 +108,7 @@ public class Particle2DComponent : MonoBehaviour
                 break;
         }
 
+        // If inertia is greater than 0, inverse inertia is 1 / inertia
         inertiaInv = inertia > 0.0f ? 1.0f / inertia : 0.0f;
     }
 
@@ -204,11 +213,13 @@ public class Particle2DComponent : MonoBehaviour
         force = Vector2.zero;
     }
 
+    // Apply a given torque-force to the rotating objects
     public void ApplyTorque()
     {
         // D'Alembert's Principle:
-        // T = pf * F where T is torque, pf is moment arm, and F is applied force at pf
-        // Center of mass not necessarily object center
+        // T = pf * F where T is torque being applied, pf is the moment-of-inertia-arm, and F is the force applied at the Moment ARm
+        // Center of mass not necessarily object center, so two variables exist: localCenterOfMass & worldCenterOfMass
+        // NOTE: Not totally sure which center of mass to use in this equation, or if this equation is correct
 
         if(Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)){
             particleRotation.torque += particleRotation.torqueForce * (particleRotation.momentArm - particleRotation.worldCenterOfMass).magnitude;
@@ -224,6 +235,7 @@ public class Particle2DComponent : MonoBehaviour
         float alpha = inertiaInv * particleRotation.torque;
         particleRotation.angularAccel = alpha;
 
+        // Reset torque as it is getting updated again next frame
         particleRotation.torque = 0.0f;
     }
 
