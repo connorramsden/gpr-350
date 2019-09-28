@@ -27,6 +27,58 @@ public class Particle2DSystem : MonoBehaviour
         }
     }
 
+    // Check a the passed particle against all other partciles for Circle Collisions
+    private bool CheckCircleCollision(GameObject particle)
+    {
+        bool isColliding = false;
+        // Get the passed particle's circle collision hull
+        CircleCollisionHull2D cch2d = particle.GetComponent<CircleCollisionHull2D>();
+
+        // Iterate over the particle list
+        foreach (GameObject other in particleList)
+        {
+            // So long as the passed particle is not the 'other' particle (not the same particle)
+            if (particle != other)
+            {
+                // Determine which collision type to call based on what component the 'other' particle has
+                if (other.TryGetComponent(typeof(CircleCollisionHull2D), out Component circleHull))
+                {
+                    // Try a Circle v Circle collision
+                    isColliding = cch2d.TestCollisionVsCircle(other.GetComponent<CircleCollisionHull2D>());
+                }
+                else if(other.TryGetComponent(typeof(AABBCollisionHull2D), out Component aabbHull))
+                {
+                    isColliding = cch2d.TestCollisionVsAABB(other.GetComponent<AABBCollisionHull2D>());
+                }
+                else if(other.TryGetComponent(typeof(OBBCollisionHull2D), out Component obbHull))
+                {
+                }
+            }
+        }
+
+        return isColliding;
+    }
+
+    private void CheckAABBCollision(GameObject particle)
+    {
+
+    }
+
+    private void CheckCollisions()
+    {
+        bool isColliding = false;
+
+        foreach (GameObject particle in particleList)
+        {
+            isColliding = CheckCircleCollision(particle);
+
+            if (isColliding)
+            {
+                particle.GetComponent<Particle2DComponent>().shouldMove = false;
+            }
+        }
+    }
+
     private void Awake()
     {
         // Initialize particleList
@@ -53,5 +105,6 @@ public class Particle2DSystem : MonoBehaviour
         float dt = Time.fixedDeltaTime;
 
         UpdateAllParticles(dt);
+        CheckCollisions();
     }
 }

@@ -6,7 +6,7 @@ public class CircleCollisionHull2D : CollisionHull2D
     private const float MAX_RADIUS = 100.0f;
 
     public CircleCollisionHull2D(CollisionHullType2D newType) : base(CollisionHullType2D.HULL_CIRCLE)
-    { }
+    {}
 
     [Header("Circle Attributes"), Tooltip("Radius of the circle")]
     [Range(0.0f, MAX_RADIUS)]

@@ -4,7 +4,7 @@ public class AABBCollisionHull2D : CollisionHull2D
 {
     public AABBCollisionHull2D(CollisionHullType2D newType) : base(CollisionHullType2D.HULL_AABB)
     {
-
+        
     }
 
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other)

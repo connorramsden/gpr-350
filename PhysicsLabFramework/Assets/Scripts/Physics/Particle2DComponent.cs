@@ -228,7 +228,8 @@ public class Particle2DComponent : MonoBehaviour
 
         Vector2 momentArm = (particleRotation.pointOfAppliedForce - particleRotation.worldCenterOfMass);
 
-        if(Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)){
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+        {
             particleRotation.torque += momentArm.x * particleRotation.appliedForce.y - momentArm.y * particleRotation.appliedForce.x;
         }
     }
