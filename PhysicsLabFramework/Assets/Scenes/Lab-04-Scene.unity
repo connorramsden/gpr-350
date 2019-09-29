@@ -288,7 +288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a142ea0d2fcabd042ad13f98990dc5e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 0.25
+  radius: 0.5
 --- !u!114 &617813556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -454,7 +454,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a142ea0d2fcabd042ad13f98990dc5e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 0.25
+  radius: 0.5
 --- !u!23 &1153134096
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -509,7 +509,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1153134094}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

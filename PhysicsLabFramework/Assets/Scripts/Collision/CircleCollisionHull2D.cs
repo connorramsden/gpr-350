@@ -37,7 +37,7 @@ public class CircleCollisionHull2D : CollisionHull2D
 
     public override bool TestCollisionVsAABB(AABBCollisionHull2D other)
     {
-        // find the closest point to the ricle on the box
+        // find the closest point to the cicle on the box
         // done by clamping center of circle ot be within box dimensions
         // if closest point is within circle, pass (do point vs circle collision test)
 
