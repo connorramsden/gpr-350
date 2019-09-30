@@ -248,7 +248,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 187926322}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 100, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -265,9 +265,9 @@ GameObject:
   - component: {fileID: 1073149395}
   - component: {fileID: 1073149394}
   - component: {fileID: 1073149393}
+  - component: {fileID: 1073149390}
   - component: {fileID: 1073149392}
   - component: {fileID: 1073149391}
-  - component: {fileID: 1073149390}
   - component: {fileID: 1073149389}
   m_Layer: 0
   m_Name: Particle 03
@@ -304,6 +304,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d54f292974fd1c4182803f9da150c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  particleMovement: {fileID: 1073149392}
+  particleRotation: {fileID: 1073149391}
   redMat: {fileID: 2100000, guid: 0061812973d882c45b0ab534cb48ced6, type: 2}
   greenMat: {fileID: 2100000, guid: 76bb310b7c744544fa536364a2b149ed, type: 2}
   particleShape: 0
@@ -313,7 +315,7 @@ MonoBehaviour:
   innerRadius: 0
   outerRadius: 0
   anchorObject: {fileID: 0}
-  shouldMove: 1
+  shouldMove: 0
   shouldRotate: 0
 --- !u!114 &1073149391
 MonoBehaviour:
@@ -351,7 +353,7 @@ MonoBehaviour:
   position: {x: 0, y: 0}
   velocity: {x: 0, y: 0}
   acceleration: {x: 0, y: 0}
-  useGravity: 1
+  useGravity: 0
   useNormal: 0
   useSliding: 0
   useFriction: 0
@@ -423,7 +425,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1153134094
 GameObject:
@@ -459,7 +461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a142ea0d2fcabd042ad13f98990dc5e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 0.5
+  radius: 1
   center: {x: 0, y: 0, z: 0}
 --- !u!23 &1153134096
 MeshRenderer:
@@ -533,6 +535,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d54f292974fd1c4182803f9da150c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  particleMovement: {fileID: 1153134101}
+  particleRotation: {fileID: 1153134100}
   redMat: {fileID: 2100000, guid: 0061812973d882c45b0ab534cb48ced6, type: 2}
   greenMat: {fileID: 2100000, guid: 76bb310b7c744544fa536364a2b149ed, type: 2}
   particleShape: 0
@@ -542,7 +546,7 @@ MonoBehaviour:
   innerRadius: 0
   outerRadius: 0
   anchorObject: {fileID: 0}
-  shouldMove: 0
+  shouldMove: 1
   shouldRotate: 0
 --- !u!114 &1153134100
 MonoBehaviour:
@@ -688,9 +692,9 @@ GameObject:
   - component: {fileID: 1405180947}
   - component: {fileID: 1405180946}
   - component: {fileID: 1405180945}
+  - component: {fileID: 1405180942}
   - component: {fileID: 1405180944}
   - component: {fileID: 1405180943}
-  - component: {fileID: 1405180942}
   - component: {fileID: 1405180941}
   m_Layer: 0
   m_Name: Particle 02
@@ -727,6 +731,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d54f292974fd1c4182803f9da150c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  particleMovement: {fileID: 1405180944}
+  particleRotation: {fileID: 1405180943}
   redMat: {fileID: 2100000, guid: 0061812973d882c45b0ab534cb48ced6, type: 2}
   greenMat: {fileID: 2100000, guid: 76bb310b7c744544fa536364a2b149ed, type: 2}
   particleShape: 0
@@ -846,5 +852,5 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

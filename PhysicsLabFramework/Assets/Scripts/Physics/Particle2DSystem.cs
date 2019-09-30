@@ -46,20 +46,14 @@ public class Particle2DSystem : MonoBehaviour
             {
                 // Determine which collision type to call based on what component the 'other' particle has
                 if (other.TryGetComponent(out CircleCollisionHull2D circleHull))
-                {
                     // Try a Circle vs Circle collision
                     isColliding = cch2d.TestCollisionVsCircle(circleHull);
-                }
                 else if (other.TryGetComponent(out AABBCollisionHull2D aabbHull))
-                {
                     // Try a Circle vs ABB collision
                     isColliding = cch2d.TestCollisionVsAABB(aabbHull);
-                }
                 else if (other.TryGetComponent(out OBBCollisionHull2D obbHull))
-                {
                     // Try a Circle vs OBB collision
                     isColliding = cch2d.TestCollisionVsOBB(obbHull);
-                }
             }
         }
 
@@ -72,15 +66,13 @@ public class Particle2DSystem : MonoBehaviour
         bool isColliding = false;
         CollisionHull2D bb2d;
 
+        // Determine whether to use AABB or OBB collision hull
         if (particle.TryGetComponent(out AABBCollisionHull2D tryAabbHull))
-        {
             bb2d = tryAabbHull;
-        }
         else if (particle.TryGetComponent(out OBBCollisionHull2D tryObbHull))
-        {
             bb2d = tryObbHull;
-        }
-        else{
+        else
+        {
             bb2d = null;
             Debug.LogError("Error in Box Collision Detection");
         }
@@ -92,20 +84,14 @@ public class Particle2DSystem : MonoBehaviour
             if (particle != other)
             {
                 if (other.TryGetComponent(out CircleCollisionHull2D circleHull))
-                {
                     // Try a Circle vs Circle collision
                     isColliding = bb2d.TestCollisionVsCircle(circleHull);
-                }
                 else if (other.TryGetComponent(out AABBCollisionHull2D aabbHull))
-                {
                     // Try a Circle vs ABB collision
                     isColliding = bb2d.TestCollisionVsAABB(aabbHull);
-                }
                 else if (other.TryGetComponent(out OBBCollisionHull2D obbHull))
-                {
                     // Try a Circle vs OBB collision
                     isColliding = bb2d.TestCollisionVsOBB(obbHull);
-                }
             }
         }
 
@@ -126,13 +112,9 @@ public class Particle2DSystem : MonoBehaviour
                 isColliding = CheckBoxCollision(particle);
 
             if (isColliding)
-            {
                 particle.GetComponent<MeshRenderer>().material = particle.GetComponent<Particle2DComponent>().greenMat;
-            }
             else
-            {
                 particle.GetComponent<MeshRenderer>().material = particle.GetComponent<Particle2DComponent>().redMat;
-            }
         }
     }
 

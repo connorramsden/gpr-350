@@ -23,7 +23,7 @@ public class CircleCollisionHull2D : CollisionHull2D
         // Step 04: add the radii
         // Step 05: square the sum of radii
         // Step 06: DO THE TEST: distSq <= sumSq
-        
+
         Vector2 distance = particle.GetPosition() - other.particle.GetPosition();
         float distSq = Vector3.Dot(distance, distance);
         float sum = radius + other.radius;
@@ -41,16 +41,19 @@ public class CircleCollisionHull2D : CollisionHull2D
         // done by clamping center of circle to be within box dimensions
         // if closest point is within circle, pass (do point vs circle collision test)
 
-        // Step 01: Get the center of the circle
-        float centerSq = center.sqrMagnitude;
-        // Step 02: Get max and min extent of other
-        float maxSq = other.maxExtent.sqrMagnitude;
-        float minSq = other.minExtent.sqrMagnitude;
-        // Step 03: Clamp center within extents
-        float closestPoint = Mathf.Clamp(centerSq, minSq, maxSq);
+        // Step 01: Get max and min extent of other
+        Vector3 minExtent = other.minExtent;
+        Vector3 maxExtent = other.maxExtent;
+        
+        // Step 02: Clamp center within extents
+        float xPosClamp = Mathf.Clamp(center.x, minExtent.x, maxExtent.x);
+        float yPosClamp = Mathf.Clamp(center.y, minExtent.y, maxExtent.y);
+        float zPosClamp = Mathf.Clamp(center.z, minExtent.z, maxExtent.z);
+        
+        // Step 03: Establish closest point
+        Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
 
-        // CHANGE THIS
-        if (centerSq <= maxSq && centerSq >= minSq)
+        if(closestPoint.sqrMagnitude < radius * radius)
             return true;
         else
             return false;
@@ -60,7 +63,7 @@ public class CircleCollisionHull2D : CollisionHull2D
     {
         // same as AABB collision, but first..
         // multiply circle center by box world matrix inverse
-        
+
         return false;
     }
 
