@@ -13,7 +13,7 @@ public class CircleCollisionHull2D : CollisionHull2D
     public Vector3 center;
 
     // Architecture Style 2 //
-    public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
+    public override bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c)
     {
         // collision if distance between centers is <= sum of radii
         // optimized collision if (distance between centers)^2 <= (sum of radii)^2
@@ -35,7 +35,7 @@ public class CircleCollisionHull2D : CollisionHull2D
             return false;
     }
 
-    public override bool TestCollisionVsAABB(AABBCollisionHull2D other)
+    public override bool TestCollisionVsAABB(AABBCollisionHull2D other, ref Collision c)
     {
         // find the closest point to the cicle on the box
         // done by clamping center of circle to be within box dimensions
@@ -47,7 +47,7 @@ public class CircleCollisionHull2D : CollisionHull2D
         return false;
     }
 
-    public override bool TestCollisionVsOBB(OBBCollisionHull2D other)
+    public override bool TestCollisionVsOBB(OBBCollisionHull2D other, ref Collision c)
     {
         // same as AABB collision, but first..
         // multiply circle center by box world matrix inverse

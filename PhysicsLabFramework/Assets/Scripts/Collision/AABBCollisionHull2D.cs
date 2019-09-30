@@ -15,14 +15,14 @@ public class AABBCollisionHull2D : CollisionHull2D
     [Tooltip("Maximum Extent of the box")]
     public Vector3 maxExtent;
 
-    public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
+    public override bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c)
     {
         /// <see cref="CircleCollisionHull2D.TestCollisionVsCircle(CircleCollisionHull2D)"/>
 
         return false;
     }
 
-    public override bool TestCollisionVsAABB(AABBCollisionHull2D other)
+    public override bool TestCollisionVsAABB(AABBCollisionHull2D other, ref Collision c)
     {
         // pass if, for all axes, max extent of A is greather than min extent of B
         // Step 01: 
@@ -30,7 +30,7 @@ public class AABBCollisionHull2D : CollisionHull2D
         return false;
     }
 
-    public override bool TestCollisionVsOBB(OBBCollisionHull2D other)
+    public override bool TestCollisionVsOBB(OBBCollisionHull2D other, ref Collision c)
     {
         // same as above twice:
         // first, find max extents of OBB, do AABB vs this box

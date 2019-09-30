@@ -14,21 +14,21 @@ public class OBBCollisionHull2D : CollisionHull2D
     [Tooltip("Center of the box")]
     public Vector3 center;
 
-    public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
+    public override bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c)
     {
         /// <see cref="CircleCollisionHull2D.TestCollisionVsCircle(CircleCollisionHull2D)"/>
 
         return false;
     }
 
-    public override bool TestCollisionVsAABB(AABBCollisionHull2D other)
+    public override bool TestCollisionVsAABB(AABBCollisionHull2D other, ref Collision c)
     {
         /// <see cref="AABBCollisionHull2D.TestCollisionVsAABB(AABBCollisionHull2D)"/>
 
         return false;
     }
 
-    public override bool TestCollisionVsOBB(OBBCollisionHull2D other)
+    public override bool TestCollisionVsOBB(OBBCollisionHull2D other, ref Collision c)
     {
         // same as AABB-OBB part 2, twice
 
