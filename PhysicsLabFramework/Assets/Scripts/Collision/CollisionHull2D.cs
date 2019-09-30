@@ -36,4 +36,11 @@ public abstract class CollisionHull2D : MonoBehaviour
     public abstract bool TestCollisionVsAABB(AABBCollisionHull2D other);
 
     public abstract bool TestCollisionVsOBB(OBBCollisionHull2D other);
+
+    public abstract void UpdateCenterPos();
+
+    private void Awake()
+    {
+        particle = gameObject.GetComponent<Particle2DComponent>();
+    }
 }

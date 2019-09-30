@@ -35,6 +35,12 @@ public class OBBCollisionHull2D : CollisionHull2D
         return false;
     }
 
+    public override void UpdateCenterPos()
+    {
+        if (particle)
+            center = particle.GetPosition();
+    }
+
     private void Awake()
     {
         SetType(CollisionHullType2D.HULL_OBB);

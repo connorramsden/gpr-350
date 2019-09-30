@@ -23,7 +23,7 @@ public class CircleCollisionHull2D : CollisionHull2D
         // Step 04: add the radii
         // Step 05: square the sum of radii
         // Step 06: DO THE TEST: distSq <= sumSq
-
+        
         Vector2 distance = particle.GetPosition() - other.particle.GetPosition();
         float distSq = Vector3.Dot(distance, distance);
         float sum = radius + other.radius;
@@ -42,16 +42,25 @@ public class CircleCollisionHull2D : CollisionHull2D
         // if closest point is within circle, pass (do point vs circle collision test)
 
         // Step 01: Get the center of the circle
-        center = particle.transform.position;
-        
-        return false;
+        float centerSq = center.sqrMagnitude;
+        // Step 02: Get max and min extent of other
+        float maxSq = other.maxExtent.sqrMagnitude;
+        float minSq = other.minExtent.sqrMagnitude;
+        // Step 03: Clamp center within extents
+        float closestPoint = Mathf.Clamp(centerSq, minSq, maxSq);
+
+        // CHANGE THIS
+        if (centerSq <= maxSq && centerSq >= minSq)
+            return true;
+        else
+            return false;
     }
 
     public override bool TestCollisionVsOBB(OBBCollisionHull2D other)
     {
         // same as AABB collision, but first..
         // multiply circle center by box world matrix inverse
-
+        
         return false;
     }
 
@@ -62,11 +71,12 @@ public class CircleCollisionHull2D : CollisionHull2D
         particle = GetComponent<Particle2DComponent>();
 
         // Initialize center position
-        center = particle.transform.position;
+        center = particle.GetPosition();
     }
 
-    private void OnDrawGizmos()
+    public override void UpdateCenterPos()
     {
-        
+        if (particle)
+            center = particle.GetPosition();
     }
 }

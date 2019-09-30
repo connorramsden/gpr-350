@@ -38,6 +38,9 @@ public class Particle2DSystem : MonoBehaviour
         // Iterate over the particle list
         foreach (GameObject other in particleList)
         {
+            // Update center position of particle
+            cch2d.UpdateCenterPos();
+
             // So long as the passed particle is not the 'other' particle (not the same particle)
             if (particle != other)
             {
@@ -84,6 +87,8 @@ public class Particle2DSystem : MonoBehaviour
 
         foreach (GameObject other in particleList)
         {
+            bb2d.UpdateCenterPos();
+
             if (particle != other)
             {
                 if (other.TryGetComponent(out CircleCollisionHull2D circleHull))
