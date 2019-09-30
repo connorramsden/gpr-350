@@ -31,6 +31,7 @@ public class Particle2DSystem : MonoBehaviour
     private bool CheckCircleCollision(GameObject particle)
     {
         bool isColliding = false;
+
         // Get the passed particle's circle collision hull
         CircleCollisionHull2D cch2d = particle.GetComponent<CircleCollisionHull2D>();
 
@@ -41,17 +42,20 @@ public class Particle2DSystem : MonoBehaviour
             if (particle != other)
             {
                 // Determine which collision type to call based on what component the 'other' particle has
-                if (other.TryGetComponent(typeof(CircleCollisionHull2D), out Component circleHull))
+                if (other.TryGetComponent(out CircleCollisionHull2D circleHull))
                 {
-                    // Try a Circle v Circle collision
-                    isColliding = cch2d.TestCollisionVsCircle(other.GetComponent<CircleCollisionHull2D>());
+                    // Try a Circle vs Circle collision
+                    isColliding = cch2d.TestCollisionVsCircle(circleHull);
                 }
-                else if(other.TryGetComponent(typeof(AABBCollisionHull2D), out Component aabbHull))
+                else if (other.TryGetComponent(out AABBCollisionHull2D aabbHull))
                 {
-                    isColliding = cch2d.TestCollisionVsAABB(other.GetComponent<AABBCollisionHull2D>());
+                    // Try a Circle vs ABB collision
+                    isColliding = cch2d.TestCollisionVsAABB(aabbHull);
                 }
-                else if(other.TryGetComponent(typeof(OBBCollisionHull2D), out Component obbHull))
+                else if (other.TryGetComponent(out OBBCollisionHull2D obbHull))
                 {
+                    // Try a Circle vs OBB collision
+                    isColliding = cch2d.TestCollisionVsOBB(obbHull);
                 }
             }
         }
@@ -59,9 +63,47 @@ public class Particle2DSystem : MonoBehaviour
         return isColliding;
     }
 
-    private void CheckAABBCollision(GameObject particle)
+    private bool CheckBoxCollision(GameObject particle)
     {
+        bool isColliding = false;
+        CollisionHull2D bb2d;
 
+        if (particle.TryGetComponent(out AABBCollisionHull2D tryAabbHull))
+        {
+            bb2d = tryAabbHull;
+        }
+        else if (particle.TryGetComponent(out OBBCollisionHull2D tryObbHull))
+        {
+            bb2d = tryObbHull;
+        }
+        else{
+            bb2d = null;
+            Debug.LogError("Error in Box Collision Detection");
+        }
+
+        foreach (GameObject other in particleList)
+        {
+            if (particle != other)
+            {
+                if (other.TryGetComponent(out CircleCollisionHull2D circleHull))
+                {
+                    // Try a Circle vs Circle collision
+                    isColliding = bb2d.TestCollisionVsCircle(circleHull);
+                }
+                else if (other.TryGetComponent(out AABBCollisionHull2D aabbHull))
+                {
+                    // Try a Circle vs ABB collision
+                    isColliding = bb2d.TestCollisionVsAABB(aabbHull);
+                }
+                else if (other.TryGetComponent(out OBBCollisionHull2D obbHull))
+                {
+                    // Try a Circle vs OBB collision
+                    isColliding = bb2d.TestCollisionVsOBB(obbHull);
+                }
+            }
+        }
+
+        return isColliding;
     }
 
     private void CheckCollisions()
@@ -70,7 +112,12 @@ public class Particle2DSystem : MonoBehaviour
 
         foreach (GameObject particle in particleList)
         {
-            isColliding = CheckCircleCollision(particle);
+            if (particle.TryGetComponent(out CircleCollisionHull2D circleHull))
+                isColliding = CheckCircleCollision(particle);
+            else if (particle.TryGetComponent(out AABBCollisionHull2D aabbHull))
+                isColliding = CheckBoxCollision(particle);
+            else if (particle.TryGetComponent(out OBBCollisionHull2D obbHull))
+                isColliding = CheckBoxCollision(particle);
 
             if (isColliding)
             {
