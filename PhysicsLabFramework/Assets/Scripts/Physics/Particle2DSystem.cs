@@ -63,6 +63,7 @@ public class Particle2DSystem : MonoBehaviour
         return isColliding;
     }
 
+    // Check the passed particle against all other particles for Box Collisions (AABB & OBB)
     private bool CheckBoxCollision(GameObject particle)
     {
         bool isColliding = false;
@@ -121,7 +122,11 @@ public class Particle2DSystem : MonoBehaviour
 
             if (isColliding)
             {
-                particle.GetComponent<Particle2DComponent>().shouldMove = false;
+                particle.GetComponent<MeshRenderer>().material = particle.GetComponent<Particle2DComponent>().greenMat;
+            }
+            else
+            {
+                particle.GetComponent<MeshRenderer>().material = particle.GetComponent<Particle2DComponent>().redMat;
             }
         }
     }

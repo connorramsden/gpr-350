@@ -11,6 +11,9 @@ public class Particle2DComponent : MonoBehaviour
     private Particle2DMovement particleMovement;
     private Particle2DRotation particleRotation;
 
+    public Material redMat;
+    public Material greenMat;
+
     // Shapes for Torque-based rotation in 2D
     public enum ParticleShape
     {

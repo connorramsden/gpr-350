@@ -43,11 +43,7 @@ public class CircleCollisionHull2D : CollisionHull2D
 
         // Step 01: Get the center of the circle
         center = particle.transform.position;
-        // Step 02: Get box (other) dimensions
-        Vector3 boxDimensions = other.transform.lossyScale;
-        // Step 03: Clamp center within box dimensions
-        // Vector3 closestPoint = Vector3.ClampMagnitude(particle, other.particle);
-
+        
         return false;
     }
 
@@ -67,5 +63,10 @@ public class CircleCollisionHull2D : CollisionHull2D
 
         // Initialize center position
         center = particle.transform.position;
+    }
+
+    private void OnDrawGizmos()
+    {
+        
     }
 }
