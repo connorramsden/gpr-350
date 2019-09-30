@@ -1,16 +1,16 @@
-﻿using UnityEngine;
+﻿// Circle Collision Hull for 2D Space
 
-// Circle Collision Hull for 2D Space
+using UnityEngine;
+
 public class CircleCollisionHull2D : CollisionHull2D
 {
     private const float MAX_RADIUS = 100.0f;
 
-    public CircleCollisionHull2D(CollisionHullType2D newType) : base(CollisionHullType2D.HULL_CIRCLE)
-    {}
-
-    [Header("Circle Attributes"), Tooltip("Radius of the circle")]
-    [Range(0.0f, MAX_RADIUS)]
+    [Header("Circle Hull Attributes")]
+    [Tooltip("Radius of the circle"), Range(0.0f, MAX_RADIUS)]
     public float radius;
+    [Tooltip("Center of the circle")]
+    public Vector3 center;
 
     // Architecture Style 2 //
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
@@ -38,8 +38,15 @@ public class CircleCollisionHull2D : CollisionHull2D
     public override bool TestCollisionVsAABB(AABBCollisionHull2D other)
     {
         // find the closest point to the cicle on the box
-        // done by clamping center of circle ot be within box dimensions
+        // done by clamping center of circle to be within box dimensions
         // if closest point is within circle, pass (do point vs circle collision test)
+
+        // Step 01: Get the center of the circle
+        center = particle.transform.position;
+        // Step 02: Get box (other) dimensions
+        Vector3 boxDimensions = other.transform.lossyScale;
+        // Step 03: Clamp center within box dimensions
+        // Vector3 closestPoint = Vector3.ClampMagnitude(particle, other.particle);
 
         return false;
     }
@@ -50,5 +57,15 @@ public class CircleCollisionHull2D : CollisionHull2D
         // multiply circle center by box world matrix inverse
 
         return false;
+    }
+
+    // Initialize local variables
+    private void Awake()
+    {
+        SetType(CollisionHullType2D.HULL_CIRCLE);
+        particle = GetComponent<Particle2DComponent>();
+
+        // Initialize center position
+        center = particle.transform.position;
     }
 }
