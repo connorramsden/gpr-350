@@ -54,6 +54,8 @@ public class Particle2DSystem : MonoBehaviour
                 else if (other.TryGetComponent(out OBBCollisionHull2D obbHull))
                     // Try a Circle vs OBB collision
                     isColliding = cch2d.TestCollisionVsOBB(obbHull);
+                else
+                    isColliding = false;
             }
         }
 
@@ -92,6 +94,8 @@ public class Particle2DSystem : MonoBehaviour
                 else if (other.TryGetComponent(out OBBCollisionHull2D obbHull))
                     // Try a Circle vs OBB collision
                     isColliding = bb2d.TestCollisionVsOBB(obbHull);
+                else
+                    isColliding = false;
             }
         }
 
@@ -110,6 +114,8 @@ public class Particle2DSystem : MonoBehaviour
                 isColliding = CheckBoxCollision(particle);
             else if (particle.TryGetComponent(out OBBCollisionHull2D obbHull))
                 isColliding = CheckBoxCollision(particle);
+
+            // Debug.Log($"Is {particle.name} colliding? {isColliding}.");
 
             if (isColliding)
                 particle.GetComponent<MeshRenderer>().material = particle.GetComponent<Particle2DComponent>().greenMat;

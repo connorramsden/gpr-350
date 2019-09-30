@@ -44,27 +44,38 @@ public class CircleCollisionHull2D : CollisionHull2D
         // Step 01: Get max and min extent of other
         Vector3 minExtent = other.minExtent;
         Vector3 maxExtent = other.maxExtent;
-        
+
         // Step 02: Clamp center within extents
         float xPosClamp = Mathf.Clamp(center.x, minExtent.x, maxExtent.x);
         float yPosClamp = Mathf.Clamp(center.y, minExtent.y, maxExtent.y);
         float zPosClamp = Mathf.Clamp(center.z, minExtent.z, maxExtent.z);
-        
+
         // Step 03: Establish closest point
         Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
 
-        if(closestPoint.magnitude < radius * radius)
+        // Step 04: Establish distance of contact (Millington 2nd Ed. pg. 317)
+        float distance = (closestPoint - center).sqrMagnitude;
+
+        // Step 05: Check to see if we're in contact
+        if (distance < radius * radius)
             return true;
         else
             return false;
     }
 
+    // TODO Implement Circle vs OBB
     public override bool TestCollisionVsOBB(OBBCollisionHull2D other)
     {
         // same as AABB collision, but first..
         // multiply circle center by box world matrix inverse
 
         return false;
+    }
+
+    public override void UpdateCenterPos()
+    {
+        if (particle)
+            center = particle.GetPosition();
     }
 
     // Initialize local variables
@@ -77,9 +88,9 @@ public class CircleCollisionHull2D : CollisionHull2D
         center = particle.GetPosition();
     }
 
-    public override void UpdateCenterPos()
+    private void OnDrawGizmosSelected()
     {
-        if (particle)
-            center = particle.GetPosition();
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(center, radius);
     }
 }

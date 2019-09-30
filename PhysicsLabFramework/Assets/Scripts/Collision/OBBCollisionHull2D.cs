@@ -9,8 +9,6 @@ public class OBBCollisionHull2D : CollisionHull2D
     // pg. 258 in Millington 2nd Ed. "general OBB should have a separation orientation Quaternion
     // This is how it is differentiated from AABB collision hulls
     public Quaternion orientation;
-    [Tooltip("Half-dimensions of the box")]
-    public Vector3 halfSize;
     [Tooltip("Center of the box")]
     public Vector3 center;
     [Tooltip("Minimum Extent of the box")]
@@ -50,6 +48,5 @@ public class OBBCollisionHull2D : CollisionHull2D
         SetType(CollisionHullType2D.HULL_OBB);
         particle = GetComponent<Particle2DComponent>();
         center = particle.transform.position;
-        halfSize = 0.5f * particle.transform.localScale;
     }
 }
