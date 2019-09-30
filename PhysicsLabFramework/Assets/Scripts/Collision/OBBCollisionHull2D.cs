@@ -1,10 +1,18 @@
 ﻿// Object-Bounding-Box Collision Hull for 2D Space
+// Same Axes as Local Axes
+
+using UnityEngine;
+
 public class OBBCollisionHull2D : CollisionHull2D
 {
-    public OBBCollisionHull2D(CollisionHullType2D newType) : base(CollisionHullType2D.HULL_OBB)
-    {
-
-    }
+    [Header("Object Bounding Box Hull Attributes")]
+    // pg. 258 in Millington 2nd Ed. "general OBB should have a separation orientation Quaternion
+    // This is how it is differentiated from AABB collision hulls
+    public Quaternion orientation;
+    [Tooltip("Half-dimensions of the box")]
+    public Vector3 halfSize;
+    [Tooltip("Center of the box")]
+    public Vector3 center;
 
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
     {
@@ -25,5 +33,13 @@ public class OBBCollisionHull2D : CollisionHull2D
         // same as AABB-OBB part 2, twice
 
         return false;
+    }
+
+    private void Awake()
+    {
+        SetType(CollisionHullType2D.HULL_OBB);
+        particle = GetComponent<Particle2DComponent>();
+        center = particle.transform.position;
+        halfSize = 0.5f * particle.transform.localScale;
     }
 }

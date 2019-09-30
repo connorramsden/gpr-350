@@ -18,8 +18,7 @@ public abstract class CollisionHull2D : MonoBehaviour
         get; private set;
     }
 
-    // Protected constructor
-    protected CollisionHull2D(CollisionHullType2D newType)
+    protected void SetType(CollisionHullType2D newType)
     {
         type = newType;
     }
@@ -37,9 +36,4 @@ public abstract class CollisionHull2D : MonoBehaviour
     public abstract bool TestCollisionVsAABB(AABBCollisionHull2D other);
 
     public abstract bool TestCollisionVsOBB(OBBCollisionHull2D other);
-
-    private void Start()
-    {
-        particle = GetComponent<Particle2DComponent>();
-    }
 }

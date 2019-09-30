@@ -1,17 +1,23 @@
 ﻿// Axis-Aligned-Bounding-Box Collision Hull for 2D Space
-// Same Axis' as World-Axis
+// Same Axes as World Axes
+
+using UnityEngine;
+
 public class AABBCollisionHull2D : CollisionHull2D
 {
-    public AABBCollisionHull2D(CollisionHullType2D newType) : base(CollisionHullType2D.HULL_AABB)
-    {
-        
-    }
+    [Header("Axis-Aligned Hull Attributes")]
+    [Tooltip("Half-dimensions of the box")]
+    public Vector3 halfSize;
+    [Tooltip("Center of the box")]
+    public Vector3 center; 
+    [Tooltip("Minimum Extent of the box")]
+    public Vector3 minExtent;
+    [Tooltip("Maximum Extent of the box")]
+    public Vector3 maxExtent;
 
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
     {
         /// <see cref="CircleCollisionHull2D.TestCollisionVsCircle(CircleCollisionHull2D)"/>
-        
-
 
         return false;
     }
@@ -32,5 +38,16 @@ public class AABBCollisionHull2D : CollisionHull2D
         // Step 01:
 
         return false;
+    }
+
+    // Initialize local variables
+    private void Awake()
+    {
+        SetType(CollisionHullType2D.HULL_AABB);
+        particle = GetComponent<Particle2DComponent>();
+        // Initialize center to object position (we're working in a origin-centered world)
+        center = particle.transform.position;
+        // Initialize halfSize to half of the global scale
+        halfSize = 0.5f * particle.transform.lossyScale;
     }
 }
