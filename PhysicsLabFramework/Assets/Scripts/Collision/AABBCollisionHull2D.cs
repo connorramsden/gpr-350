@@ -9,7 +9,7 @@ public class AABBCollisionHull2D : CollisionHull2D
     [Tooltip("Half-dimensions of the box")]
     public Vector3 halfSize;
     [Tooltip("Center of the box")]
-    public Vector3 center; 
+    public Vector3 center;
     [Tooltip("Minimum Extent of the box")]
     public Vector3 minExtent;
     [Tooltip("Maximum Extent of the box")]
@@ -18,18 +18,36 @@ public class AABBCollisionHull2D : CollisionHull2D
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
     {
         /// <see cref="CircleCollisionHull2D.TestCollisionVsCircle(CircleCollisionHull2D)"/>
-        
 
-        return false;
+        // Step 01: Get center & radius of other
+        Vector3 otherCenter = other.center;
+        float otherRadius = other.radius;
+
+        // Step 02: Clamp center within extents
+        float xPosClamp = Mathf.Clamp(otherCenter.x, minExtent.x, maxExtent.x);
+        float yPosClamp = Mathf.Clamp(otherCenter.y, minExtent.y, maxExtent.y);
+        float zPosClamp = Mathf.Clamp(otherCenter.z, minExtent.z, maxExtent.z);
+
+        // Step 03: Establish closest point
+        Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
+
+        if (closestPoint.sqrMagnitude < otherRadius * otherRadius)
+            return true;
+        else
+            return false;
     }
 
     public override bool TestCollisionVsAABB(AABBCollisionHull2D other)
     {
         // pass if, for all axes, max extent of A is greather than min extent of B
-        
-        // Step 01: store extents of A & B
 
-        return false;
+        // Step 01: store max extent of other
+        Vector3 otherMax = other.maxExtent;
+
+        if (otherMax.magnitude > minExtent.magnitude)
+            return true;
+        else
+            return false;
     }
 
     public override bool TestCollisionVsOBB(OBBCollisionHull2D other)
@@ -37,8 +55,11 @@ public class AABBCollisionHull2D : CollisionHull2D
         // same as above twice:
         // first, find max extents of OBB, do AABB vs this box
         // then, transform this box into OBB's space, find max extents, repeat
-        // Step 01:
         
+        // Step 01: Get max extents of OBB
+        Vector3 otherMax = other.maxExtent;
+        // Step 02: AABB vs OtherMax
+
         return false;
     }
 
@@ -55,10 +76,10 @@ public class AABBCollisionHull2D : CollisionHull2D
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(center, maxExtent);
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(center, minExtent);
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(center, 0.5f * minExtent.magnitude);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(center, 0.5f* maxExtent.magnitude);
     }
 
     public override void UpdateCenterPos()

@@ -53,7 +53,7 @@ public class CircleCollisionHull2D : CollisionHull2D
         // Step 03: Establish closest point
         Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
 
-        if(closestPoint.sqrMagnitude < radius * radius)
+        if(closestPoint.magnitude < radius * radius)
             return true;
         else
             return false;

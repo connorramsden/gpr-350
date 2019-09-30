@@ -13,6 +13,10 @@ public class OBBCollisionHull2D : CollisionHull2D
     public Vector3 halfSize;
     [Tooltip("Center of the box")]
     public Vector3 center;
+    [Tooltip("Minimum Extent of the box")]
+    public Vector3 minExtent;
+    [Tooltip("Maximum Extent of the box")]
+    public Vector3 maxExtent;
 
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
     {
