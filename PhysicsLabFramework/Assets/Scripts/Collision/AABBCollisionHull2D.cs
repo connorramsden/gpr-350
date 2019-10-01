@@ -5,18 +5,15 @@ using UnityEngine;
 
 public class AABBCollisionHull2D : CollisionHull2D
 {
-    private Vector3 center;
-    
     [Header("Axis-Aligned Hull Attributes")]
-    [Tooltip("Minimum Extent of the box")]
-    public Vector3 minExtent;
-    [Tooltip("Maximum Extent of the box")]
-    public Vector3 maxExtent;
+    [Tooltip("Center of the box")]
+    public Vector3 center;
+    protected Vector3 minExtent, maxExtent;
 
     public override bool TestCollisionVsCircle(CircleCollisionHull2D other)
     {
         /// <see cref="CircleCollisionHull2D.TestCollisionVsAABB(AABBCollisionHull2D)"/>
-
+        
         // Step 01: Get center & radius of other
         Vector3 otherCenter = other.center;
         float otherRadius = other.radius;
@@ -43,14 +40,20 @@ public class AABBCollisionHull2D : CollisionHull2D
     {
         // Pass Condition: If, for all axes (X, Y, Z), the MaxExtent of This is overlapping the MinExtent of Other
 
-        // Step 01: Store minExtent of other
+        // Step 01: Store other's min extent
         Vector3 otherMin = other.minExtent;
 
-        // Step 02: Store distance between two objects
-        Vector3 distance = maxExtent - otherMin;
-        float distSq = Vector3.Dot(distance, distance);
-        
-        return false;
+        // Step 01: Compare min & max extents and store in boolean variables
+        bool diffX = otherMin.x < maxExtent.x ? true : false;
+        bool diffY = otherMin.y < maxExtent.y ? true : false;
+        bool diffZ = otherMin.z < maxExtent.z ? true : false;
+
+        // Check that all extents are passing properly
+        // If yes, return true, else, return false
+        if (diffX && diffY && diffZ)
+            return true;
+        else
+            return false;
     }
 
     // TODO Implement AABB vs OBB
@@ -67,16 +70,15 @@ public class AABBCollisionHull2D : CollisionHull2D
         return false;
     }
 
+    public void UpdateExtents()
+    {
+
+    }
+
     public override void UpdateCenterPos()
     {
         if (particle)
             center = particle.GetPosition();
-    }
-
-    public override void UpdateExtents()
-    {
-        minExtent = 0.25f * particle.transform.lossyScale;
-        maxExtent = 0.5f * particle.transform.lossyScale;
     }
 
     // Initialize local variables
@@ -91,8 +93,8 @@ public class AABBCollisionHull2D : CollisionHull2D
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(center, minExtent.magnitude);
+        Gizmos.DrawWireCube(center, minExtent);
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(center, maxExtent.magnitude);
+        Gizmos.DrawWireCube(center, maxExtent);
     }
 }

@@ -77,9 +77,6 @@ public class CircleCollisionHull2D : CollisionHull2D
         if (particle)
             center = particle.GetPosition();
     }
-
-    public override void UpdateExtents()
-    {}
     
     // Initialize local variables
     private void Awake()

@@ -11,8 +11,10 @@ public class Particle2DComponent : MonoBehaviour
     public Particle2DMovement particleMovement;
     public Particle2DRotation particleRotation;
 
-    public Material redMat;
-    public Material greenMat;
+    public void SetMaterial(Material newMat)
+    {
+        gameObject.GetComponent<MeshRenderer>().material = newMat;
+    }
 
     // Shapes for Torque-based rotation in 2D
     public enum ParticleShape
@@ -117,10 +119,10 @@ public class Particle2DComponent : MonoBehaviour
 
     public Vector2 GetPosition()
     {
-        if (particleMovement)
+        if (particleMovement && shouldMove)
             return particleMovement.position;
         else
-            return Vector2.zero;
+            return transform.position;
     }
 
     // Lab 02 Step 02 - Declaring Force Variables

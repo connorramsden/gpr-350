@@ -5,6 +5,9 @@ public class Particle2DSystem : MonoBehaviour
 {
     List<GameObject> particleList;
 
+    public Material redMat;
+    public Material greenMat;
+
     // Trying to mimic ECS-style updating all entities in a single, system-based update call
     private void UpdateAllParticles(float dt)
     {
@@ -28,103 +31,48 @@ public class Particle2DSystem : MonoBehaviour
     }
 
     // Check a the passed particle against all other partciles for Circle Collisions
-    private bool CheckCircleCollision(GameObject particle)
+    private bool CheckCircleCollision()
     {
-        bool isColliding = false;
-
-        // Get the passed particle's circle collision hull
-        CircleCollisionHull2D cch2d = particle.GetComponent<CircleCollisionHull2D>();
-
-        // Iterate over the particle list
-        foreach (GameObject other in particleList)
-        {
-            // Update center position of particle
-            cch2d.UpdateCenterPos();
-
-            // So long as the passed particle is not the 'other' particle (not the same particle)
-            if (particle != other)
-            {
-                // Determine which collision type to call based on what component the 'other' particle has
-                if (other.TryGetComponent(out CircleCollisionHull2D circleHull))
-                    // Try a Circle vs Circle collision
-                    isColliding = cch2d.TestCollisionVsCircle(circleHull);
-                else if (other.TryGetComponent(out AABBCollisionHull2D aabbHull))
-                    // Try a Circle vs ABB collision
-                    isColliding = cch2d.TestCollisionVsAABB(aabbHull);
-                else if (other.TryGetComponent(out OBBCollisionHull2D obbHull))
-                    // Try a Circle vs OBB collision
-                    isColliding = cch2d.TestCollisionVsOBB(obbHull);
-                else
-                    isColliding = false;
-            }
-        }
-
-        return isColliding;
+        return false;
     }
 
     // Check the passed particle against all other particles for Box Collisions (AABB & OBB)
-    private bool CheckBoxCollision(GameObject particle)
+    private bool CheckAABBCollision()
     {
-        bool isColliding = false;
-        CollisionHull2D bb2d;
-
-        // Determine whether to use AABB or OBB collision hull
-        if (particle.TryGetComponent(out AABBCollisionHull2D tryAabbHull))
-            bb2d = tryAabbHull;
-        else if (particle.TryGetComponent(out OBBCollisionHull2D tryObbHull))
-            bb2d = tryObbHull;
-        else
-        {
-            bb2d = null;
-            Debug.LogError("Error in Box Collision Detection");
-        }
-
-        foreach (GameObject other in particleList)
-        {
-            bb2d.UpdateCenterPos();
-            bb2d.UpdateExtents();
-
-            if (particle != other)
-            {
-                if (other.TryGetComponent(out CircleCollisionHull2D circleHull))
-                    // Try a Circle vs Circle collision
-                    isColliding = bb2d.TestCollisionVsCircle(circleHull);
-                else if (other.TryGetComponent(out AABBCollisionHull2D aabbHull))
-                    // Try a Circle vs ABB collision
-                    isColliding = bb2d.TestCollisionVsAABB(aabbHull);
-                else if (other.TryGetComponent(out OBBCollisionHull2D obbHull))
-                    // Try a Circle vs OBB collision
-                    isColliding = bb2d.TestCollisionVsOBB(obbHull);
-                else
-                    isColliding = false;
-            }
-        }
-
-        return isColliding;
+        return false;
     }
 
     private void CheckCollisions()
     {
-        // Initialize isColliding to false: default return if nothing is colliding
-        bool isColliding = false;
-
-        // Iterate over every particle in the particleList
         foreach (GameObject particle in particleList)
         {
-            // If the particle has a Circle Hull, run CheckCircleCollision() on the particle
-            if (particle.TryGetComponent(out CircleCollisionHull2D circleHull))
-                isColliding = CheckCircleCollision(particle);
-            // If the particle has an AABB or OBB hull, run CheckBoxCollision() on the particle
-            else if (particle.TryGetComponent(out AABBCollisionHull2D aabbHull))
-                isColliding = CheckBoxCollision(particle);
-            else if (particle.TryGetComponent(out OBBCollisionHull2D obbHull))
-                isColliding = CheckBoxCollision(particle);
+            // Get the particle's Particle2D Component
+            Particle2DComponent p2d = particle.GetComponent<Particle2DComponent>();
 
-            // If is colliding returns true, turn the particle green; otherwise turn it red.
+            // Establish a local boolean
+            bool isColliding = false;
+
+            // If the particle has a circle hull, check circle-collisions
+            if (particle.TryGetComponent(out CircleCollisionHull2D circleHull))
+            {
+                circleHull.UpdateCenterPos();
+
+            }
+            // If the particle has an AABB 
+            else if (particle.TryGetComponent(out AABBCollisionHull2D aabbHull))
+            {
+                aabbHull.UpdateCenterPos();
+                aabbHull.UpdateExtents();
+            }
+
             if (isColliding)
-                particle.GetComponent<MeshRenderer>().material = particle.GetComponent<Particle2DComponent>().greenMat;
+            {
+                p2d.SetMaterial(greenMat);
+            }
             else
-                particle.GetComponent<MeshRenderer>().material = particle.GetComponent<Particle2DComponent>().redMat;
+            {
+                p2d.SetMaterial(redMat);
+            }
         }
     }
 

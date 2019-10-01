@@ -43,12 +43,6 @@ public class OBBCollisionHull2D : CollisionHull2D
             center = particle.GetPosition();
     }
 
-    public override void UpdateExtents()
-    {
-        minExtent = 0.5f * particle.transform.lossyScale;
-        maxExtent = 1.5f * particle.transform.lossyScale;
-    }
-
     private void Awake()
     {
         SetType(CollisionHullType2D.HULL_OBB);
