@@ -44,9 +44,9 @@ public class AABBCollisionHull2D : CollisionHull2D
     {
         // pass if, for all axes, max extent of A is greather than min extent of B
 
-        // Step 01: store max extent of other
-        Vector3 otherMax = other.maxExtent;
-
+        // Step 01: Get min extent of B
+        
+        
         return false;
     }
 
