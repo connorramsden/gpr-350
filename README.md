@@ -1,4 +1,4 @@
-# gpr-350
+# GPR-350 (Game Physics)
 Projects completed in GRP-350 (Game Physics) at Champlain College in the Fall of 2019
 
 Topics Covered:
