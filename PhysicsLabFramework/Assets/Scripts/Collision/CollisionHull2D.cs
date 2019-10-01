@@ -38,6 +38,7 @@ public abstract class CollisionHull2D : MonoBehaviour
     public abstract bool TestCollisionVsOBB(OBBCollisionHull2D other);
 
     public abstract void UpdateCenterPos();
+    public abstract void UpdateExtents();
 
     private void Awake()
     {

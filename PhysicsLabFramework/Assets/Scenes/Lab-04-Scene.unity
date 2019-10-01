@@ -271,7 +271,7 @@ GameObject:
   - component: {fileID: 1073149389}
   m_Layer: 0
   m_Name: Particle 03
-  m_TagString: Untagged
+  m_TagString: Particle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -288,7 +288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56764fb5462e83b4c93234228dddb622, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  center: {x: 5, y: 3, z: 0}
+  center: {x: 0, y: 0, z: 0}
   minExtent: {x: 0.5, y: 0.5, z: 0.5}
   maxExtent: {x: 1, y: 1, z: 1}
 --- !u!114 &1073149390
@@ -443,7 +443,7 @@ GameObject:
   - component: {fileID: 1153134095}
   m_Layer: 0
   m_Name: Particle 01
-  m_TagString: Untagged
+  m_TagString: Particle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -545,7 +545,7 @@ MonoBehaviour:
   innerRadius: 0
   outerRadius: 0
   anchorObject: {fileID: 0}
-  shouldMove: 1
+  shouldMove: 0
   shouldRotate: 0
 --- !u!114 &1153134100
 MonoBehaviour:
@@ -697,7 +697,7 @@ GameObject:
   - component: {fileID: 1405180941}
   m_Layer: 0
   m_Name: Particle 02
-  m_TagString: Untagged
+  m_TagString: Particle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

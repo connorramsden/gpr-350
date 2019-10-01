@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class AABBCollisionHull2D : CollisionHull2D
 {
+    private Vector3 center;
+    
     [Header("Axis-Aligned Hull Attributes")]
-    [Tooltip("Center of the box")]
-    public Vector3 center;
     [Tooltip("Minimum Extent of the box")]
     public Vector3 minExtent;
     [Tooltip("Maximum Extent of the box")]
@@ -39,13 +39,16 @@ public class AABBCollisionHull2D : CollisionHull2D
             return false;
     }
 
-    // TODO Implement AABB vs AABB
     public override bool TestCollisionVsAABB(AABBCollisionHull2D other)
     {
-        // pass if, for all axes, max extent of A is greather than min extent of B
+        // Pass Condition: If, for all axes (X, Y, Z), the MaxExtent of This is overlapping the MinExtent of Other
 
-        // Step 01: Get min extent of B
-        
+        // Step 01: Store minExtent of other
+        Vector3 otherMin = other.minExtent;
+
+        // Step 02: Store distance between two objects
+        Vector3 distance = maxExtent - otherMin;
+        float distSq = Vector3.Dot(distance, distance);
         
         return false;
     }
@@ -70,6 +73,12 @@ public class AABBCollisionHull2D : CollisionHull2D
             center = particle.GetPosition();
     }
 
+    public override void UpdateExtents()
+    {
+        minExtent = 0.25f * particle.transform.lossyScale;
+        maxExtent = 0.5f * particle.transform.lossyScale;
+    }
+
     // Initialize local variables
     private void Awake()
     {
@@ -82,8 +91,8 @@ public class AABBCollisionHull2D : CollisionHull2D
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(center, 0.5f * minExtent.magnitude);
+        Gizmos.DrawWireSphere(center, minExtent.magnitude);
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(center, 0.5f * maxExtent.magnitude);
+        Gizmos.DrawWireSphere(center, maxExtent.magnitude);
     }
 }

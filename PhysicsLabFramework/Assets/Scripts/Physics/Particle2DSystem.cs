@@ -82,6 +82,7 @@ public class Particle2DSystem : MonoBehaviour
         foreach (GameObject other in particleList)
         {
             bb2d.UpdateCenterPos();
+            bb2d.UpdateExtents();
 
             if (particle != other)
             {
@@ -104,19 +105,22 @@ public class Particle2DSystem : MonoBehaviour
 
     private void CheckCollisions()
     {
+        // Initialize isColliding to false: default return if nothing is colliding
         bool isColliding = false;
 
+        // Iterate over every particle in the particleList
         foreach (GameObject particle in particleList)
         {
+            // If the particle has a Circle Hull, run CheckCircleCollision() on the particle
             if (particle.TryGetComponent(out CircleCollisionHull2D circleHull))
                 isColliding = CheckCircleCollision(particle);
+            // If the particle has an AABB or OBB hull, run CheckBoxCollision() on the particle
             else if (particle.TryGetComponent(out AABBCollisionHull2D aabbHull))
                 isColliding = CheckBoxCollision(particle);
             else if (particle.TryGetComponent(out OBBCollisionHull2D obbHull))
                 isColliding = CheckBoxCollision(particle);
 
-            // Debug.Log($"Is {particle.name} colliding? {isColliding}.");
-
+            // If is colliding returns true, turn the particle green; otherwise turn it red.
             if (isColliding)
                 particle.GetComponent<MeshRenderer>().material = particle.GetComponent<Particle2DComponent>().greenMat;
             else

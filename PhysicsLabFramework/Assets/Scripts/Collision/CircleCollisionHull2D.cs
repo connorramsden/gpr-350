@@ -78,6 +78,9 @@ public class CircleCollisionHull2D : CollisionHull2D
             center = particle.GetPosition();
     }
 
+    public override void UpdateExtents()
+    {}
+    
     // Initialize local variables
     private void Awake()
     {
@@ -93,4 +96,5 @@ public class CircleCollisionHull2D : CollisionHull2D
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(center, radius);
     }
+
 }
