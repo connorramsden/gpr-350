@@ -23,7 +23,10 @@ public abstract class CollisionHull2D : MonoBehaviour
         type = newType;
     }
 
-    protected Particle2DComponent particle;
+    public Particle2DComponent particle
+    {
+        get; protected set;
+    }
 
     // Architecture Style 1 //
     public static bool TestCollision(CollisionHull2D a, CollisionHull2D b)

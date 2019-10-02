@@ -31,15 +31,60 @@ public class Particle2DSystem : MonoBehaviour
     }
 
     // Check a the passed particle against all other partciles for Circle Collisions
-    private bool CheckCircleCollision()
+    private bool CheckCircleCollision(GameObject particleOne)
     {
-        return false;
+        CircleCollisionHull2D cch2d = particleOne.GetComponent<CircleCollisionHull2D>();
+
+        bool isColliding = false;
+
+        // Iterate over the particleList and check vs all objects
+        foreach (GameObject particleTwo in particleList)
+        {
+            if (particleOne != particleTwo)
+            {
+                if (particleTwo.TryGetComponent(out CircleCollisionHull2D otherCircle))
+                {
+                    isColliding = cch2d.TestCollisionVsCircle(otherCircle);
+                }
+                else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
+                {
+                    isColliding = cch2d.TestCollisionVsAABB(otherAABB);
+                }
+                else if (particleTwo.TryGetComponent(out OBBCollisionHull2D otherOBB))
+                {
+                    isColliding = cch2d.TestCollisionVsOBB(otherOBB);
+                }
+            }
+        }
+
+        // If none of the above are true, will return false
+        return isColliding;
     }
 
     // Check the passed particle against all other particles for Box Collisions (AABB & OBB)
-    private bool CheckAABBCollision()
+    private bool CheckAABBCollision(GameObject particleOne)
     {
-        return false;
+        AABBCollisionHull2D aabb2d = particleOne.GetComponent<AABBCollisionHull2D>();
+        bool isColliding = false;
+
+        foreach (GameObject particleTwo in particleList)
+        {
+            if (particleTwo.TryGetComponent(out CircleCollisionHull2D otherCircle))
+            {
+                isColliding = aabb2d.TestCollisionVsCircle(otherCircle);
+            }
+            else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
+            {
+                isColliding = aabb2d.TestCollisionVsAABB(otherAABB);
+            }
+            else if (particleTwo.TryGetComponent(out OBBCollisionHull2D otherOBB))
+            {
+                isColliding = aabb2d.TestCollisionVsOBB(otherOBB);
+            }
+        }
+
+        // If none of the above are true, will return false
+        return isColliding;
     }
 
     private void CheckCollisions()
@@ -56,13 +101,14 @@ public class Particle2DSystem : MonoBehaviour
             if (particle.TryGetComponent(out CircleCollisionHull2D circleHull))
             {
                 circleHull.UpdateCenterPos();
-
+                isColliding = CheckCircleCollision(particle);
             }
             // If the particle has an AABB 
             else if (particle.TryGetComponent(out AABBCollisionHull2D aabbHull))
             {
                 aabbHull.UpdateCenterPos();
                 aabbHull.UpdateExtents();
+                isColliding = CheckAABBCollision(particle);
             }
 
             if (isColliding)
