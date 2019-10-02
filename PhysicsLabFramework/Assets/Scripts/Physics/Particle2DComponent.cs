@@ -8,11 +8,13 @@ public class Particle2DComponent : MonoBehaviour
     // Gravitational Constant
     public const float GRAVITY = 9.8f;
 
-    private Particle2DMovement particleMovement;
-    private Particle2DRotation particleRotation;
+    public Particle2DMovement particleMovement;
+    public Particle2DRotation particleRotation;
 
-    public Material redMat;
-    public Material greenMat;
+    public void SetMaterial(Material newMat)
+    {
+        gameObject.GetComponent<MeshRenderer>().material = newMat;
+    }
 
     // Shapes for Torque-based rotation in 2D
     public enum ParticleShape
@@ -117,7 +119,10 @@ public class Particle2DComponent : MonoBehaviour
 
     public Vector2 GetPosition()
     {
-        return particleMovement.position;
+        if (particleMovement && shouldMove)
+            return particleMovement.position;
+        else
+            return transform.position;
     }
 
     // Lab 02 Step 02 - Declaring Force Variables

@@ -149,6 +149,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f0d232d1e10e5e4bbe07f774c8fcc83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  redMat: {fileID: 2100000, guid: 0061812973d882c45b0ab534cb48ced6, type: 2}
+  greenMat: {fileID: 2100000, guid: 76bb310b7c744544fa536364a2b149ed, type: 2}
 --- !u!4 &4396374
 Transform:
   m_ObjectHideFlags: 0
@@ -248,7 +250,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 187926322}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 100, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -271,7 +273,7 @@ GameObject:
   - component: {fileID: 1153134095}
   m_Layer: 0
   m_Name: Particle 01
-  m_TagString: Untagged
+  m_TagString: Particle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -288,8 +290,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a142ea0d2fcabd042ad13f98990dc5e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 0.5
-  center: {x: 0, y: 0, z: 0}
 --- !u!23 &1153134096
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -362,16 +362,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d54f292974fd1c4182803f9da150c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  redMat: {fileID: 2100000, guid: 0061812973d882c45b0ab534cb48ced6, type: 2}
-  greenMat: {fileID: 2100000, guid: 76bb310b7c744544fa536364a2b149ed, type: 2}
+  particleMovement: {fileID: 1153134101}
+  particleRotation: {fileID: 1153134100}
   particleShape: 0
   length: 0
   height: 0
-  radius: 0
+  radius: 0.5
   innerRadius: 0
   outerRadius: 0
   anchorObject: {fileID: 0}
-  shouldMove: 1
+  shouldMove: 0
   shouldRotate: 0
 --- !u!114 &1153134100
 MonoBehaviour:
@@ -409,7 +409,7 @@ MonoBehaviour:
   position: {x: 0, y: 0}
   velocity: {x: 0, y: 0}
   acceleration: {x: 0, y: 0}
-  useGravity: 1
+  useGravity: 0
   useNormal: 0
   useSliding: 0
   useFriction: 0
@@ -517,13 +517,13 @@ GameObject:
   - component: {fileID: 1405180947}
   - component: {fileID: 1405180946}
   - component: {fileID: 1405180945}
+  - component: {fileID: 1405180942}
   - component: {fileID: 1405180944}
   - component: {fileID: 1405180943}
-  - component: {fileID: 1405180942}
   - component: {fileID: 1405180941}
   m_Layer: 0
   m_Name: Particle 02
-  m_TagString: Untagged
+  m_TagString: Particle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -540,10 +540,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56764fb5462e83b4c93234228dddb622, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  halfSize: {x: 0, y: 0, z: 0}
-  center: {x: 0, y: 0, z: 0}
-  minExtent: {x: -1, y: -1, z: -1}
-  maxExtent: {x: 1, y: 1, z: 1}
 --- !u!114 &1405180942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -556,9 +552,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d54f292974fd1c4182803f9da150c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  redMat: {fileID: 2100000, guid: 0061812973d882c45b0ab534cb48ced6, type: 2}
-  greenMat: {fileID: 2100000, guid: 76bb310b7c744544fa536364a2b149ed, type: 2}
-  particleShape: 0
+  particleMovement: {fileID: 1405180944}
+  particleRotation: {fileID: 1405180943}
+  particleShape: 2
   length: 0
   height: 0
   radius: 0

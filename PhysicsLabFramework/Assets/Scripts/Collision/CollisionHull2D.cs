@@ -51,7 +51,10 @@ public abstract class CollisionHull2D : MonoBehaviour
         type = newType;
     }
 
-    protected Particle2DComponent particle;
+    public Particle2DComponent particle
+    {
+        get; protected set;
+    }
 
     // Architecture Style 1 //
     public static bool TestCollision(CollisionHull2D a, CollisionHull2D b, ref Collision c)
@@ -64,5 +67,12 @@ public abstract class CollisionHull2D : MonoBehaviour
 
     public abstract bool TestCollisionVsAABB(AABBCollisionHull2D other, ref Collision c);
 
-    public abstract bool TestCollisionVsOBB(OBBCollisionHull2D other, ref Collision c);
+    public abstract bool TestCollisionVsOBB(OBBCollisionHull2D other);
+
+    public abstract void UpdateCenterPos();
+
+    private void Awake()
+    {
+        particle = gameObject.GetComponent<Particle2DComponent>();
+    }
 }
