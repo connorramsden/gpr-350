@@ -8,8 +8,13 @@ public class Particle2DComponent : MonoBehaviour
     // Gravitational Constant
     public const float GRAVITY = 9.8f;
 
-    private Particle2DMovement particleMovement;
-    private Particle2DRotation particleRotation;
+    public Particle2DMovement particleMovement;
+    public Particle2DRotation particleRotation;
+
+    public void SetMaterial(Material newMat)
+    {
+        gameObject.GetComponent<MeshRenderer>().material = newMat;
+    }
 
     // Shapes for Torque-based rotation in 2D
     public enum ParticleShape
@@ -110,6 +115,14 @@ public class Particle2DComponent : MonoBehaviour
 
         // If inertia is greater than 0, inverse inertia is 1 / inertia
         inertiaInv = inertia > 0.0f ? 1.0f / inertia : 0.0f;
+    }
+
+    public Vector2 GetPosition()
+    {
+        if (particleMovement && shouldMove)
+            return particleMovement.position;
+        else
+            return transform.position;
     }
 
     // Lab 02 Step 02 - Declaring Force Variables
@@ -217,12 +230,15 @@ public class Particle2DComponent : MonoBehaviour
     public void ApplyTorque()
     {
         // D'Alembert's Principle:
-        // T = pf * F where T is torque being applied, pf is the moment-of-inertia-arm, and F is the force applied at the Moment ARm
+        // T = cross(pf, F) where T is torque being applied, pf is the moment-of-inertia-arm, and F is the force applied at the Moment ARm
         // Center of mass not necessarily object center, so two variables exist: localCenterOfMass & worldCenterOfMass
         // NOTE: Not totally sure which center of mass to use in this equation, or if this equation is correct
 
-        if(Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)){
-            particleRotation.torque += particleRotation.torqueForce * (particleRotation.momentArm - particleRotation.worldCenterOfMass).magnitude;
+        Vector2 momentArm = (particleRotation.pointOfAppliedForce - particleRotation.worldCenterOfMass);
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            particleRotation.torque += momentArm.x * particleRotation.appliedForce.y - momentArm.y * particleRotation.appliedForce.x;
         }
     }
 
