@@ -1,34 +1,40 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [RequireComponent(typeof(Particle2DComponent))]
 public abstract class CollisionHull2D : MonoBehaviour
 {
     // A collision is an event (two objects touching)
+    // Lab 05 Step 01
     public struct Collision
     {
+        // References to hulls involved
+        public CollisionHull2D hullOne, hullTwo;
+
+        // Collision Status (did it happen?)
+        public bool status;
+
         // A contact is the point(s) at which a collision occurs
         public struct Contact
         {
+            // Location
             public Vector2 pointOfContact;
+            // Normal
             public Vector2 normal;
+            // Coefficient of Restitution
             public float coeffRestitution;
+            // Collision Depth
+            public float depth;
         }
 
         // List of contacts for this collision
         public List<Contact> contact;
+
         // Number of contacts (size of contact list)
         public int contactCount;
 
-        // Hulls that are colliding
-        public CollisionHull2D a, b;
-        // True = collision, false = no collision
-        public bool status;
-
         // Velocity between two objects approaching one another
         public Vector2 closingVelocity;
-
     }
 
     // All collision types must be enumerators in this set
@@ -57,19 +63,52 @@ public abstract class CollisionHull2D : MonoBehaviour
     }
 
     // Architecture Style 1 //
-    public static bool TestCollision(CollisionHull2D a, CollisionHull2D b, ref Collision c)
+    public static bool TestCollision(CollisionHull2D a, CollisionHull2D b, out Collision c)
     {
-
+        c = new Collision();
         return false;
     }
 
-    public abstract bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c);
+    public abstract bool TestCollisionVsCircle(CircleCollisionHull2D other, out Collision c);
 
-    public abstract bool TestCollisionVsAABB(AABBCollisionHull2D other, ref Collision c);
+    public abstract bool TestCollisionVsAABB(AABBCollisionHull2D other, out Collision c);
 
-    public abstract bool TestCollisionVsOBB(OBBCollisionHull2D other);
+    public abstract bool TestCollisionVsOBB(OBBCollisionHull2D other, out Collision c);
 
     public abstract void UpdateCenterPos();
+
+    // Formula from Millington 2nd Ed. pg. 120
+    public static Vector3 CalcSeparatingVel(Collision collision, Collision.Contact contact)
+    {
+        CollisionHull2D partOne = collision.hullOne;
+        CollisionHull2D partTwo = collision.hullTwo;
+
+        // Calculate relative velocity of both particles
+        Vector3 relativeVel = partOne.particle.movement.velocity - partTwo.particle.movement.velocity;
+
+        return relativeVel * contact.normal;
+    }
+
+    // Formulae from Millington 2nd Ed. pg. 120-121
+    public static void ResolveVelocity(Collision collision)
+    {
+        // Create a list of separating velocities
+        List<Vector3> sepVelList = new List<Vector3>();
+
+        // For each contact in the passed collision, calculate the separating velocity
+        // and add it to a list
+        foreach (Collision.Contact contact in collision.contact)
+        {
+            sepVelList.Add(CalcSeparatingVel(collision, contact));
+        }
+
+        // If there is only one separating velocity and it is greater than 0, no impulse is required
+        if (sepVelList.Count == 1 && sepVelList[0].sqrMagnitude > 0.0f)
+            return;
+
+
+
+    }
 
     private void Awake()
     {

@@ -23,7 +23,7 @@ public class AABBCollisionHull2D : CollisionHull2D
         get; private set;
     }
 
-    public override bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c)
+    public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out Collision c)
     {
         /// <see cref="CircleCollisionHull2D.TestCollisionVsAABB(AABBCollisionHull2D)"/>
 
@@ -42,6 +42,8 @@ public class AABBCollisionHull2D : CollisionHull2D
         // Step 04: get distance for contact
         float distance = (closestPoint - otherCenter).sqrMagnitude;
 
+        c = new Collision();
+
         // Step 05: Check that the closest point is within the AABB box
         if (distance < otherRadSqr)
             return true;
@@ -49,7 +51,7 @@ public class AABBCollisionHull2D : CollisionHull2D
             return false;
     }
 
-    public override bool TestCollisionVsAABB(AABBCollisionHull2D other, ref Collision c)
+    public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out Collision c)
     {
         // Pass Condition: If, for all axes (X, Y, Z), the MaxExtent of This is overlapping the MinExtent of Other
 
@@ -62,6 +64,8 @@ public class AABBCollisionHull2D : CollisionHull2D
         bool diffY = (otherMin.y < maxExtent.y && minExtent.y < otherMax.y) ? true : false;
         bool diffZ = (otherMin.z < maxExtent.z && minExtent.z < otherMax.z) ? true : false;
 
+        c = new Collision();
+
         // Check that all extents are passing properly
         // If yes, return true, else, return false
         if (diffX && diffY && diffZ)
@@ -70,7 +74,7 @@ public class AABBCollisionHull2D : CollisionHull2D
             return false;
     }
 
-    public override bool TestCollisionVsOBB(OBBCollisionHull2D other, ref Collision c)
+    public override bool TestCollisionVsOBB(OBBCollisionHull2D other, out Collision c)
     {
         // same as above twice:
         // first, find max extents of OBB, do AABB vs this box
@@ -85,7 +89,9 @@ public class AABBCollisionHull2D : CollisionHull2D
         bool diffZ = (otherMin.z < maxExtent.z && minExtent.z < otherMax.z) ? true : false;
 
         Vector3 transBox = Vector3.Project(particle.GetPosition(), other.particle.GetPosition());
-        
+
+        c = new Collision();
+
         // Honestly, no idea what I'm doing here, and I need to move on to Project 5
         return false;
     }

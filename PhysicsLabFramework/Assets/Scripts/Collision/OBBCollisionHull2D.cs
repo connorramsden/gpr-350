@@ -32,7 +32,7 @@ public class OBBCollisionHull2D : CollisionHull2D
         get; private set;
     }
 
-    public override bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c)
+    public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out Collision c)
     {
         /// <see cref="CircleCollisionHull2D.TestCollisionVsOBB(OBBCollisionHull2D)"/>
 
@@ -54,6 +54,8 @@ public class OBBCollisionHull2D : CollisionHull2D
         // Step 05: Establish distance of contact
         float distance = (closestPoint - newCenter).sqrMagnitude;
 
+        c = new Collision();
+
         // Step 06: Check to see if we're in contact
         if (distance < radiusSqr)
             return true;
@@ -61,7 +63,7 @@ public class OBBCollisionHull2D : CollisionHull2D
             return false;
     }
 
-    public override bool TestCollisionVsAABB(AABBCollisionHull2D other, ref Collision c)
+    public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out Collision c)
     {
         /// <see cref="AABBCollisionHull2D.TestCollisionVsOBB(OBBCollisionHull2D)"/>
         
@@ -75,15 +77,17 @@ public class OBBCollisionHull2D : CollisionHull2D
 
         Vector3 transBox = Vector3.Project(particle.GetPosition(), other.particle.GetPosition());
 
+        c = new Collision();
+
         // Honestly, no idea what I'm doing here, and I need to move on to Project 5
         return false;
     }
     
     // Don't know what I'm doing, hopefully will figure out in class
-    public override bool TestCollisionVsOBB(OBBCollisionHull2D other, ref Collision c)
+    public override bool TestCollisionVsOBB(OBBCollisionHull2D other, out Collision c)
     {
         // same as AABB-OBB part 2, twice
-        
+        c = new Collision();
         return false;
     }
 

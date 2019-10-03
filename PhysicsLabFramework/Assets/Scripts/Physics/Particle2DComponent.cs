@@ -8,8 +8,8 @@ public class Particle2DComponent : MonoBehaviour
     // Gravitational Constant
     public const float GRAVITY = 9.8f;
 
-    public Particle2DMovement particleMovement;
-    public Particle2DRotation particleRotation;
+    public Particle2DMovement movement;
+    public Particle2DRotation rotation;
 
     public void SetMaterial(Material newMat)
     {
@@ -60,7 +60,7 @@ public class Particle2DComponent : MonoBehaviour
     // Return a particle's starting mass
     public float GetStartingMass()
     {
-        return particleMovement.startingMass;
+        return movement.startingMass;
     }
 
     // Set mass to the passed mass, and update inverse mass
@@ -119,8 +119,8 @@ public class Particle2DComponent : MonoBehaviour
 
     public Vector2 GetPosition()
     {
-        if (particleMovement && shouldMove)
-            return particleMovement.position;
+        if (movement && shouldMove)
+            return movement.position;
         else
             return transform.position;
     }
@@ -145,9 +145,9 @@ public class Particle2DComponent : MonoBehaviour
     public void ApplyForces()
     {
         // Calculate the surface normal based on the surface angle
-        Vector2 surfaceNormal = new Vector2(Mathf.Cos(particleMovement.surfaceAngle * Mathf.Deg2Rad), Mathf.Sin(particleMovement.surfaceAngle * Mathf.Deg2Rad));
+        Vector2 surfaceNormal = new Vector2(Mathf.Cos(movement.surfaceAngle * Mathf.Deg2Rad), Mathf.Sin(movement.surfaceAngle * Mathf.Deg2Rad));
 
-        if (particleMovement.useGravity)
+        if (movement.useGravity)
         {
             f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector2.up);
             AddForce(f_gravity);
@@ -157,11 +157,11 @@ public class Particle2DComponent : MonoBehaviour
             f_gravity = Vector2.zero;
         }
 
-        if (particleMovement.useNormal)
+        if (movement.useNormal)
         {
             // Gravity used in this formula, must be ticked on
-            if (!particleMovement.useGravity && particleMovement.surfaceAngle > 0.0f)
-                particleMovement.useGravity = true;
+            if (!movement.useGravity && movement.surfaceAngle > 0.0f)
+                movement.useGravity = true;
             f_normal = ForceGenerator.GenerateForce_Normal(f_gravity, surfaceNormal);
             AddForce(f_normal);
         }
@@ -170,14 +170,14 @@ public class Particle2DComponent : MonoBehaviour
             f_normal = Vector2.zero;
         }
 
-        if (particleMovement.useSliding)
+        if (movement.useSliding)
         {
             // Gravity used in this formula, must be ticked on
-            if (!particleMovement.useGravity)
-                particleMovement.useGravity = true;
+            if (!movement.useGravity)
+                movement.useGravity = true;
             // Normal used in this formula, must be ticked on
-            if (!particleMovement.useNormal)
-                particleMovement.useNormal = true;
+            if (!movement.useNormal)
+                movement.useNormal = true;
             f_sliding = ForceGenerator.GenerateForce_Sliding(f_gravity, f_normal);
             AddForce(f_sliding);
         }
@@ -186,18 +186,18 @@ public class Particle2DComponent : MonoBehaviour
             f_sliding = Vector2.zero;
         }
 
-        if (particleMovement.useFriction)
+        if (movement.useFriction)
         {
             // Normal used in this formula, must be ticked on
-            if (!particleMovement.useNormal)
-                particleMovement.useNormal = true;
-            f_friction = ForceGenerator.GenerateForce_Friction_Standard(f_normal, particleMovement.velocity, f_sliding, particleMovement.coeffStaticFriction, particleMovement.coeffKineticFriction);
+            if (!movement.useNormal)
+                movement.useNormal = true;
+            f_friction = ForceGenerator.GenerateForce_Friction_Standard(f_normal, movement.velocity, f_sliding, movement.coeffStaticFriction, movement.coeffKineticFriction);
             AddForce(f_friction);
         }
 
-        if (particleMovement.useDrag)
+        if (movement.useDrag)
         {
-            f_drag = ForceGenerator.GenerateForce_Drag(particleMovement.velocity, particleMovement.fluidDensity, 1.0f, particleMovement.coeffDrag);
+            f_drag = ForceGenerator.GenerateForce_Drag(movement.velocity, movement.fluidDensity, 1.0f, movement.coeffDrag);
             AddForce(f_drag);
         }
         else
@@ -205,9 +205,9 @@ public class Particle2DComponent : MonoBehaviour
             f_drag = Vector2.zero;
         }
 
-        if (particleMovement.useSpring)
+        if (movement.useSpring)
         {
-            f_spring = ForceGenerator.GenerateForce_Spring(particleMovement.position, anchorPoint, particleMovement.springRestingLength, particleMovement.springStiffness);
+            f_spring = ForceGenerator.GenerateForce_Spring(movement.position, anchorPoint, movement.springRestingLength, movement.springStiffness);
             AddForce(f_spring);
         }
         else
@@ -220,7 +220,7 @@ public class Particle2DComponent : MonoBehaviour
     public void UpdateAcceleration()
     {
         // Newton2
-        particleMovement.acceleration = force * massInv;
+        movement.acceleration = force * massInv;
 
         // reset because they're coming back next frame probably
         force = Vector2.zero;
@@ -234,11 +234,11 @@ public class Particle2DComponent : MonoBehaviour
         // Center of mass not necessarily object center, so two variables exist: localCenterOfMass & worldCenterOfMass
         // NOTE: Not totally sure which center of mass to use in this equation, or if this equation is correct
 
-        Vector2 momentArm = (particleRotation.pointOfAppliedForce - particleRotation.worldCenterOfMass);
+        Vector2 momentArm = (rotation.pointOfAppliedForce - rotation.worldCenterOfMass);
 
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
         {
-            particleRotation.torque += momentArm.x * particleRotation.appliedForce.y - momentArm.y * particleRotation.appliedForce.x;
+            rotation.torque += momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
         }
     }
 
@@ -248,11 +248,11 @@ public class Particle2DComponent : MonoBehaviour
         //  Newton-2 Integration for AngularAcceleration
         //  torque = inertia * alpha
         //  alpha = inverseInertia * torque
-        float alpha = inertiaInv * particleRotation.torque;
-        particleRotation.angularAccel = alpha;
+        float alpha = inertiaInv * rotation.torque;
+        rotation.angularAccel = alpha;
 
         // Reset torque as it is getting updated again next frame
-        particleRotation.torque = 0.0f;
+        rotation.torque = 0.0f;
     }
 
     [Header("Additional Movement Attributes")]
@@ -266,26 +266,26 @@ public class Particle2DComponent : MonoBehaviour
     {
         // Use the Kinematic formula for movement integration
         // x(t+dt) = x(t) + v(t)dt + 1/2(a(t)dt^2)
-        particleMovement.position += (particleMovement.velocity * dt) + (0.5f * particleMovement.acceleration * (dt * dt));
+        movement.position += (movement.velocity * dt) + (0.5f * movement.acceleration * (dt * dt));
 
         // Update velocity based on acceleration
-        particleMovement.velocity += particleMovement.acceleration * dt;
+        movement.velocity += movement.acceleration * dt;
 
         // Update GO position based on calculated rotational physics
-        transform.position = particleMovement.position;
+        transform.position = movement.position;
     }
 
     // Update's a particle's rotation based on KINEMATIC integration
     public void UpdateRotation(float dt)
     {
         // Use Kinematic formula for rotation integration
-        particleRotation.rotation += (particleRotation.angularVelocity * dt) + (0.5f * particleRotation.angularAccel * (dt * dt));
+        rotation.rotation += (rotation.angularVelocity * dt) + (0.5f * rotation.angularAccel * (dt * dt));
 
         // Update rotational velocity based on angular acceleration
-        particleRotation.angularVelocity += particleRotation.angularAccel * dt;
+        rotation.angularVelocity += rotation.angularAccel * dt;
 
         // Update GO rotation based on calculated rotational physics
-        transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, particleRotation.rotation));
+        transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, rotation.rotation));
     }
 
     // Initializes local variables
@@ -298,11 +298,11 @@ public class Particle2DComponent : MonoBehaviour
             gameObject.tag = "Particle";
         }
 
-        particleMovement = gameObject.GetComponent<Particle2DMovement>();
-        particleRotation = gameObject.GetComponent<Particle2DRotation>();
+        movement = gameObject.GetComponent<Particle2DMovement>();
+        rotation = gameObject.GetComponent<Particle2DRotation>();
 
-        particleMovement.position = transform.position;
-        particleRotation.rotation = transform.rotation.eulerAngles.z;
+        movement.position = transform.position;
+        rotation.rotation = transform.rotation.eulerAngles.z;
     }
 
     // Initializes external variables

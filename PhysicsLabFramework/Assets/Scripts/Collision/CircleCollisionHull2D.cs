@@ -17,29 +17,40 @@ public class CircleCollisionHull2D : CollisionHull2D
     }
 
     // Architecture Style 2 //
-    public override bool TestCollisionVsCircle(CircleCollisionHull2D other, ref Collision c)
+    public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out Collision c)
     {
         // collision if distance between centers is <= sum of radii
-        // optimized collision if (distance between centers)^2 <= (sum of radii)^2
+        // optimized collision if (distance between centers)^2 <= (sum of radii)^2       
+
+        bool isColliding = false;
+
         // Step 01: Get the two centers
         // Step 02: Take the difference
-        // Step 03: distance squared = dot(diff, diff)
-        // Step 04: add the radii
-        // Step 05: square the sum of radii
-        // Step 06: DO THE TEST: distSq <= sumSq
-
         Vector3 distance = center - other.center;
+        // Step 03: distance squared = dot(diff, diff)
         float distSq = Vector3.Dot(distance, distance);
+        // Step 04: add the radii
         float sum = radius + other.radius;
+        // Step 05: square the sum of radii
         float sumSq = sum * sum;
 
+        // Step 06: DO THE TEST: distSq <= sumSq
         if (distSq <= sumSq)
-            return true;
-        else
-            return false;
+        {
+            isColliding = true;
+        }
+
+        c.hullOne = this;
+        c.hullTwo = other;
+        c.status = isColliding;
+
+        // REMOVE THIS LATER
+        c = new Collision();
+
+        return isColliding;
     }
 
-    public override bool TestCollisionVsAABB(AABBCollisionHull2D other, ref Collision c)
+    public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out Collision c)
     {
         // find the closest point to the cicle on the box
         // done by clamping center of circle to be within box dimensions
@@ -60,14 +71,16 @@ public class CircleCollisionHull2D : CollisionHull2D
         // Step 04: Establish distance of contact (Millington 2nd Ed. pg. 317)
         float distance = (closestPoint - center).sqrMagnitude;
 
+        c = new Collision();
+
         // Step 05: Check to see if we're in contact
         if (distance < radius * radius)
             return true;
         else
             return false;
     }
-    
-    public override bool TestCollisionVsOBB(OBBCollisionHull2D other)
+
+    public override bool TestCollisionVsOBB(OBBCollisionHull2D other, out Collision c)
     {
         // same as AABB collision, but first..
         // multiply circle center by box world matrix inverse
@@ -89,6 +102,8 @@ public class CircleCollisionHull2D : CollisionHull2D
 
         // Step 05: Establish distance of contact
         float distance = (closestPoint - newCenter).sqrMagnitude;
+
+        c = new Collision();
 
         // Step 06: Check to see if we're in contact
         if (distance < radius * radius)
@@ -120,5 +135,4 @@ public class CircleCollisionHull2D : CollisionHull2D
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(center, radius);
     }
-
 }
