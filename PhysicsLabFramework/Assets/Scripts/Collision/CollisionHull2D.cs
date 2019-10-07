@@ -78,22 +78,25 @@ public abstract class CollisionHull2D : MonoBehaviour
     public abstract void UpdateCenterPos();
 
     // Formula from Millington 2nd Ed. pg. 120
-    public static Vector3 CalcSeparatingVel(Collision collision, Collision.Contact contact)
+    public static float CalcSeparatingVel(Collision collision, Collision.Contact contact)
     {
         CollisionHull2D partOne = collision.hullOne;
         CollisionHull2D partTwo = collision.hullTwo;
 
         // Calculate relative velocity of both particles
-        Vector3 relativeVel = partOne.particle.movement.velocity - partTwo.particle.movement.velocity;
+        Vector2 relativeVel = partOne.particle.movement.velocity - partTwo.particle.movement.velocity;
 
-        return relativeVel * contact.normal;
+        // TODO: FIX THIS FUNCTION
+        return 0.0f;
+
+        // return relativeVel * contact.normal;
     }
 
     // Formulae from Millington 2nd Ed. pg. 120-121
     public static void ResolveVelocity(Collision collision)
     {
         // Create a list of separating velocities
-        List<Vector3> sepVelList = new List<Vector3>();
+        List<float> sepVelList = new List<float>();
 
         // For each contact in the passed collision, calculate the separating velocity
         // and add it to a list
@@ -103,10 +106,8 @@ public abstract class CollisionHull2D : MonoBehaviour
         }
 
         // If there is only one separating velocity and it is greater than 0, no impulse is required
-        if (sepVelList.Count == 1 && sepVelList[0].sqrMagnitude > 0.0f)
+        if (sepVelList.Count == 1 && sepVelList[0] > 0.0f)
             return;
-
-
 
     }
 

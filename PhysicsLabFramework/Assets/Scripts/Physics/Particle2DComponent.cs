@@ -8,8 +8,14 @@ public class Particle2DComponent : MonoBehaviour
     // Gravitational Constant
     public const float GRAVITY = 9.8f;
 
-    public Particle2DMovement movement;
-    public Particle2DRotation rotation;
+    public Particle2DMovement movement
+    {
+        get; private set;
+    }
+    public Particle2DRotation rotation
+    {
+        get; private set;
+    }
 
     public void SetMaterial(Material newMat)
     {
@@ -236,7 +242,11 @@ public class Particle2DComponent : MonoBehaviour
 
         Vector2 momentArm = (rotation.pointOfAppliedForce - rotation.worldCenterOfMass);
 
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            rotation.torque -= momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
+        }
+        if (Input.GetKey(KeyCode.RightArrow))
         {
             rotation.torque += momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
         }
@@ -283,6 +293,11 @@ public class Particle2DComponent : MonoBehaviour
 
         // Update rotational velocity based on angular acceleration
         rotation.angularVelocity += rotation.angularAccel * dt;
+
+        rotation.angularVelocity = Mathf.Clamp(rotation.angularVelocity, -Mathf.PI, Mathf.PI);
+
+        // Clamp rotation to -PI, PI
+        rotation.rotation = Mathf.Clamp(rotation.rotation, -Mathf.PI, Mathf.PI);
 
         // Update GO rotation based on calculated rotational physics
         transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, rotation.rotation));
