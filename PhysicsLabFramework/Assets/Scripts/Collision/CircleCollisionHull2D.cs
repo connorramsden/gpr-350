@@ -1,138 +1,105 @@
 ﻿// Circle Collision Hull for 2D Space
 
 using UnityEngine;
+using static NS_Collision.CollisionResolutionManager;
 
-public class CircleCollisionHull2D : CollisionHull2D
+namespace NS_Collision
 {
-    private const float MAX_RADIUS = 100.0f;
-
-    public float radius
+    public class CircleCollisionHull2D : CollisionHull2D
     {
-        get; private set;
-    }
+        private const float MAX_RADIUS = 100.0f;
 
-    public Vector3 center
-    {
-        get; private set;
-    }
-
-    // Architecture Style 2 //
-    public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out Collision c)
-    {
-        // collision if distance between centers is <= sum of radii
-        // optimized collision if (distance between centers)^2 <= (sum of radii)^2       
-
-        bool isColliding = false;
-
-        // Step 01: Get the two centers
-        // Step 02: Take the difference
-        Vector3 distance = center - other.center;
-        // Step 03: distance squared = dot(diff, diff)
-        float distSq = Vector3.Dot(distance, distance);
-        // Step 04: add the radii
-        float sum = radius + other.radius;
-        // Step 05: square the sum of radii
-        float sumSq = sum * sum;
-
-        // Step 06: DO THE TEST: distSq <= sumSq
-        if (distSq <= sumSq)
+        public float radius
         {
-            isColliding = true;
+            get; private set;
         }
 
-        c.hullOne = this;
-        c.hullTwo = other;
-        c.status = isColliding;
+        // Architecture Style 2 //
+        public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out NCollision c)
+        {
+            // collision if distance between centers is <= sum of radii
+            // optimized collision if (distance between centers)^2 <= (sum of radii)^2       
 
-        // REMOVE THIS LATER
-        c = new Collision();
+            bool isColliding = false;
 
-        return isColliding;
-    }
+            // Step 01: Get the two centers
+            // Step 02: Take the difference
+            Vector3 distance = center - other.center;
+            // Step 03: distance squared = dot(diff, diff)
+            float distSq = Vector3.Dot(distance, distance);
+            // Step 04: add the radii
+            float sum = radius + other.radius;
+            // Step 05: square the sum of radii
+            float sumSq = sum * sum;
 
-    public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out Collision c)
-    {
-        // find the closest point to the cicle on the box
-        // done by clamping center of circle to be within box dimensions
-        // if closest point is within circle, pass (do point vs circle collision test)
+            // Step 06: DO THE TEST: distSq <= sumSq
+            if (distSq <= sumSq)
+            {
+                isColliding = true;
+            }
 
-        // Step 01: Get max and min extent of other
-        Vector3 minExtent = other.minExtent;
-        Vector3 maxExtent = other.maxExtent;
+            c.hullOne = this;
+            c.hullTwo = other;
+            c.status = isColliding;
 
-        // Step 02: Clamp center within extents
-        float xPosClamp = Mathf.Clamp(center.x, minExtent.x, maxExtent.x);
-        float yPosClamp = Mathf.Clamp(center.y, minExtent.y, maxExtent.y);
-        float zPosClamp = Mathf.Clamp(center.z, minExtent.z, maxExtent.z);
+            // REMOVE THIS LATER
+            c = new NCollision();
 
-        // Step 03: Establish closest point
-        Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
+            return isColliding;
+        }
 
-        // Step 04: Establish distance of contact (Millington 2nd Ed. pg. 317)
-        float distance = (closestPoint - center).sqrMagnitude;
+        public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision c)
+        {
+            // find the closest point to the cicle on the box
+            // done by clamping center of circle to be within box dimensions
+            // if closest point is within circle, pass (do point vs circle collision test)
 
-        c = new Collision();
+            // Step 01: Get max and min extent of other
+            Vector3 minExtent = other.minExtent;
+            Vector3 maxExtent = other.maxExtent;
 
-        // Step 05: Check to see if we're in contact
-        if (distance < radius * radius)
-            return true;
-        else
-            return false;
-    }
+            // Step 02: Clamp center within extents
+            float xPosClamp = Mathf.Clamp(center.x, minExtent.x, maxExtent.x);
+            float yPosClamp = Mathf.Clamp(center.y, minExtent.y, maxExtent.y);
+            float zPosClamp = Mathf.Clamp(center.z, minExtent.z, maxExtent.z);
 
-    public override bool TestCollisionVsOBB(OBBCollisionHull2D other, out Collision c)
-    {
-        // same as AABB collision, but first..
-        // multiply circle center by box world matrix inverse
+            // Step 03: Establish closest point
+            Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
 
-        // Step 01: Get max and min extent of other
-        Vector3 otherMin = other.minExtent;
-        Vector3 otherMax = other.maxExtent;
+            // Step 04: Establish distance of contact (Millington 2nd Ed. pg. 317)
+            float distance = (closestPoint - center).sqrMagnitude;
 
-        // Step 02: multiply center by other world matrix inverse
-        Vector3 newCenter = Vector3.Cross(center, other.inverseWorldMatrix);
+            c = new NCollision();
 
-        // Step 03: Clamp new center to max & min of other
-        float xPosClamp = Mathf.Clamp(newCenter.x, otherMin.x, otherMax.x);
-        float yPosClamp = Mathf.Clamp(newCenter.y, otherMin.y, otherMax.y);
-        float zPosClamp = Mathf.Clamp(newCenter.z, otherMin.z, otherMax.z);
+            // Step 05: Check to see if we're in contact
+            if (distance < radius * radius)
+                return true;
+            else
+                return false;
+        }
 
-        // Step 04: Establish closest point
-        Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
+        public override void UpdateCenterPos()
+        {
+            if (particle)
+                center = particle.GetPosition();
+        }
 
-        // Step 05: Establish distance of contact
-        float distance = (closestPoint - newCenter).sqrMagnitude;
+        // Initialize local variables
+        private void Awake()
+        {
+            type = CollisionHullType2D.HULL_CIRCLE;
+            particle = GetComponent<Particle2DComponent>();
 
-        c = new Collision();
-
-        // Step 06: Check to see if we're in contact
-        if (distance < radius * radius)
-            return true;
-        else
-            return false;
-    }
-
-    public override void UpdateCenterPos()
-    {
-        if (particle)
+            // Initialize center position
             center = particle.GetPosition();
-    }
 
-    // Initialize local variables
-    private void Awake()
-    {
-        SetType(CollisionHullType2D.HULL_CIRCLE);
-        particle = GetComponent<Particle2DComponent>();
+            radius = particle.radius;
+        }
 
-        // Initialize center position
-        center = particle.GetPosition();
-
-        radius = particle.radius;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(center, radius);
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(center, radius);
+        }
     }
 }

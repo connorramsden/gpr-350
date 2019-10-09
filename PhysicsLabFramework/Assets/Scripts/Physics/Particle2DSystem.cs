@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using NS_Collision;
+using static NS_Collision.CollisionResolutionManager;
 
 public class Particle2DSystem : MonoBehaviour
 {
@@ -42,20 +44,15 @@ public class Particle2DSystem : MonoBehaviour
         {
             if (particleOne != particleTwo)
             {
+                NCollision c = new NCollision();
+                
                 if (particleTwo.TryGetComponent(out CircleCollisionHull2D otherCircle))
                 {
-                    CollisionHull2D.Collision c;
                     isColliding = cch2d.TestCollisionVsCircle(otherCircle, out c);
                 }
                 else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
                 {
-                    CollisionHull2D.Collision c;
                     isColliding = cch2d.TestCollisionVsAABB(otherAABB, out c);
-                }
-                else if (particleTwo.TryGetComponent(out OBBCollisionHull2D otherOBB))
-                {
-                    CollisionHull2D.Collision c;
-                    isColliding = cch2d.TestCollisionVsOBB(otherOBB, out c);
                 }
             }
         }
@@ -72,20 +69,15 @@ public class Particle2DSystem : MonoBehaviour
 
         foreach (GameObject particleTwo in particleList)
         {
+            NCollision c = new NCollision();
+            
             if (particleTwo.TryGetComponent(out CircleCollisionHull2D otherCircle))
             {
-                CollisionHull2D.Collision c;
                 isColliding = aabb2d.TestCollisionVsCircle(otherCircle, out c);
             }
             else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
             {
-                CollisionHull2D.Collision c;
                 isColliding = aabb2d.TestCollisionVsAABB(otherAABB, out c);
-            }
-            else if (particleTwo.TryGetComponent(out OBBCollisionHull2D otherOBB))
-            {
-                CollisionHull2D.Collision c;
-                isColliding = aabb2d.TestCollisionVsOBB(otherOBB, out c);
             }
         }
 
