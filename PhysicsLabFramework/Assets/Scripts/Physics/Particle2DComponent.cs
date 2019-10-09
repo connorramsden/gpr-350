@@ -300,7 +300,7 @@ public class Particle2DComponent : MonoBehaviour
         rotation.rotation = Mathf.Clamp(rotation.rotation, -Mathf.PI, Mathf.PI);
 
         // Update GO rotation based on calculated rotational physics
-        transform.Rotate(new Vector3(transform.rotation.x, transform.rotation.y, rotation.rotation));
+        transform.Rotate(new Vector3(0.0f, 0.0f, rotation.rotation));
     }
 
     // Initializes local variables
