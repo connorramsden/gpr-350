@@ -76,7 +76,7 @@ namespace NS_Collision
         // Called in an Update loop to re-define min & max extents
         public void UpdateExtents()
         {
-            halfSize = 0.5f * particle.transform.localScale;
+            halfSize = new Vector3(0.5f * particle.width, 0.5f * particle.height, 0.5f * particle.length);
 
             minExtent = new Vector3(center.x - halfSize.x, center.y - halfSize.y, center.z - halfSize.z);
             maxExtent = new Vector3(center.x + halfSize.x, center.y + halfSize.y, center.z + halfSize.z);
@@ -94,6 +94,14 @@ namespace NS_Collision
 
             // Initialize halfSize to half of the world-scale of the particle
             halfSize = 0.5f * particle.transform.lossyScale;
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireCube(center, minExtent);
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireCube(center, maxExtent);
         }
     }
 }

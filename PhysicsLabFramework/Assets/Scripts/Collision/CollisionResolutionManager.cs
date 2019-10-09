@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace NS_Collision
 {
     public class CollisionResolutionManager : MonoBehaviour
@@ -21,7 +20,7 @@ namespace NS_Collision
             // A contact is the point(s) at which a collision occurs
             public struct Contact
             {
-                // Location
+                // Contact Location
                 public Vector2 pointOfContact;
                 // Normal
                 public Vector2 normal;

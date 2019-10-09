@@ -7,9 +7,6 @@ public class Particle2DSystem : MonoBehaviour
 {
     List<GameObject> particleList;
 
-    public Material redMat;
-    public Material greenMat;
-
     // Trying to mimic ECS-style updating all entities in a single, system-based update call
     private void UpdateAllParticles(float dt)
     {
@@ -111,11 +108,7 @@ public class Particle2DSystem : MonoBehaviour
 
             if (isColliding)
             {
-                p2d.SetMaterial(greenMat);
-            }
-            else
-            {
-                p2d.SetMaterial(redMat);
+                
             }
         }
     }

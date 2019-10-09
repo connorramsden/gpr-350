@@ -5,31 +5,24 @@
 [RequireComponent(typeof(Particle2DMovement), typeof(Particle2DRotation))]
 public class Particle2DComponent : MonoBehaviour
 {
-    // Gravitational Constant
-    public const float GRAVITY = 9.8f;
-
+    // Stores variables for a particle's movement
     public Particle2DMovement movement
     {
         get; private set;
     }
+
+    // Stores variables for a particle's rotation
     public Particle2DRotation rotation
     {
         get; private set;
     }
-
-    public void SetMaterial(Material newMat)
-    {
-        gameObject.GetComponent<MeshRenderer>().material = newMat;
-    }
-
+    
     // Shapes for Torque-based rotation in 2D
     public enum ParticleShape
     {
         INVALID_TYPE = -1,
         DISK,
-        RING,
         RECTANGLE,
-        ROD
     }
 
     public ParticleShape particleShape;
@@ -61,7 +54,7 @@ public class Particle2DComponent : MonoBehaviour
     }
 
     // Values necessary for Torque / Inertia / Rotation
-    public float length, height, radius, innerRadius, outerRadius;
+    public float length, width, height, radius, innerRadius, outerRadius;
 
     // Return a particle's starting mass
     public float GetStartingMass()
@@ -90,25 +83,11 @@ public class Particle2DComponent : MonoBehaviour
                     inertia = 0.5f * mass * radius * radius;
                     break;
                 }
-            // Inertia Formula for a Ring-like object
-            case ParticleShape.RING:
-                {
-                    // I = 1/2 * mass * (outerRadius * outerRadius + innerRadius*innerRadius)
-                    inertia = 0.5f * mass * outerRadius * outerRadius + innerRadius * innerRadius;
-                    break;
-                }
             // Inertia Formula for a Rectangle-like object
             case ParticleShape.RECTANGLE:
                 {
                     // I = 1/12 * mass * (dx*dx + dy*dy) where dx = length and dy = height
                     inertia = 0.083f * mass * length * length + height * height;
-                    break;
-                }
-            // Inertia formula for a Rod-like object
-            case ParticleShape.ROD:
-                {
-                    // I + 1/12 * mass * length * length
-                    inertia = 0.083f * mass * length * length;
                     break;
                 }
             // If the shape is invalid / default, log an Error for the user
@@ -123,6 +102,7 @@ public class Particle2DComponent : MonoBehaviour
         inertiaInv = inertia > 0.0f ? 1.0f / inertia : 0.0f;
     }
 
+    // Either returns the Particle's position or the GO transform position
     public Vector2 GetPosition()
     {
         if (movement && shouldMove)
@@ -134,11 +114,9 @@ public class Particle2DComponent : MonoBehaviour
     // Lab 02 Step 02 - Declaring Force Variables
     // Total force acting on a particle
     private Vector2 force;
-    public GameObject anchorObject;
-    private Vector2 anchorPoint;
 
     // Variables to store possible forces
-    private Vector2 f_gravity, f_normal, f_sliding, f_friction, f_drag, f_spring;
+    private Vector2 f_gravity, f_normal, f_sliding, f_friction;
 
     // Adds the passed force to the current force vector
     private void AddForce(Vector2 newForce)
@@ -155,13 +133,11 @@ public class Particle2DComponent : MonoBehaviour
 
         if (movement.useGravity)
         {
-            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GRAVITY, Vector2.up);
+            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, Vector2.up);
             AddForce(f_gravity);
         }
         else
-        {
             f_gravity = Vector2.zero;
-        }
 
         if (movement.useNormal)
         {
@@ -172,9 +148,7 @@ public class Particle2DComponent : MonoBehaviour
             AddForce(f_normal);
         }
         else
-        {
             f_normal = Vector2.zero;
-        }
 
         if (movement.useSliding)
         {
@@ -188,38 +162,18 @@ public class Particle2DComponent : MonoBehaviour
             AddForce(f_sliding);
         }
         else
-        {
             f_sliding = Vector2.zero;
-        }
 
         if (movement.useFriction)
         {
-            // Normal used in this formula, must be ticked on
-            if (!movement.useNormal)
-                movement.useNormal = true;
+            // Sliding used in this formula, must be ticked on, will tick-on Gravity & Normal
+            if (!movement.useSliding)
+                movement.useSliding = true;
             f_friction = ForceGenerator.GenerateForce_Friction_Standard(f_normal, movement.velocity, f_sliding, movement.coeffStaticFriction, movement.coeffKineticFriction);
             AddForce(f_friction);
         }
-
-        if (movement.useDrag)
-        {
-            f_drag = ForceGenerator.GenerateForce_Drag(movement.velocity, movement.fluidDensity, 1.0f, movement.coeffDrag);
-            AddForce(f_drag);
-        }
         else
-        {
-            f_drag = Vector2.zero;
-        }
-
-        if (movement.useSpring)
-        {
-            f_spring = ForceGenerator.GenerateForce_Spring(movement.position, anchorPoint, movement.springRestingLength, movement.springStiffness);
-            AddForce(f_spring);
-        }
-        else
-        {
-            f_spring = Vector2.zero;
-        }
+            f_friction = Vector2.zero;
     }
 
     // Converts force and inverse mass to acceleration
@@ -238,15 +192,14 @@ public class Particle2DComponent : MonoBehaviour
         // D'Alembert's Principle:
         // T = cross(pf, F) where T is torque being applied, pf is the moment-of-inertia-arm, and F is the force applied at the Moment ARm
         // Center of mass not necessarily object center, so two variables exist: localCenterOfMass & worldCenterOfMass
-        // NOTE: Not totally sure which center of mass to use in this equation, or if this equation is correct
 
         Vector2 momentArm = (rotation.pointOfAppliedForce - rotation.worldCenterOfMass);
 
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
             rotation.torque -= momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
             rotation.torque += momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
         }
@@ -318,15 +271,5 @@ public class Particle2DComponent : MonoBehaviour
 
         movement.position = transform.position;
         rotation.rotation = transform.rotation.eulerAngles.z;
-    }
-
-    // Initializes external variables
-    private void Start()
-    {
-        // Initialize the anchor point to the passed GameObject's position
-        if (anchorObject)
-            anchorPoint = anchorObject.transform.position;
-        else
-            anchorPoint = Vector2.zero;
     }
 }
