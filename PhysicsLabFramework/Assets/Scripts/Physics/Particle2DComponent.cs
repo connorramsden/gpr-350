@@ -16,7 +16,7 @@ public class Particle2DComponent : MonoBehaviour
     {
         get; private set;
     }
-    
+
     // Shapes for Torque-based rotation in 2D
     public enum ParticleShape
     {
@@ -136,8 +136,17 @@ public class Particle2DComponent : MonoBehaviour
             f_gravity = ForceGenerator.GenerateForce_Gravity(mass, Vector2.up);
             AddForce(f_gravity);
         }
-        else
-            f_gravity = Vector2.zero;
+
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        {
+            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, Vector2.down);
+            AddForce(f_gravity);
+        }
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        {
+            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, Vector2.up);
+            AddForce(f_gravity);
+        }
 
         if (movement.useNormal)
         {
@@ -147,8 +156,6 @@ public class Particle2DComponent : MonoBehaviour
             f_normal = ForceGenerator.GenerateForce_Normal(f_gravity, surfaceNormal);
             AddForce(f_normal);
         }
-        else
-            f_normal = Vector2.zero;
 
         if (movement.useSliding)
         {
@@ -161,8 +168,6 @@ public class Particle2DComponent : MonoBehaviour
             f_sliding = ForceGenerator.GenerateForce_Sliding(f_gravity, f_normal);
             AddForce(f_sliding);
         }
-        else
-            f_sliding = Vector2.zero;
 
         if (movement.useFriction)
         {
@@ -172,8 +177,6 @@ public class Particle2DComponent : MonoBehaviour
             f_friction = ForceGenerator.GenerateForce_Friction_Standard(f_normal, movement.velocity, f_sliding, movement.coeffStaticFriction, movement.coeffKineticFriction);
             AddForce(f_friction);
         }
-        else
-            f_friction = Vector2.zero;
     }
 
     // Converts force and inverse mass to acceleration

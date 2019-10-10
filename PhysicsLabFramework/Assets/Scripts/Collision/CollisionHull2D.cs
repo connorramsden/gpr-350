@@ -28,7 +28,7 @@ namespace NS_Collision
         }
 
         // Holds the CH2d's particle's center position
-        public virtual Vector3 center
+        public virtual Vector2 center
         {
             get; protected set;
         }

@@ -8,16 +8,16 @@ namespace NS_Collision
 {
     public class AABBCollisionHull2D : CollisionHull2D
     {
-        public Vector3 halfSize
+        public Vector2 halfSize
         {
             get; private set;
         }
 
-        public Vector3 minExtent
+        public Vector2 minExtent
         {
             get; private set;
         }
-        public Vector3 maxExtent
+        public Vector2 maxExtent
         {
             get; private set;
         }
@@ -27,16 +27,15 @@ namespace NS_Collision
             /// <see cref="CircleCollisionHull2D.TestCollisionVsAABB(AABBCollisionHull2D)"/>
 
             // Step 01: Get center & radius of other
-            Vector3 otherCenter = other.center;
+            Vector2 otherCenter = other.center;
             float otherRadSqr = other.radius * other.radius;
 
             // Step 02: Clamp center within extents
             float xPosClamp = Mathf.Clamp(otherCenter.x, minExtent.x, maxExtent.x);
             float yPosClamp = Mathf.Clamp(otherCenter.y, minExtent.y, maxExtent.y);
-            float zPosClamp = Mathf.Clamp(otherCenter.z, minExtent.z, maxExtent.z);
 
             // Step 03: Establish closest point
-            Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
+            Vector2 closestPoint = new Vector2(xPosClamp, yPosClamp);
 
             // Step 04: get distance for contact
             float distance = (closestPoint - otherCenter).sqrMagnitude;
@@ -52,22 +51,21 @@ namespace NS_Collision
 
         public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision c)
         {
-            // Pass Condition: If, for all axes (X, Y, Z), the MaxExtent of This is overlapping the MinExtent of Other
+            // Pass Condition: If, for all axes (X & Y), the MaxExtent of This is overlapping the MinExtent of Other
 
             // Step 01: Store other's min extent
-            Vector3 otherMin = other.minExtent;
-            Vector3 otherMax = other.maxExtent;
+            Vector2 otherMin = other.minExtent;
+            Vector2 otherMax = other.maxExtent;
 
             // Step 01: Compare min & max extents and store in boolean variables
             bool diffX = (otherMin.x < maxExtent.x && minExtent.x < otherMax.x) ? true : false;
             bool diffY = (otherMin.y < maxExtent.y && minExtent.y < otherMax.y) ? true : false;
-            bool diffZ = (otherMin.z < maxExtent.z && minExtent.z < otherMax.z) ? true : false;
 
             c = new NCollision();
 
             // Check that all extents are passing properly
             // If yes, return true, else, return false
-            if (diffX && diffY && diffZ)
+            if (diffX && diffY)
                 return true;
             else
                 return false;
@@ -76,10 +74,10 @@ namespace NS_Collision
         // Called in an Update loop to re-define min & max extents
         public void UpdateExtents()
         {
-            halfSize = new Vector3(0.5f * particle.width, 0.5f * particle.height, 0.5f * particle.length);
+            halfSize = new Vector2(0.5f * particle.width, 0.5f * particle.height);
 
-            minExtent = new Vector3(center.x - halfSize.x, center.y - halfSize.y, center.z - halfSize.z);
-            maxExtent = new Vector3(center.x + halfSize.x, center.y + halfSize.y, center.z + halfSize.z);
+            minExtent = new Vector2(center.x - halfSize.x, center.y - halfSize.y);
+            maxExtent = new Vector2(center.x + halfSize.x, center.y + halfSize.y);
         }
 
         // Initialize local variables
@@ -94,14 +92,6 @@ namespace NS_Collision
 
             // Initialize halfSize to half of the world-scale of the particle
             halfSize = 0.5f * particle.transform.lossyScale;
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireCube(center, minExtent);
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawWireCube(center, maxExtent);
         }
     }
 }

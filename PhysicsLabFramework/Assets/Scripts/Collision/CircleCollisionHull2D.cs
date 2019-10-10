@@ -24,9 +24,9 @@ namespace NS_Collision
 
             // Step 01: Get the two centers
             // Step 02: Take the difference
-            Vector3 distance = center - other.center;
+            Vector2 distance = center - other.center;
             // Step 03: distance squared = dot(diff, diff)
-            float distSq = Vector3.Dot(distance, distance);
+            float distSq = Vector2.Dot(distance, distance);
             // Step 04: add the radii
             float sum = radius + other.radius;
             // Step 05: square the sum of radii
@@ -55,16 +55,15 @@ namespace NS_Collision
             // if closest point is within circle, pass (do point vs circle collision test)
 
             // Step 01: Get max and min extent of other
-            Vector3 minExtent = other.minExtent;
-            Vector3 maxExtent = other.maxExtent;
+            Vector2 minExtent = other.minExtent;
+            Vector2 maxExtent = other.maxExtent;
 
             // Step 02: Clamp center within extents
             float xPosClamp = Mathf.Clamp(center.x, minExtent.x, maxExtent.x);
             float yPosClamp = Mathf.Clamp(center.y, minExtent.y, maxExtent.y);
-            float zPosClamp = Mathf.Clamp(center.z, minExtent.z, maxExtent.z);
 
             // Step 03: Establish closest point
-            Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
+            Vector2 closestPoint = new Vector2(xPosClamp, yPosClamp);
 
             // Step 04: Establish distance of contact (Millington 2nd Ed. pg. 317)
             float distance = (closestPoint - center).sqrMagnitude;
