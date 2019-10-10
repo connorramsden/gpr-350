@@ -1,7 +1,6 @@
 ﻿// Circle Collision Hull for 2D Space
 
 using UnityEngine;
-using static NS_Collision.CollisionResolutionManager;
 
 namespace NS_Collision
 {

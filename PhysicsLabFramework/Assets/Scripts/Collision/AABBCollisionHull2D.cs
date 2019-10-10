@@ -2,7 +2,7 @@
 // Same Axes as World Axes
 
 using UnityEngine;
-using static NS_Collision.CollisionResolutionManager;
+using System.Collections.Generic;
 
 namespace NS_Collision
 {
@@ -40,13 +40,20 @@ namespace NS_Collision
             // Step 04: get distance for contact
             float distance = (closestPoint - otherCenter).sqrMagnitude;
 
-            c = new NCollision();
+            c = new NCollision()
+            {
+                hullOne = this,
+                hullTwo = other,
+                contact = new List<NCollision.Contact>(),
+            };
 
             // Step 05: Check that the closest point is within the AABB box
             if (distance < otherRadSqr)
-                return true;
+                c.status = true;
             else
-                return false;
+                c.status = false;
+
+            return c.status;
         }
 
         public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision c)
@@ -61,14 +68,29 @@ namespace NS_Collision
             bool diffX = (otherMin.x < maxExtent.x && minExtent.x < otherMax.x) ? true : false;
             bool diffY = (otherMin.y < maxExtent.y && minExtent.y < otherMax.y) ? true : false;
 
-            c = new NCollision();
+            // Create a new NCollision
+            // Assign hulls and instantiate the contact list
+            c = new NCollision
+            {
+                hullOne = this,
+                hullTwo = other,
+                contact = new List<NCollision.Contact>(),
+            };
 
             // Check that all extents are passing properly
             // If yes, return true, else, return false
             if (diffX && diffY)
-                return true;
+            {
+                c.status = true;
+            }
             else
-                return false;
+            {
+                c.status = false;
+            }
+
+            c.contactCount = c.contact.Count;
+
+            return c.status;
         }
 
         // Called in an Update loop to re-define min & max extents
@@ -87,11 +109,8 @@ namespace NS_Collision
 
             particle = GetComponent<Particle2DComponent>();
 
-            // Initialize center to object position (we're working in a origin-centered world)
-            center = particle.GetPosition();
-
-            // Initialize halfSize to half of the world-scale of the particle
-            halfSize = 0.5f * particle.transform.lossyScale;
+            UpdateCenterPos();
+            UpdateExtents();
         }
     }
 }

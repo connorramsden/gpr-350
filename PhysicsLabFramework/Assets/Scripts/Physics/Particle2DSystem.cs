@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using NS_Collision;
-using static NS_Collision.CollisionResolutionManager;
 
 public class Particle2DSystem : MonoBehaviour
 {
