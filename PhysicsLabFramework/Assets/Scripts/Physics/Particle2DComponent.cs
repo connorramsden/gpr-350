@@ -111,6 +111,20 @@ public class Particle2DComponent : MonoBehaviour
             return transform.position;
     }
 
+    // Returns the 'Facing' float for a particle
+    // Borrowed from DeanLib Vector2D
+    public float GetFacing()
+    {
+        return Mathf.Atan2(rotation.rotation, -rotation.rotation);
+    }
+
+    // Uses the Facing float to get a directional vector
+    public Vector2 GetHeadingVector()
+    {
+        float facing = GetFacing() - Mathf.PI / 2; // Pi / 2 compensates for screen position being up, not right
+        return new Vector2(Mathf.Cos(facing), Mathf.Sin(facing));
+    }
+
     // Lab 02 Step 02 - Declaring Force Variables
     // Total force acting on a particle
     private Vector2 force;
@@ -139,12 +153,12 @@ public class Particle2DComponent : MonoBehaviour
 
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, Vector2.down);
+            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, GetHeadingVector());
             AddForce(f_gravity);
         }
         else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, Vector2.up);
+            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GetHeadingVector());
             AddForce(f_gravity);
         }
 
@@ -200,11 +214,11 @@ public class Particle2DComponent : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
-            rotation.torque -= momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
+            rotation.torque += momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
         }
         if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
-            rotation.torque += momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
+            rotation.torque -= momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
         }
     }
 
@@ -274,5 +288,11 @@ public class Particle2DComponent : MonoBehaviour
 
         movement.position = transform.position;
         rotation.rotation = transform.rotation.eulerAngles.z;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(movement.position, GetHeadingVector());
     }
 }
