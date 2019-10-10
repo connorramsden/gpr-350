@@ -54,7 +54,7 @@ public class Particle2DComponent : MonoBehaviour
     }
 
     // Values necessary for Torque / Inertia / Rotation
-    public float length, width, height, radius, innerRadius, outerRadius;
+    public float length, width, height, radius;
 
     // Return a particle's starting mass
     public float GetStartingMass()

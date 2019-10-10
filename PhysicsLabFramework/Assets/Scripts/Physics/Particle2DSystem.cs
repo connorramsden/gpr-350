@@ -42,7 +42,7 @@ public class Particle2DSystem : MonoBehaviour
             if (particleOne != particleTwo)
             {
                 NCollision c = new NCollision();
-                
+
                 if (particleTwo.TryGetComponent(out CircleCollisionHull2D otherCircle))
                 {
                     isColliding = cch2d.TestCollisionVsCircle(otherCircle, out c);
@@ -66,15 +66,18 @@ public class Particle2DSystem : MonoBehaviour
 
         foreach (GameObject particleTwo in particleList)
         {
-            NCollision c = new NCollision();
-            
-            if (particleTwo.TryGetComponent(out CircleCollisionHull2D otherCircle))
+            if (particleOne != particleTwo)
             {
-                isColliding = aabb2d.TestCollisionVsCircle(otherCircle, out c);
-            }
-            else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
-            {
-                isColliding = aabb2d.TestCollisionVsAABB(otherAABB, out c);
+                NCollision c = new NCollision();
+
+                if (particleTwo.TryGetComponent(out CircleCollisionHull2D otherCircle))
+                {
+                    isColliding = aabb2d.TestCollisionVsCircle(otherCircle, out c);
+                }
+                else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
+                {
+                    isColliding = aabb2d.TestCollisionVsAABB(otherAABB, out c);
+                }
             }
         }
 
@@ -108,7 +111,7 @@ public class Particle2DSystem : MonoBehaviour
 
             if (isColliding)
             {
-                
+                Debug.Log("Doing a good collision!");
             }
         }
     }
