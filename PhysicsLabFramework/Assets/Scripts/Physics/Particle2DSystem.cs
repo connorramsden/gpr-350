@@ -29,54 +29,64 @@ public class Particle2DSystem : MonoBehaviour
     }
 
     // Check a the passed particle against all other partciles for Circle Collisions
-    private bool CheckCircleCollision(GameObject particleOne)
+    private bool CheckCircleCollision(GameObject particleOne, out NCollision collision)
     {
         CircleCollisionHull2D cch2d = particleOne.GetComponent<CircleCollisionHull2D>();
+        Particle2DComponent p2dOne = particleOne.GetComponent<Particle2DComponent>();
 
         bool isColliding = false;
+
+        collision = new NCollision();
 
         // Iterate over the particleList and check vs all objects
         foreach (GameObject particleTwo in particleList)
         {
             if (particleOne != particleTwo)
             {
-                NCollision c = new NCollision();
-
+                Particle2DComponent p2dTwo = particleTwo.GetComponent<Particle2DComponent>();
+                
                 if (particleTwo.TryGetComponent(out CircleCollisionHull2D otherCircle))
                 {
-                    isColliding = cch2d.TestCollisionVsCircle(otherCircle, out c);
+                    isColliding = cch2d.TestCollisionVsCircle(otherCircle, out collision);
                 }
                 else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
                 {
-                    isColliding = cch2d.TestCollisionVsAABB(otherAABB, out c);
+                    isColliding = cch2d.TestCollisionVsAABB(otherAABB, out collision);
                 }
+                
+                collision.closingVelocity = CollisionResolutionManager.CalcClosingVel(p2dOne, p2dTwo);
             }
         }
-
         // If none of the above are true, will return false
         return isColliding;
     }
 
     // Check the passed particle against all other particles for Box Collisions (AABB & OBB)
-    private bool CheckAABBCollision(GameObject particleOne)
+    private bool CheckAABBCollision(GameObject particleOne, out NCollision collision)
     {
         AABBCollisionHull2D aabb2d = particleOne.GetComponent<AABBCollisionHull2D>();
+        Particle2DComponent p2dOne = particleOne.GetComponent<Particle2DComponent>();
+
         bool isColliding = false;
+
+        collision = new NCollision();
 
         foreach (GameObject particleTwo in particleList)
         {
             if (particleOne != particleTwo)
             {
-                NCollision c = new NCollision();
+                Particle2DComponent p2dTwo = particleTwo.GetComponent<Particle2DComponent>();
 
                 if (particleTwo.TryGetComponent(out CircleCollisionHull2D otherCircle))
                 {
-                    isColliding = aabb2d.TestCollisionVsCircle(otherCircle, out c);
+                    isColliding = aabb2d.TestCollisionVsCircle(otherCircle, out collision);
                 }
                 else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
                 {
-                    isColliding = aabb2d.TestCollisionVsAABB(otherAABB, out c);
+                    isColliding = aabb2d.TestCollisionVsAABB(otherAABB, out collision);
                 }
+
+                collision.closingVelocity = CollisionResolutionManager.CalcClosingVel(p2dOne, p2dTwo);
             }
         }
 
@@ -91,6 +101,8 @@ public class Particle2DSystem : MonoBehaviour
             // Get the particle's Particle2D Component
             Particle2DComponent p2d = particle.GetComponent<Particle2DComponent>();
 
+            NCollision collisionToResolve = new NCollision();
+
             // Establish a local boolean
             bool isColliding = false;
 
@@ -98,19 +110,19 @@ public class Particle2DSystem : MonoBehaviour
             if (particle.TryGetComponent(out CircleCollisionHull2D circleHull))
             {
                 circleHull.UpdateCenterPos();
-                isColliding = CheckCircleCollision(particle);
+                isColliding = CheckCircleCollision(particle, out collisionToResolve);
             }
             // If the particle has an AABB 
             else if (particle.TryGetComponent(out AABBCollisionHull2D aabbHull))
             {
                 aabbHull.UpdateCenterPos();
                 aabbHull.UpdateExtents();
-                isColliding = CheckAABBCollision(particle);
+                isColliding = CheckAABBCollision(particle, out collisionToResolve);
             }
 
             if (isColliding)
             {
-                Debug.Log("Doing a good collision!");
+                CollisionResolutionManager.ResolveCollision(collisionToResolve, 0.0f);
             }
         }
     }

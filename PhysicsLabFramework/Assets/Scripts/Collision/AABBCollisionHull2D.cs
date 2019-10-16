@@ -12,7 +12,6 @@ namespace NS_Collision
         {
             get; private set;
         }
-
         public Vector2 minExtent
         {
             get; private set;
@@ -25,6 +24,17 @@ namespace NS_Collision
         public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out NCollision c)
         {
             /// <see cref="CircleCollisionHull2D.TestCollisionVsAABB(AABBCollisionHull2D)"/>
+
+            // Create a new NCollision
+            // Assign hulls and instantiate the contact list
+            // Status defaults to false
+            c = new NCollision
+            {
+                hullOne = this,
+                hullTwo = other,
+                contact = new List<NCollision.Contact>(),
+                status = false
+            };
 
             // Step 01: Get center & radius of other
             Vector2 otherCenter = other.center;
@@ -40,25 +50,30 @@ namespace NS_Collision
             // Step 04: get distance for contact
             float distance = (closestPoint - otherCenter).sqrMagnitude;
 
-            c = new NCollision()
-            {
-                hullOne = this,
-                hullTwo = other,
-                contact = new List<NCollision.Contact>(),
-            };
-
             // Step 05: Check that the closest point is within the AABB box
             if (distance < otherRadSqr)
                 c.status = true;
-            else
-                c.status = false;
-
+            
+            // Finish setting up the collision
+            c.contactCount = c.contact.Count;
+            
             return c.status;
         }
 
         public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision c)
         {
             // Pass Condition: If, for all axes (X & Y), the MaxExtent of This is overlapping the MinExtent of Other
+
+            // Create a new NCollision
+            // Assign hulls and instantiate the contact list
+            // Status defaults to false
+            c = new NCollision
+            {
+                hullOne = this,
+                hullTwo = other,
+                contact = new List<NCollision.Contact>(),
+                status = false
+            };
 
             // Step 01: Store other's min extent
             Vector2 otherMin = other.minExtent;
@@ -68,26 +83,12 @@ namespace NS_Collision
             bool diffX = (otherMin.x < maxExtent.x && minExtent.x < otherMax.x) ? true : false;
             bool diffY = (otherMin.y < maxExtent.y && minExtent.y < otherMax.y) ? true : false;
 
-            // Create a new NCollision
-            // Assign hulls and instantiate the contact list
-            c = new NCollision
-            {
-                hullOne = this,
-                hullTwo = other,
-                contact = new List<NCollision.Contact>(),
-            };
-
             // Check that all extents are passing properly
             // If yes, return true, else, return false
             if (diffX && diffY)
-            {
                 c.status = true;
-            }
-            else
-            {
-                c.status = false;
-            }
 
+            // Finish setting up the collision
             c.contactCount = c.contact.Count;
 
             return c.status;

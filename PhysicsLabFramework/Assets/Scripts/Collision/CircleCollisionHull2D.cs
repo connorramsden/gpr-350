@@ -1,6 +1,7 @@
 ﻿// Circle Collision Hull for 2D Space
 
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace NS_Collision
 {
@@ -19,7 +20,16 @@ namespace NS_Collision
             // collision if distance between centers is <= sum of radii
             // optimized collision if (distance between centers)^2 <= (sum of radii)^2       
 
-            bool isColliding = false;
+            // Create a new NCollision
+            // Assign hulls and instantiate the contact list
+            // Status defaults to false
+            c = new NCollision
+            {
+                hullOne = this,
+                hullTwo = other,
+                contact = new List<NCollision.Contact>(),
+                status = false
+            };
 
             // Step 01: Get the two centers
             // Step 02: Take the difference
@@ -34,17 +44,13 @@ namespace NS_Collision
             // Step 06: DO THE TEST: distSq <= sumSq
             if (distSq <= sumSq)
             {
-                isColliding = true;
+                c.status = true;
             }
 
-            c.hullOne = this;
-            c.hullTwo = other;
-            c.status = isColliding;
+            // Finish setting up the collision
+            c.contactCount = c.contact.Count;
 
-            // REMOVE THIS LATER
-            c = new NCollision();
-
-            return isColliding;
+            return c.status;
         }
 
         public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision c)
@@ -52,6 +58,17 @@ namespace NS_Collision
             // find the closest point to the cicle on the box
             // done by clamping center of circle to be within box dimensions
             // if closest point is within circle, pass (do point vs circle collision test)
+
+            // Create a new NCollision
+            // Assign hulls and instantiate the contact list
+            // Status defaults to false
+            c = new NCollision
+            {
+                hullOne = this,
+                hullTwo = other,
+                contact = new List<NCollision.Contact>(),
+                status = false
+            };
 
             // Step 01: Get max and min extent of other
             Vector2 minExtent = other.minExtent;
@@ -67,19 +84,14 @@ namespace NS_Collision
             // Step 04: Establish distance of contact (Millington 2nd Ed. pg. 317)
             float distance = (closestPoint - center).sqrMagnitude;
 
-            c = new NCollision();
-
             // Step 05: Check to see if we're in contact
             if (distance < radius * radius)
-                return true;
-            else
-                return false;
-        }
+                c.status = true;
 
-        public override void UpdateCenterPos()
-        {
-            if (particle)
-                center = particle.GetPosition();
+            // Finish setting up the collision
+            c.contactCount = c.contact.Count;
+
+            return c.status;
         }
 
         // Initialize local variables

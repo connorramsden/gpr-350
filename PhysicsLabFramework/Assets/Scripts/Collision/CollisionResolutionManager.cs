@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace NS_Collision
@@ -40,7 +41,7 @@ namespace NS_Collision
     public class CollisionResolutionManager : MonoBehaviour
     {
         // Formula from Millington 2nd Ed. pg. 114
-        private static float CalcClosingVel(Particle2DComponent partOne, Particle2DComponent partTwo)
+        public static float CalcClosingVel(Particle2DComponent partOne, Particle2DComponent partTwo)
         {
             // vc = NEG(velOne - velTwo) DOT norm(posOne - posTwo) 
 
@@ -55,20 +56,23 @@ namespace NS_Collision
         }
 
         // Formulae from Millington 2nd Ed. pg. 120-121
-        public static void ResolveVelocity(NCollision c)
+        private static void ResolveVelocity(NCollision c, float duration)
         {
+            // Ensure the collision is valid
+            if(!VerifyCollision(c))
+            {
+                Debug.LogError("Collision is invalid");
+                return;
+            }
+
             Particle2DComponent partOne = c.hullOne.particle;
             Particle2DComponent partTwo = c.hullTwo.particle;
 
             // Assuming one point of contact
-            // TODO: FIX LATER
             NCollision.Contact contact = c.contact[0];
 
-            // Find the velocity in the direction of the contact
-            c.closingVelocity = CalcClosingVel(partOne, partTwo);
-
             // Check if the collision needs to be resolved
-            if(c.closingVelocity > 0)
+            if (c.closingVelocity > 0)
             {
                 // If the contact is separating or stationary, no impulse is required
                 return;
@@ -76,6 +80,18 @@ namespace NS_Collision
 
             // Calculate new separating velocity
             float newClosingVelcoity = -c.closingVelocity * contact.coeffRestitution;
+
+            Vector2 accCausedVelocity = partOne.movement.acceleration - partTwo.movement.acceleration;
+            float accCausedClosingVelocity = Vector2.Dot(accCausedVelocity, contact.normal) * duration;
+
+            if(accCausedClosingVelocity < 0)
+            {
+                newClosingVelcoity += contact.coeffRestitution * accCausedClosingVelocity;
+
+                if(newClosingVelcoity < 0)
+                    newClosingVelcoity = 0;
+            }
+
             float deltaVelocity = newClosingVelcoity - c.closingVelocity;
 
             // Apply the change in velocity to each object in proportion to
@@ -88,7 +104,7 @@ namespace NS_Collision
 
             // Calculate the impulse to apply
             float impulse = deltaVelocity / totalInverseMass;
-            
+
             // Find the amount of impulse per unit of inverse mass
             Vector2 impulsePerInvMass = contact.normal * impulse;
 
@@ -96,6 +112,62 @@ namespace NS_Collision
             // and are proportional to the inverse mass
             partOne.movement.velocity = partOne.movement.velocity + impulsePerInvMass * partOne.massInv;
             partTwo.movement.velocity = partTwo.movement.velocity + impulsePerInvMass * -partTwo.massInv;
+        }
+
+        public static void ResolveCollision(NCollision collision, float duration)
+        {
+            ResolveVelocity(collision, duration);
+            ResolveInterpenetration(collision, duration);
+        }
+
+        private static void ResolveInterpenetration(NCollision collision, float duration)
+        {            
+            Particle2DComponent partOne = collision.hullOne.particle;
+            Particle2DComponent partTwo = collision.hullTwo.particle;
+
+            // The movement of each object is based on their inverse mass
+            // So, total that value
+            float totalInverseMass = partOne.massInv + partTwo.massInv;
+
+            // If all particles have infinite mass, then we do nothing
+            if(totalInverseMass <= 0)
+                return;
+            
+            // Check out results for each contact in the collision contact list
+            foreach(NCollision.Contact contact in collision.contact)
+            {
+                // Continue to the next contact if we have no penetration
+                if(contact.depth <= 0)
+                    continue;
+                
+                // Find the amount of penetration resolution per unit of inverse mass
+                Vector2 movePerIMass = contact.normal * (contact.depth / totalInverseMass);
+
+                // Calculate the movement amounts
+                Vector2 partOneMoveAmount = movePerIMass * partOne.massInv;
+                Vector2 partTwoMoveAmount = movePerIMass * -partTwo.massInv;
+
+                partOne.movement.position = partOne.movement.position + partOneMoveAmount;
+                partTwo.movement.position = partTwo.movement.position + partTwoMoveAmount;
+            }
+            
+        }
+
+        // Check to ensure that a collision has been properly set up.
+        private static bool VerifyCollision(NCollision collision)
+        {
+            // ensure the collision has a valid closing velocity
+            if(collision.closingVelocity.Equals(null))
+                return false;
+            // Ensure the collision has both hulls assigned
+            if(!collision.hullOne && !collision.hullTwo)
+                return false;
+            // Ensure the collision has at least one contact point
+            if(collision.contactCount <= 0)
+                return false;
+
+            // Return true if all checks have passed
+            return true;
         }
     }
 }
