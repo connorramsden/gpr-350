@@ -453,6 +453,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 50852195}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &65189823 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 110440, guid: c9816fa979b06ba4e9c222b529370cc2,
+    type: 3}
+  m_PrefabInstance: {fileID: 1145425126}
+  m_PrefabAsset: {fileID: 0}
 --- !u!198 &68706444 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 6374429909032422641, guid: c9816fa979b06ba4e9c222b529370cc2,
@@ -3520,6 +3526,7 @@ GameObject:
   - component: {fileID: 1276721315}
   - component: {fileID: 1276721316}
   - component: {fileID: 1276721317}
+  - component: {fileID: 1276721318}
   m_Layer: 0
   m_Name: Particle System
   m_TagString: Untagged
@@ -3565,6 +3572,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94f294430a45d9f4e8297830e94f5a85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1276721318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276721314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e0ca25f9fe8e749a6f0efaf6d5e9ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 65189823}
 --- !u!1 &1277771590
 GameObject:
   m_ObjectHideFlags: 0
@@ -3577,7 +3597,7 @@ GameObject:
   - component: {fileID: 1277771593}
   - component: {fileID: 1277771592}
   m_Layer: 5
-  m_Name: Lose Text
+  m_Name: Result Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4644,6 +4664,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerHealthBar: {fileID: 1866329143}
   scoreText: {fileID: 651282163}
+  resultText: {fileID: 1277771592}
   ResultPanel: {fileID: 46849201}
   shipRearThruster: {fileID: 958354576}
   rearThrustAnim: {fileID: 958354579}
@@ -5207,6 +5228,10 @@ PrefabInstance:
     - target: {fileID: 151664, guid: fa49e460baf435b4780da7196c2ab473, type: 3}
       propertyPath: m_TagString
       value: Particle
+      objectReference: {fileID: 0}
+    - target: {fileID: 151664, guid: fa49e460baf435b4780da7196c2ab473, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 494976, guid: fa49e460baf435b4780da7196c2ab473, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6412,6 +6437,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Particle
       objectReference: {fileID: 0}
+    - target: {fileID: 151664, guid: fa49e460baf435b4780da7196c2ab473, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 494976, guid: fa49e460baf435b4780da7196c2ab473, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.31
@@ -6657,6 +6686,10 @@ PrefabInstance:
     - target: {fileID: 151664, guid: fa49e460baf435b4780da7196c2ab473, type: 3}
       propertyPath: m_TagString
       value: Particle
+      objectReference: {fileID: 0}
+    - target: {fileID: 151664, guid: fa49e460baf435b4780da7196c2ab473, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 494976, guid: fa49e460baf435b4780da7196c2ab473, type: 3}
       propertyPath: m_LocalPosition.x

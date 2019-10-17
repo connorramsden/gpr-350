@@ -10,9 +10,11 @@ public class PlayerStats : MonoBehaviour
     public static float playerHealth;
     public static bool isPlayerAlive;
     public static float playerScore;
+    public static bool didPlayerWin;
 
     public Image playerHealthBar;
     public Text scoreText;
+    public Text resultText;
     public GameObject ResultPanel;
 
     public GameObject shipRearThruster;
@@ -56,6 +58,8 @@ public class PlayerStats : MonoBehaviour
         playerHealth = PLAYER_HEALTH_MAX;
         // The player has the maximum possible score
         playerScore = 1000.0f;
+        // The player has not won the game yet
+        didPlayerWin = false;
     }
 
     // Initialize external variables
@@ -104,7 +108,7 @@ public class PlayerStats : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (isPlayerAlive)
+        if (isPlayerAlive && !didPlayerWin)
         {
             // Update the health bar based on the player's current health
             playerHealthBar.fillAmount = playerHealth / PLAYER_HEALTH_MAX;
@@ -117,9 +121,19 @@ public class PlayerStats : MonoBehaviour
 
             scoreText.text = "Score: " + playerScore;
         }
-        else
+        else if(!isPlayerAlive && !didPlayerWin)
         {
             Camera.main.transform.position = new Vector3(0.0f, 0.0f, 10.0f);
+            resultText.text = "You Lose.";
+            resultText.color = Color.red;
+            ResultPanel.SetActive(true);
+        }
+        else if (didPlayerWin)
+        {
+            Camera.main.transform.position = new Vector3(0.0f, 0.0f, 10.0f);
+
+            resultText.text = "You Win!";
+            resultText.color = Color.blue;
             ResultPanel.SetActive(true);
         }
     }
