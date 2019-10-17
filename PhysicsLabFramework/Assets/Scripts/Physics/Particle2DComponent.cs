@@ -121,7 +121,7 @@ public class Particle2DComponent : MonoBehaviour
     private Vector2 f_gravity, f_normal, f_sliding, f_friction;
 
     // Adds the passed force to the current force vector
-    private void AddForce(Vector2 newForce)
+    public void AddForce(Vector2 newForce)
     {
         // D'Alembert's Principle (French Guy!)
         force += newForce;

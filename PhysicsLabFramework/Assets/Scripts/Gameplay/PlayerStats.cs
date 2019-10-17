@@ -10,15 +10,27 @@ public class PlayerStats : MonoBehaviour
     public static float playerHealth;
     public static bool isPlayerAlive;
     public static float playerScore;
+    public static int asteroidsDestroyed;
+    public static float topSpeed;
 
     public Image playerHealthBar;
     public Text scoreText;
+    public Text destroyedText;
+    public Text speedText;
+
+    public GameObject ResultPanel;
+
+    public GameObject shipRearThruster;
+
+    public Animator rearThrustAnim;
+    public ParticleSystem leftThrustAnim;
+    public ParticleSystem rightThrustAnim;
 
     // The player will take damage when called
     public static void TakeDamage()
     {
         // If the player has health to spare, knock some off
-        if(playerHealth > 0f)
+        if (playerHealth > 0f)
         {
             // Player takes damage equal to 1% of max health
             playerHealth -= PLAYER_HEALTH_MAX * 0.1f;
@@ -43,6 +55,10 @@ public class PlayerStats : MonoBehaviour
         playerHealth = PLAYER_HEALTH_MAX;
         // The player has no existing score
         playerScore = 0.0f;
+        // The player has not destroyed any asteroids
+        asteroidsDestroyed = 0;
+        // The player has not hit a record speed
+        topSpeed = 0.0f;
     }
 
     // Initialize external variables
@@ -52,19 +68,64 @@ public class PlayerStats : MonoBehaviour
         playerHealthBar.fillAmount = 1f;
         // Display the player's score on-screen
         scoreText.text = "Score: " + playerScore;
+        // The result screen should not be visible initially
+        if (ResultPanel.activeSelf)
+            ResultPanel.SetActive(false);
     }
 
-    private void LateUpdate() 
+    private void Update()
     {
-        // Update the health bar based on the player's current health
-        playerHealthBar.fillAmount = playerHealth / PLAYER_HEALTH_MAX;
-        
-        // Update the player health bar color to red in critical condition
-        if(playerHealth <= PLAYER_HEALTH_MAX * 0.40f && playerHealthBar.color != Color.red)
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            playerHealthBar.color = Color.red;
+            shipRearThruster.SetActive(true);
+            rearThrustAnim.SetBool("PlayRearThrusterAnimation", true);
+        }
+        else
+        {
+            rearThrustAnim.SetBool("PlayRearThrusterAnimation", false);
+            shipRearThruster.SetActive(false);
         }
 
-        scoreText.text = "Score: " + playerScore;
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            rightThrustAnim.Play();
+        }
+        else
+        {
+            rightThrustAnim.Stop();
+        }
+
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            leftThrustAnim.Play();
+        }
+        else
+        {
+            leftThrustAnim.Stop();
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (isPlayerAlive)
+        {
+            // Update the health bar based on the player's current health
+            playerHealthBar.fillAmount = playerHealth / PLAYER_HEALTH_MAX;
+
+            // Update the player health bar color to red in critical condition
+            if (playerHealth <= PLAYER_HEALTH_MAX * 0.40f && playerHealthBar.color != Color.red)
+            {
+                playerHealthBar.color = Color.red;
+            }
+
+            scoreText.text = "Score: " + playerScore;
+        }
+        else
+        {
+            Camera.main.transform.position = new Vector3(0.0f, 0.0f, 10.0f);
+            ResultPanel.SetActive(true);
+            destroyedText.text = "Asteroids\n Destroyed: " + asteroidsDestroyed;
+            speedText.text = "Top Speed: " + topSpeed;
+        }
     }
 }

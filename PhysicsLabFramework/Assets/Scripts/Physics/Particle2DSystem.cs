@@ -13,17 +13,20 @@ public class Particle2DSystem : MonoBehaviour
         {
             Particle2DComponent p2d = particle.GetComponent<Particle2DComponent>();
 
-            if (p2d.shouldMove)
+            if (particle)
             {
-                p2d.UpdatePosition(dt);
-                p2d.ApplyForces();
-                p2d.UpdateAcceleration();
-            }
-            if (p2d.shouldRotate)
-            {
-                p2d.UpdateRotation(dt);
-                p2d.ApplyTorque();
-                p2d.UpdateAngularAcceleration();
+                if (p2d.shouldMove)
+                {
+                    p2d.UpdatePosition(dt);
+                    p2d.ApplyForces();
+                    p2d.UpdateAcceleration();
+                }
+                if (p2d.shouldRotate)
+                {
+                    p2d.UpdateRotation(dt);
+                    p2d.ApplyTorque();
+                    p2d.UpdateAngularAcceleration();
+                }
             }
         }
     }
@@ -41,7 +44,7 @@ public class Particle2DSystem : MonoBehaviour
         // Iterate over the particleList and check vs all objects
         foreach (GameObject particleTwo in particleList)
         {
-            if (particleOne != particleTwo)
+            if (particleOne != particleTwo && !particleTwo.name.Contains("Bullet"))
             {
                 Particle2DComponent p2dTwo = particleTwo.GetComponent<Particle2DComponent>();
 
@@ -73,7 +76,7 @@ public class Particle2DSystem : MonoBehaviour
 
         foreach (GameObject particleTwo in particleList)
         {
-            if (particleOne != particleTwo)
+            if (particleOne != particleTwo && !particleTwo.name.Contains("Bullet"))
             {
                 Particle2DComponent p2dTwo = particleTwo.GetComponent<Particle2DComponent>();
 
@@ -125,11 +128,22 @@ public class Particle2DSystem : MonoBehaviour
                 CollisionResolutionManager.ResolveCollision(collisionToResolve, 1.0f);
 
                 // Make the player take damage on collision
-                if(particle.CompareTag("Player"))
+                if (particle.CompareTag("Player"))
                 {
                     PlayerStats.TakeDamage();
                 }
             }
+        }
+    }
+
+    private void GetNewParticles()
+    {
+        var particles = GameObject.FindGameObjectsWithTag("Particle");
+
+        foreach (var particle in particles)
+        {
+            if (!particleList.Contains(particle))
+                particleList.Add(particle);
         }
     }
 
@@ -141,8 +155,15 @@ public class Particle2DSystem : MonoBehaviour
 
     private void Start()
     {
-        // Snag all GO's with tag Particle for particleList
-        particleList.AddRange(GameObject.FindGameObjectsWithTag("Particle"));
+        var particles = GameObject.FindGameObjectsWithTag("Particle");
+
+        // Add all particles
+        foreach (var particle in particles)
+        {
+            particleList.Add(particle);
+        }
+
+        // Add the player
         particleList.Add(GameObject.FindGameObjectWithTag("Player"));
 
         foreach (GameObject particle in particleList)
@@ -161,5 +182,10 @@ public class Particle2DSystem : MonoBehaviour
 
         UpdateAllParticles(dt);
         CheckCollisions();
+    }
+
+    private void LateUpdate()
+    {
+        GetNewParticles();
     }
 }
