@@ -44,7 +44,6 @@ namespace NS_Collision
         public static float CalcClosingVel(Particle2DComponent partOne, Particle2DComponent partTwo)
         {
             // vc = NEG(velOne - velTwo) DOT norm(posOne - posTwo) 
-
             // Step 01: Get relative velocity (velOne - velTwo)
             Vector2 relativeVelocity = partOne.movement.velocity - partTwo.movement.velocity;
             // Step 02.a: Get relative position (posOne - posTwo)
@@ -58,13 +57,6 @@ namespace NS_Collision
         // Formulae from Millington 2nd Ed. pg. 120-121
         private static void ResolveVelocity(NCollision c, float duration)
         {
-            // Ensure the collision is valid
-            if(!VerifyCollision(c))
-            {
-                Debug.LogError("Collision is invalid");
-                return;
-            }
-
             Particle2DComponent partOne = c.hullOne.particle;
             Particle2DComponent partTwo = c.hullTwo.particle;
 
@@ -84,11 +76,11 @@ namespace NS_Collision
             Vector2 accCausedVelocity = partOne.movement.acceleration - partTwo.movement.acceleration;
             float accCausedClosingVelocity = Vector2.Dot(accCausedVelocity, contact.normal) * duration;
 
-            if(accCausedClosingVelocity < 0)
+            if (accCausedClosingVelocity < 0)
             {
                 newClosingVelcoity += contact.coeffRestitution * accCausedClosingVelocity;
 
-                if(newClosingVelcoity < 0)
+                if (newClosingVelcoity < 0)
                     newClosingVelcoity = 0;
             }
 
@@ -114,14 +106,8 @@ namespace NS_Collision
             partTwo.movement.velocity = partTwo.movement.velocity + impulsePerInvMass * -partTwo.massInv;
         }
 
-        public static void ResolveCollision(NCollision collision, float duration)
-        {
-            ResolveVelocity(collision, duration);
-            ResolveInterpenetration(collision, duration);
-        }
-
         private static void ResolveInterpenetration(NCollision collision, float duration)
-        {            
+        {
             Particle2DComponent partOne = collision.hullOne.particle;
             Particle2DComponent partTwo = collision.hullTwo.particle;
 
@@ -130,16 +116,16 @@ namespace NS_Collision
             float totalInverseMass = partOne.massInv + partTwo.massInv;
 
             // If all particles have infinite mass, then we do nothing
-            if(totalInverseMass <= 0)
+            if (totalInverseMass <= 0)
                 return;
-            
+
             // Check out results for each contact in the collision contact list
-            foreach(NCollision.Contact contact in collision.contact)
+            foreach (NCollision.Contact contact in collision.contact)
             {
                 // Continue to the next contact if we have no penetration
-                if(contact.depth <= 0)
+                if (contact.depth <= 0)
                     continue;
-                
+
                 // Find the amount of penetration resolution per unit of inverse mass
                 Vector2 movePerIMass = contact.normal * (contact.depth / totalInverseMass);
 
@@ -150,24 +136,43 @@ namespace NS_Collision
                 partOne.movement.position = partOne.movement.position + partOneMoveAmount;
                 partTwo.movement.position = partTwo.movement.position + partTwoMoveAmount;
             }
-            
+
         }
 
         // Check to ensure that a collision has been properly set up.
         private static bool VerifyCollision(NCollision collision)
         {
             // ensure the collision has a valid closing velocity
-            if(collision.closingVelocity.Equals(null))
+            if (collision.closingVelocity.Equals(null))
+            {
+                Debug.LogError("Collision invalid: no closing velocity");
                 return false;
+            }
             // Ensure the collision has both hulls assigned
-            if(!collision.hullOne && !collision.hullTwo)
+            if (!collision.hullOne && !collision.hullTwo)
+            {
+                Debug.LogError("Collision invalid: hulls not properly assigned");
                 return false;
+            }
             // Ensure the collision has at least one contact point
-            if(collision.contactCount <= 0)
+            if (collision.contactCount <= 0)
+            {
+                Debug.LogError("Collision invalid: no contact points assigned");
                 return false;
+            }
 
             // Return true if all checks have passed
             return true;
+        }
+
+        public static void ResolveCollision(NCollision collision, float duration)
+        {
+            // Ensure the collision is valid
+            if (!VerifyCollision(collision))
+                return;
+
+            ResolveVelocity(collision, duration);
+            ResolveInterpenetration(collision, duration);
         }
     }
 }

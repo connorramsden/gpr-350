@@ -4,7 +4,7 @@
 // Require a Particle2D Movement & Rotation component on Particle2D objects
 [RequireComponent(typeof(Particle2DMovement), typeof(Particle2DRotation))]
 public class Particle2DComponent : MonoBehaviour
-{
+{    
     // Stores variables for a particle's movement
     public Particle2DMovement movement
     {
@@ -55,6 +55,8 @@ public class Particle2DComponent : MonoBehaviour
 
     // Values necessary for Torque / Inertia / Rotation
     public float length, width, height, radius;
+
+    private bool isPlayer = false;
 
     // Return a particle's starting mass
     public float GetStartingMass()
@@ -111,20 +113,6 @@ public class Particle2DComponent : MonoBehaviour
             return transform.position;
     }
 
-    // Returns the 'Facing' float for a particle
-    // Borrowed from DeanLib Vector2D
-    public float GetFacing()
-    {
-        return Mathf.Atan2(rotation.rotation, -rotation.rotation);
-    }
-
-    // Uses the Facing float to get a directional vector
-    public Vector2 GetHeadingVector()
-    {
-        float facing = GetFacing() - Mathf.PI / 2; // Pi / 2 compensates for screen position being up, not right
-        return new Vector2(Mathf.Cos(facing), Mathf.Sin(facing));
-    }
-
     // Lab 02 Step 02 - Declaring Force Variables
     // Total force acting on a particle
     private Vector2 force;
@@ -151,14 +139,16 @@ public class Particle2DComponent : MonoBehaviour
             AddForce(f_gravity);
         }
 
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        // If the unit is the player, gravity can be applied at the front or back
+        // using W&S, or Up&Down Arrow keys
+        if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && isPlayer)
         {
-            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, GetHeadingVector());
+            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -transform.up);
             AddForce(f_gravity);
         }
-        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        else if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && isPlayer)
         {
-            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -GetHeadingVector());
+            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, transform.up);
             AddForce(f_gravity);
         }
 
@@ -212,11 +202,13 @@ public class Particle2DComponent : MonoBehaviour
 
         Vector2 momentArm = (rotation.pointOfAppliedForce - rotation.worldCenterOfMass);
 
-        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
+        // Torque can be applied to the player on either side
+        // by pressing A&D or Left&Right ArrowKeys
+        if ((Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) && isPlayer)
         {
             rotation.torque += momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
         }
-        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
+        if ((Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) && isPlayer)
         {
             rotation.torque -= momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
         }
@@ -251,6 +243,9 @@ public class Particle2DComponent : MonoBehaviour
         // Update velocity based on acceleration
         movement.velocity += movement.acceleration * dt;
 
+        // Wrap the object's position to the screen bounds
+        Screenwrapper.WrapToScreen(ref movement.position);
+
         // Update GO position based on calculated rotational physics
         transform.position = movement.position;
     }
@@ -277,10 +272,15 @@ public class Particle2DComponent : MonoBehaviour
     private void Awake()
     {
         // Upon Awake(), set the object's tag to Particle
-        // if it is not already set
-        if (!gameObject.CompareTag("Particle"))
+        // if it is not already set, but ensure the Player tag will not be overriden
+        if (!gameObject.CompareTag("Particle") && !gameObject.CompareTag("Player"))
         {
             gameObject.tag = "Particle";
+        }
+
+        if (gameObject.CompareTag("Player"))
+        {
+            isPlayer = true;
         }
 
         movement = gameObject.GetComponent<Particle2DMovement>();
@@ -292,7 +292,10 @@ public class Particle2DComponent : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.green;
-        Gizmos.DrawRay(movement.position, GetHeadingVector());
+        if (movement)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawRay(movement.position, transform.forward);
+        }
     }
 }

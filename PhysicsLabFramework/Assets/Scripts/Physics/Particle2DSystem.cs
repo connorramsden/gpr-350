@@ -44,7 +44,7 @@ public class Particle2DSystem : MonoBehaviour
             if (particleOne != particleTwo)
             {
                 Particle2DComponent p2dTwo = particleTwo.GetComponent<Particle2DComponent>();
-                
+
                 if (particleTwo.TryGetComponent(out CircleCollisionHull2D otherCircle))
                 {
                     isColliding = cch2d.TestCollisionVsCircle(otherCircle, out collision);
@@ -53,7 +53,7 @@ public class Particle2DSystem : MonoBehaviour
                 {
                     isColliding = cch2d.TestCollisionVsAABB(otherAABB, out collision);
                 }
-                
+
                 collision.closingVelocity = CollisionResolutionManager.CalcClosingVel(p2dOne, p2dTwo);
             }
         }
@@ -122,7 +122,7 @@ public class Particle2DSystem : MonoBehaviour
 
             if (isColliding)
             {
-                CollisionResolutionManager.ResolveCollision(collisionToResolve, 0.0f);
+                CollisionResolutionManager.ResolveCollision(collisionToResolve, 1.0f);
             }
         }
     }
@@ -137,6 +137,7 @@ public class Particle2DSystem : MonoBehaviour
     {
         // Snag all GO's with tag Particle for particleList
         particleList.AddRange(GameObject.FindGameObjectsWithTag("Particle"));
+        particleList.Add(GameObject.FindGameObjectWithTag("Player"));
 
         foreach (GameObject particle in particleList)
         {
