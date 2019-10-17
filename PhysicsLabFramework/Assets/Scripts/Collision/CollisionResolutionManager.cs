@@ -46,10 +46,8 @@ namespace NS_Collision
             // vc = NEG(velOne - velTwo) DOT norm(posOne - posTwo) 
             // Step 01: Get relative velocity (velOne - velTwo)
             Vector2 relativeVelocity = partOne.movement.velocity - partTwo.movement.velocity;
-            // Step 02.a: Get relative position (posOne - posTwo)
-            Vector2 relativePosition = partOne.GetPosition() - partTwo.GetPosition();
-            // Step 02.b: Normalize the relative position
-            relativePosition.Normalize();
+            // Step 02: Get relative position norm(posOne - posTwo)
+            Vector2 relativePosition = (partOne.GetPosition() - partTwo.GetPosition()).normalized;
             // Step 03: Calculate closing velocity
             return -Vector2.Dot(relativeVelocity, relativePosition);
         }
@@ -159,6 +157,25 @@ namespace NS_Collision
             {
                 Debug.LogError("Collision invalid: no contact points assigned");
                 return false;
+            }
+            
+            foreach(NCollision.Contact contact in collision.contact)
+            {
+                if(contact.depth.Equals(null))
+                {
+                    Debug.LogError("Collision invalid: improper depth");
+                    return false;
+                }
+                if(contact.normal.magnitude.Equals(null))
+                {
+                    Debug.LogError("Collision invalid: improper normal");
+                    return false;
+                }
+                if(contact.pointOfContact.magnitude.Equals(null))
+                {
+                    Debug.LogError("Collision invalid: improper point of contact");
+                    return false;
+                }
             }
 
             // Return true if all checks have passed

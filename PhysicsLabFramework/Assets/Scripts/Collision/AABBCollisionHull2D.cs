@@ -21,14 +21,14 @@ namespace NS_Collision
             get; private set;
         }
 
-        public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out NCollision c)
+        public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out NCollision collision)
         {
             /// <see cref="CircleCollisionHull2D.TestCollisionVsAABB(AABBCollisionHull2D)"/>
 
             // Create a new NCollision
             // Assign hulls and instantiate the contact list
             // Status defaults to false
-            c = new NCollision
+            collision = new NCollision
             {
                 hullOne = this,
                 hullTwo = other,
@@ -52,22 +52,32 @@ namespace NS_Collision
 
             // Step 05: Check that the closest point is within the AABB box
             if (distance < otherRadSqr)
-                c.status = true;
-            
+                collision.status = true;
+
+            NCollision.Contact contact = new NCollision.Contact
+            {
+                pointOfContact = closestPoint,
+                coeffRestitution = 1.0f,
+                normal = (collision.hullOne.particle.movement.position - collision.hullTwo.particle.movement.position).normalized,
+                depth = distance
+            };
+
+            collision.contact.Add(contact);
+
             // Finish setting up the collision
-            c.contactCount = c.contact.Count;
-            
-            return c.status;
+            collision.contactCount = collision.contact.Count;
+
+            return collision.status;
         }
 
-        public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision c)
+        public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision collision)
         {
             // Pass Condition: If, for all axes (X & Y), the MaxExtent of This is overlapping the MinExtent of Other
 
             // Create a new NCollision
             // Assign hulls and instantiate the contact list
             // Status defaults to false
-            c = new NCollision
+            collision = new NCollision
             {
                 hullOne = this,
                 hullTwo = other,
@@ -86,12 +96,12 @@ namespace NS_Collision
             // Check that all extents are passing properly
             // If yes, return true, else, return false
             if (diffX && diffY)
-                c.status = true;
+                collision.status = true;
 
             // Finish setting up the collision
-            c.contactCount = c.contact.Count;
+            collision.contactCount = collision.contact.Count;
 
-            return c.status;
+            return collision.status;
         }
 
         // Called in an Update loop to re-define min & max extents
