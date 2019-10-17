@@ -128,7 +128,7 @@ public class PlayerStats : MonoBehaviour
             resultText.color = Color.red;
             ResultPanel.SetActive(true);
         }
-        else if (didPlayerWin)
+        else if (didPlayerWin && isPlayerAlive)
         {
             Camera.main.transform.position = new Vector3(0.0f, 0.0f, 10.0f);
 

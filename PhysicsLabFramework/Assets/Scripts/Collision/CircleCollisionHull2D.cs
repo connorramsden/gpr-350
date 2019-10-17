@@ -47,6 +47,13 @@ namespace NS_Collision
                 collision.status = true;
             }
 
+            NCollision.Contact contact = new NCollision.Contact
+            {
+                
+            };
+
+            collision.contact.Add(contact);
+
             // Finish setting up the collision
             collision.contactCount = collision.contact.Count;
 
