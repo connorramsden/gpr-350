@@ -123,6 +123,12 @@ public class Particle2DSystem : MonoBehaviour
             if (isColliding)
             {
                 CollisionResolutionManager.ResolveCollision(collisionToResolve, 1.0f);
+
+                // Make the player take damage on collision
+                if(particle.CompareTag("Player"))
+                {
+                    PlayerStats.TakeDamage();
+                }
             }
         }
     }
