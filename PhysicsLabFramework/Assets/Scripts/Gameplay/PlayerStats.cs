@@ -10,18 +10,12 @@ public class PlayerStats : MonoBehaviour
     public static float playerHealth;
     public static bool isPlayerAlive;
     public static float playerScore;
-    public static int asteroidsDestroyed;
-    public static float topSpeed;
 
     public Image playerHealthBar;
     public Text scoreText;
-    public Text destroyedText;
-    public Text speedText;
-
     public GameObject ResultPanel;
 
     public GameObject shipRearThruster;
-
     public Animator rearThrustAnim;
     public ParticleSystem leftThrustAnim;
     public ParticleSystem rightThrustAnim;
@@ -32,12 +26,19 @@ public class PlayerStats : MonoBehaviour
         // If the player has health to spare, knock some off
         if (playerHealth > 0f)
         {
-            // Player takes damage equal to 1% of max health
-            playerHealth -= PLAYER_HEALTH_MAX * 0.1f;
+            // Player takes damage equal to .01% of max health
+            playerHealth -= PLAYER_HEALTH_MAX * 0.01f;
+            // Player loses some score upon taking damage
+            RemoveScore();
         }
         // Otherwise, the player is dead
         else
             isPlayerAlive = false;
+    }
+
+    private static void RemoveScore()
+    {
+        playerScore -= 10.0f;
     }
 
     // Add to the player's score depending on
@@ -53,12 +54,8 @@ public class PlayerStats : MonoBehaviour
         // The player is alive and has max health
         isPlayerAlive = true;
         playerHealth = PLAYER_HEALTH_MAX;
-        // The player has no existing score
-        playerScore = 0.0f;
-        // The player has not destroyed any asteroids
-        asteroidsDestroyed = 0;
-        // The player has not hit a record speed
-        topSpeed = 0.0f;
+        // The player has the maximum possible score
+        playerScore = 1000.0f;
     }
 
     // Initialize external variables
@@ -124,8 +121,6 @@ public class PlayerStats : MonoBehaviour
         {
             Camera.main.transform.position = new Vector3(0.0f, 0.0f, 10.0f);
             ResultPanel.SetActive(true);
-            destroyedText.text = "Asteroids\n Destroyed: " + asteroidsDestroyed;
-            speedText.text = "Top Speed: " + topSpeed;
         }
     }
 }

@@ -44,7 +44,7 @@ public class Particle2DSystem : MonoBehaviour
         // Iterate over the particleList and check vs all objects
         foreach (GameObject particleTwo in particleList)
         {
-            if (particleOne != particleTwo && !particleTwo.name.Contains("Bullet"))
+            if (particleOne != particleTwo)
             {
                 Particle2DComponent p2dTwo = particleTwo.GetComponent<Particle2DComponent>();
 
@@ -55,6 +55,12 @@ public class Particle2DSystem : MonoBehaviour
                 else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
                 {
                     isColliding = cch2d.TestCollisionVsAABB(otherAABB, out collision);
+                }
+
+                // Make the player take damage on collision
+                if (isColliding && (particleOne.CompareTag("Player") || particleTwo.CompareTag("Player")))
+                {
+                    PlayerStats.TakeDamage();
                 }
 
                 collision.closingVelocity = CollisionResolutionManager.CalcClosingVel(p2dOne, p2dTwo);
@@ -76,7 +82,7 @@ public class Particle2DSystem : MonoBehaviour
 
         foreach (GameObject particleTwo in particleList)
         {
-            if (particleOne != particleTwo && !particleTwo.name.Contains("Bullet"))
+            if (particleOne != particleTwo)
             {
                 Particle2DComponent p2dTwo = particleTwo.GetComponent<Particle2DComponent>();
 
@@ -87,6 +93,12 @@ public class Particle2DSystem : MonoBehaviour
                 else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
                 {
                     isColliding = aabb2d.TestCollisionVsAABB(otherAABB, out collision);
+                }
+
+                // Make the player take damage on collision
+                if (isColliding && (particleOne.CompareTag("Player") || particleTwo.CompareTag("Player")))
+                {
+                    PlayerStats.TakeDamage();
                 }
 
                 collision.closingVelocity = CollisionResolutionManager.CalcClosingVel(p2dOne, p2dTwo);
@@ -126,12 +138,6 @@ public class Particle2DSystem : MonoBehaviour
             if (isColliding)
             {
                 CollisionResolutionManager.ResolveCollision(collisionToResolve, 1.0f);
-
-                // Make the player take damage on collision
-                if (particle.CompareTag("Player"))
-                {
-                    PlayerStats.TakeDamage();
-                }
             }
         }
     }

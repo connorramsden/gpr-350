@@ -91,7 +91,6 @@ GameObject:
   - component: {fileID: 3339672207752449311}
   - component: {fileID: 3819179519613677035}
   - component: {fileID: 903251226408513595}
-  - component: {fileID: 1850278692096645062}
   m_Layer: 0
   m_Name: Ship_1
   m_TagString: Untagged
@@ -114,7 +113,6 @@ Transform:
   - {fileID: 7584873176149820396}
   - {fileID: 3951157251143644074}
   - {fileID: 6537514795755583053}
-  - {fileID: 2167581841535105814}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -191,18 +189,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56764fb5462e83b4c93234228dddb622, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1850278692096645062
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 110440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2dc208074b64e2b4a8fdccc1e5a2e47a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6703686100692143332
@@ -306,36 +292,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &8536120570051555898
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2167581841535105814}
-  m_Layer: 0
-  m_Name: BulletSpanwer
-  m_TagString: Untagged
-  m_Icon: {fileID: 7422848464349959988, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2167581841535105814
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8536120570051555898}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.7, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
-  m_Children: []
-  m_Father: {fileID: 439242}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &3953000730685928636
 PrefabInstance:
   m_ObjectHideFlags: 0

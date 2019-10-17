@@ -15,7 +15,7 @@ namespace NS_Collision
         }
 
         // Architecture Style 2 //
-        public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out NCollision c)
+        public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out NCollision collision)
         {
             // collision if distance between centers is <= sum of radii
             // optimized collision if (distance between centers)^2 <= (sum of radii)^2       
@@ -23,7 +23,7 @@ namespace NS_Collision
             // Create a new NCollision
             // Assign hulls and instantiate the contact list
             // Status defaults to false
-            c = new NCollision
+            collision = new NCollision
             {
                 hullOne = this,
                 hullTwo = other,
@@ -44,16 +44,16 @@ namespace NS_Collision
             // Step 06: DO THE TEST: distSq <= sumSq
             if (distSq <= sumSq)
             {
-                c.status = true;
+                collision.status = true;
             }
 
             // Finish setting up the collision
-            c.contactCount = c.contact.Count;
+            collision.contactCount = collision.contact.Count;
 
-            return c.status;
+            return collision.status;
         }
 
-        public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision c)
+        public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision collision)
         {
             // find the closest point to the cicle on the box
             // done by clamping center of circle to be within box dimensions
@@ -62,7 +62,7 @@ namespace NS_Collision
             // Create a new NCollision
             // Assign hulls and instantiate the contact list
             // Status defaults to false
-            c = new NCollision
+            collision = new NCollision
             {
                 hullOne = this,
                 hullTwo = other,
@@ -86,12 +86,22 @@ namespace NS_Collision
 
             // Step 05: Check to see if we're in contact
             if (distance < radius * radius)
-                c.status = true;
+                collision.status = true;
+
+            NCollision.Contact contact = new NCollision.Contact
+            {
+                pointOfContact = closestPoint,
+                coeffRestitution = 0.25f,
+                normal = (collision.hullOne.particle.movement.position - collision.hullTwo.particle.movement.position).normalized,
+                depth = distance
+            };
+
+            collision.contact.Add(contact);
 
             // Finish setting up the collision
-            c.contactCount = c.contact.Count;
+            collision.contactCount = collision.contact.Count;
 
-            return c.status;
+            return collision.status;
         }
 
         // Initialize local variables

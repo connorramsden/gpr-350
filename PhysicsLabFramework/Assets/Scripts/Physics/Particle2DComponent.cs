@@ -243,8 +243,11 @@ public class Particle2DComponent : MonoBehaviour
         // Update velocity based on acceleration
         movement.velocity += movement.acceleration * dt;
 
-        // Wrap the object's position to the screen bounds
-        Screenwrapper.WrapToScreen(ref movement.position);
+        // Clamp velocity below 15
+        if(Mathf.Abs(movement.velocity.x) > 15.0f)
+            movement.velocity.x = 15.0f;
+        if(Mathf.Abs(movement.velocity.y) > 15.0f)
+            movement.velocity.x = 15.0f;
 
         // Update GO position based on calculated rotational physics
         transform.position = movement.position;

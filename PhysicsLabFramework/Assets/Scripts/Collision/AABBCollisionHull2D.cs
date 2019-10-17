@@ -57,7 +57,7 @@ namespace NS_Collision
             NCollision.Contact contact = new NCollision.Contact
             {
                 pointOfContact = closestPoint,
-                coeffRestitution = 1.0f,
+                coeffRestitution = 0.25f,
                 normal = (collision.hullOne.particle.movement.position - collision.hullTwo.particle.movement.position).normalized,
                 depth = distance
             };
@@ -97,6 +97,25 @@ namespace NS_Collision
             // If yes, return true, else, return false
             if (diffX && diffY)
                 collision.status = true;
+
+            NCollision.Contact contactOne = new NCollision.Contact
+            {
+                pointOfContact = (minExtent - otherMin),
+                coeffRestitution = 0.25f,
+                depth = (minExtent - otherMin).sqrMagnitude,
+                normal = (collision.hullOne.particle.movement.position - collision.hullTwo.particle.movement.position).normalized
+            };
+
+            NCollision.Contact contactTwo = new NCollision.Contact
+            {
+                pointOfContact = (maxExtent - otherMax),
+                coeffRestitution = 0.25f,
+                depth = (maxExtent - otherMax).sqrMagnitude,
+                normal = (collision.hullOne.particle.movement.position - collision.hullTwo.particle.movement.position).normalized
+            };
+
+            collision.contact.Add(contactOne);
+            collision.contact.Add(contactTwo);
 
             // Finish setting up the collision
             collision.contactCount = collision.contact.Count;
