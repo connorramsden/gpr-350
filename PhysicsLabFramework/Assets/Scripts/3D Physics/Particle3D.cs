@@ -25,7 +25,7 @@ namespace Physics3D
             get; private set;
         }
 
-        public Quaternion rotation
+        public NQuaternion rotation
         {
             get; private set;
         }
@@ -68,7 +68,7 @@ namespace Physics3D
         {
         }
 
-        // Update's a particle's rotation based on Kinematic integration
+        // Updates a particle's rotation based on Kinematic integration
         public void UpdateRotationKinematic(float dt)
         {
         }
