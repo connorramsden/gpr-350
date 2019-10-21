@@ -142,5 +142,10 @@ namespace NS_Collision
             UpdateCenterPos();
             UpdateExtents();
         }
+
+        public override bool TestCollisisionVsOBB(OBBCollisionHull2D other, out NCollision c)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

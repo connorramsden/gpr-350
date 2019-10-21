@@ -3,8 +3,7 @@
 // Class containing Methods relevant to Force Generation
 public class ForceGenerator : MonoBehaviour
 {
-    // Gravitational Constant
-    public const float GRAVITY = 9.8f;
+    const float GRAVITY = 9.8f;
 
     // Must pass negative gravitationalConstant
     public static Vector2 GenerateForce_Gravity(float particleMass, Vector2 worldUp)
@@ -35,7 +34,7 @@ public class ForceGenerator : MonoBehaviour
 
         float max = frictionCoefficient_static * f_normal.magnitude;
         float opposingForce = f_opposing.magnitude;
-
+        
         if (opposingForce < max)
             return -f_opposing;
         else
@@ -54,7 +53,7 @@ public class ForceGenerator : MonoBehaviour
     public static Vector2 GenerateForce_Friction_Standard(Vector2 f_normal, Vector2 particleVelocity, Vector2 f_opposing, float frictionCoeff_static, float frictionCoeff_kinetic)
     {
 
-        if (particleVelocity.magnitude <= 0.0f)
+        if(particleVelocity.magnitude <= 0.0f)
         {
             return GenerateForce_Friction_Static(f_normal, f_opposing, frictionCoeff_static);
         }
@@ -62,5 +61,23 @@ public class ForceGenerator : MonoBehaviour
         {
             return GenerateForce_Friction_Kinetic(f_normal, particleVelocity, frictionCoeff_static);
         }
+    }
+
+    public static Vector2 GenerateForce_Drag(Vector2 fluidVelocity, float fluidDensity, float objectArea_crossSection, float objectDragCoefficient)
+    {
+        // f = (p * v^2 * area * coeff) / 2
+        Vector2 newVelocity = fluidVelocity.magnitude * fluidVelocity;
+
+        return -0.5f * fluidDensity * newVelocity * objectArea_crossSection * objectDragCoefficient;
+    }
+
+    public static Vector2 GenerateForce_Spring(Vector2 particlePosition, Vector2 anchorPosition, float springRestingLength, float springStiffnessCoefficient)
+    {
+        // f = -coeff*(spring length - spring resting length)
+        Vector2 springLengthVector = particlePosition - anchorPosition;
+        float springLength = springLengthVector.magnitude;
+        Vector2 f_spring = -springStiffnessCoefficient * (springLength - springRestingLength) * springLengthVector / springLength;
+
+        return f_spring;
     }
 }

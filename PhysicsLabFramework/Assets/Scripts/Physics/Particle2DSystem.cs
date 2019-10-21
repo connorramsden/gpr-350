@@ -57,12 +57,6 @@ public class Particle2DSystem : MonoBehaviour
                     isColliding = cch2d.TestCollisionVsAABB(otherAABB, out collision);
                 }
 
-                // Make the player take damage on collision
-                if (isColliding && (particleOne.CompareTag("Player") || particleTwo.CompareTag("Player")))
-                {
-                    PlayerStats.TakeDamage();
-                }
-
                 collision.closingVelocity = CollisionResolutionManager.CalcClosingVel(p2dOne, p2dTwo);
             }
         }
@@ -93,12 +87,6 @@ public class Particle2DSystem : MonoBehaviour
                 else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
                 {
                     isColliding = aabb2d.TestCollisionVsAABB(otherAABB, out collision);
-                }
-
-                // Make the player take damage on collision
-                if (isColliding && (particleOne.CompareTag("Player") || particleTwo.CompareTag("Player")))
-                {
-                    PlayerStats.TakeDamage();
                 }
 
                 collision.closingVelocity = CollisionResolutionManager.CalcClosingVel(p2dOne, p2dTwo);

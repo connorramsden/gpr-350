@@ -56,8 +56,6 @@ public class Particle2DComponent : MonoBehaviour
     // Values necessary for Torque / Inertia / Rotation
     public float length, width, height, radius;
 
-    private bool isPlayer = false;
-
     // Return a particle's starting mass
     public float GetStartingMass()
     {
@@ -139,19 +137,6 @@ public class Particle2DComponent : MonoBehaviour
             AddForce(f_gravity);
         }
 
-        // If the unit is the player, gravity can be applied at the front or back
-        // using W&S, or Up&Down Arrow keys
-        if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && isPlayer)
-        {
-            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, -transform.up);
-            AddForce(f_gravity);
-        }
-        else if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && isPlayer)
-        {
-            f_gravity = ForceGenerator.GenerateForce_Gravity(mass, transform.up);
-            AddForce(f_gravity);
-        }
-
         if (movement.useNormal)
         {
             // Gravity used in this formula, must be ticked on
@@ -200,15 +185,15 @@ public class Particle2DComponent : MonoBehaviour
         // T = cross(pf, F) where T is torque being applied, pf is the moment-of-inertia-arm, and F is the force applied at the Moment ARm
         // Center of mass not necessarily object center, so two variables exist: localCenterOfMass & worldCenterOfMass
 
-        Vector2 momentArm = (rotation.pointOfAppliedForce - rotation.worldCenterOfMass);
+        Vector2 momentArm = rotation.pointOfAppliedForce - rotation.worldCenterOfMass;
 
         // Torque can be applied to the player on either side
         // by pressing A&D or Left&Right ArrowKeys
-        if ((Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) && isPlayer)
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
             rotation.torque += momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
         }
-        if ((Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) && isPlayer)
+        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
             rotation.torque -= momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
         }
@@ -276,14 +261,9 @@ public class Particle2DComponent : MonoBehaviour
     {
         // Upon Awake(), set the object's tag to Particle
         // if it is not already set, but ensure the Player tag will not be overriden
-        if (!gameObject.CompareTag("Particle") && !gameObject.CompareTag("Player"))
+        if (!gameObject.CompareTag("Particle"))
         {
             gameObject.tag = "Particle";
-        }
-
-        if (gameObject.CompareTag("Player"))
-        {
-            isPlayer = true;
         }
 
         movement = gameObject.GetComponent<Particle2DMovement>();

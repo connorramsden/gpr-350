@@ -7,8 +7,6 @@ namespace NS_Collision
 {
     public class CircleCollisionHull2D : CollisionHull2D
     {
-        private const float MAX_RADIUS = 100.0f;
-
         public float radius
         {
             get; private set;
@@ -127,6 +125,11 @@ namespace NS_Collision
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(center, radius);
+        }
+
+        public override bool TestCollisisionVsOBB(OBBCollisionHull2D other, out NCollision c)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

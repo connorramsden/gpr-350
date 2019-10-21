@@ -12,6 +12,7 @@ namespace NS_Collision
             INVALID_TYPE = -1,
             HULL_CIRCLE,
             HULL_AABB,
+            HULL_OBB,
         }
 
         // Holds the CH2D's type
@@ -35,6 +36,8 @@ namespace NS_Collision
         public abstract bool TestCollisionVsCircle(CircleCollisionHull2D other, out NCollision c);
 
         public abstract bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision c);
+
+        public abstract bool TestCollisisionVsOBB(OBBCollisionHull2D other, out NCollision c);
 
         public virtual void UpdateCenterPos()
         {
