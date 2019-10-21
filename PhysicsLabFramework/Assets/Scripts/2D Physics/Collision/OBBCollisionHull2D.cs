@@ -2,6 +2,7 @@
 // Same Axes as Local Axes
 
 using UnityEngine;
+using Physics2D;
 
 namespace NS_Collision
 {

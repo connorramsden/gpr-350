@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using Physics2D;
 
 namespace NS_Collision
 {
