@@ -225,7 +225,7 @@ namespace Physics2D
         {
             // Use the Kinematic formula for movement integration
             // x(t+dt) = x(t) + v(t)dt + 1/2(a(t)dt^2)
-            movement.position += (movement.velocity * dt) + (0.5f * movement.acceleration * (dt * dt));
+            movement.position += (movement.velocity * dt) + (0.5f * (dt * dt) * movement.acceleration);
 
             // Update velocity based on acceleration
             movement.velocity += movement.acceleration * dt;
@@ -234,7 +234,7 @@ namespace Physics2D
             transform.position = movement.position;
         }
 
-        // Update's a particle's rotation based on KINEMATIC integration
+        // Updates a particle's rotation based on KINEMATIC integration
         public void UpdateRotation(float dt)
         {
             // Use Kinematic formula for rotation integration

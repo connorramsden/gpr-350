@@ -5,8 +5,8 @@ namespace Physics2D
     // Class containing Variables relevant to Particle Rotation
     public class Particle2DRotation : MonoBehaviour
     {
-        public const float MAX_VELOCITY = 10.0f;
-        public const float MAX_ACCELERATION = 10.0f;
+        private const float MAX_VELOCITY = 10.0f;
+        private const float MAX_ACCELERATION = 10.0f;
 
         // Lab 01 Step 01
         // Rotation Components
