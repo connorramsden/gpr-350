@@ -14,12 +14,13 @@ namespace Physics3D
         // Basic identity Quaternion
         private static readonly NQuaternion identityNQuaternion = new NQuaternion(0.0f, 0.0f, 0.0f, 1f);
 
-        // Do not modify these values directly unless you're Dan Buckstein
+        // Do not modify these values directly unless you're Sir William Rowan Hamilton or Dan Buckstein
         public float x;
         public float y;
         public float z;
         public float w;
 
+        // Blank, Default constructor
         public NQuaternion()
         {
         }
@@ -47,6 +48,13 @@ namespace Physics3D
             return this;
         }
 
+        public NQuaternion Add(Vector3 other)
+        {
+            x += other.x;
+
+            return this;
+        }
+
         // Subtract the passed NQuaternion from this NQuaternion
         public NQuaternion Subtract(NQuaternion other)
         {
@@ -67,9 +75,9 @@ namespace Physics3D
 
             return this;
         }
-        
+
         // Multiply this NQuaternion with the passed Vector3
-        public Vector3 Mutliply(Vector3 other)
+        public Vector3 Multiply(Vector3 other)
         {
             Vector3 ret = new Vector3(x, y, z);
             Vector3 crossOne = Vector3.Cross(ret, other);
@@ -78,10 +86,21 @@ namespace Physics3D
             return other + 2.0f * (crossOne * w + crossTwo);
         }
 
+        public float Dot(NQuaternion other)
+        {
+            return w * other.w + x * other.x + y * other.y + z * other.z;
+        }
+
         // Returns the Dot-Product of two NQuaternions
         public static float Dot(NQuaternion lhs, NQuaternion rhs)
         {
-            return lhs.w * rhs.w + lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+            return lhs.Dot(rhs);
+        }
+
+        // Linearly interpolate between the two passed NQuaternions by the passed float
+        public static NQuaternion Lerp(NQuaternion lhs, NQuaternion rhs, float progression)
+        {
+            throw new NotImplementedException();
         }
 
         // Smoothly linearly interpolates between the two passed NQuaternions by the passed float
@@ -90,61 +109,81 @@ namespace Physics3D
             throw new NotImplementedException();
         }
 
+        // Multiplies this NQuaternion by the passed Scalar value
+        public NQuaternion Scale(float scalar)
+        {
+            x *= scalar;
+            y *= scalar;
+            z *= scalar;
+            w *= scalar;
+            return this;
+        }
+
+        // Lab 06 Step 01: Implement your own operator for quaternion multiplied by scalar
         // Scales the passed NQuaternion by the passed scalar value
         public static NQuaternion Scale(NQuaternion quat, float scalar)
         {
-            NQuaternion ret = new NQuaternion()
-            {
-                x = quat.x * scalar,
-                y = quat.y * scalar,
-                z = quat.z * scalar,
-                w = quat.w * scalar
-            };
+            return quat.Scale(scalar);
+        }
 
-            return ret;
+        public float GetLengthSquared()
+        {
+            return x * x + y * y + z * z + w * w;
         }
 
         // Returns the squared length of the passed NQuaternion
         public static float GetLengthSquared(NQuaternion quat)
         {
-            return quat.x * quat.x + quat.y * quat.y + quat.z * quat.z + quat.w * quat.w;
+            return quat.GetLengthSquared();
+        }
+
+        public float GetLength()
+        {
+            return Mathf.Sqrt(this.GetLengthSquared());
         }
 
         // Returns the length of the passed NQuaternion
         public static float GetLength(NQuaternion quat)
         {
-            return Mathf.Sqrt(GetLengthSquared(quat));
+            return quat.GetLength();
+        }
+
+        public NQuaternion Normalize()
+        {
+            float length = GetLength();
+
+            x /= length;
+            y /= length;
+            z /= length;
+            w /= length;
+
+            return this;
         }
 
         // Returns the normalized version of the passed NQuaternion (length of 1)
         public static NQuaternion Normalize(NQuaternion quat)
         {
-            var length = GetLength(quat);
+            return quat.Normalize();
+        }
 
-            NQuaternion ret = new NQuaternion()
+        public Vector3 ToEuler()
+        {
+            Vector3 result = new Vector3()
             {
-                x = quat.x / length,
-                y = quat.y / length,
-                z = quat.z / length,
-                w = quat.w / length
+                x = Mathf.Atan2(2.0f * (x * w - y * z),
+                    1.0f - 2.0f * (x * x + y * y)),
+                y = Mathf.Asin(2.0f * (x * z + y * w)),
+                z = Mathf.Atan2(2.0f * (z * w - x * y),
+                    1.0f - 2.0f * (y * y + z * z))
             };
 
-            return ret;
+            return result;
         }
 
         // Converts passed NQuaternion to its Euler angle values
         public static Vector3 ToEuler(NQuaternion quat)
         {
-            Vector3 result = new Vector3()
-            {
-                x = Mathf.Atan2(2.0f * (quat.x * quat.w - quat.y * quat.z),
-                    1.0f - 2.0f * (quat.x * quat.x + quat.y * quat.y)),
-                y = Mathf.Asin(2.0f * (quat.x * quat.z + quat.y * quat.w)),
-                z = Mathf.Atan2(2.0f * (quat.z * quat.w - quat.x * quat.y),
-                    1.0f - 2.0f * (quat.y * quat.y + quat.z * quat.z))
-            };
-
-            return result;
+            return quat.ToEuler();
         }
 
         // Adds two passed NQuaternions together
@@ -153,8 +192,13 @@ namespace Physics3D
             return lhs.Add(rhs);
         }
 
+        public static NQuaternion operator +(NQuaternion lhs, Vector3 rhs)
+        {
+            return lhs.Add(rhs);
+        }
+
         // Negates the passed NQuaternion
-        public static NQuaternion operator-(NQuaternion quat)
+        public static NQuaternion operator -(NQuaternion quat)
         {
             return new NQuaternion()
             {
@@ -164,7 +208,7 @@ namespace Physics3D
                 w = -quat.w
             };
         }
-        
+
         // Subtracts right-hand NQuaternion from left-hand NQuaternion
         public static NQuaternion operator -(NQuaternion lhs, NQuaternion rhs)
         {
@@ -180,7 +224,22 @@ namespace Physics3D
         // Multiplies passed NQuaternion by passed Vector3
         public static Vector3 operator *(Vector3 lhs, NQuaternion rhs)
         {
-            return rhs.Mutliply(lhs);
+            return rhs.Multiply(lhs);
+        }
+
+        public static Vector3 operator *(NQuaternion lhs, Vector3 rhs)
+        {
+            return lhs.Multiply(rhs);
+        }
+
+        public static NQuaternion operator *(NQuaternion lhs, float rhs)
+        {
+            return lhs.Scale(rhs);
+        }
+
+        public static NQuaternion operator *(float lhs, NQuaternion rhs)
+        {
+            return rhs.Scale(lhs);
         }
 
         // Divides left-hand NQuaternion by right-hand NQuaternion
