@@ -250,11 +250,10 @@ namespace Physics2D
         // Initializes local variables
         private void Awake()
         {
-            // Upon Awake(), set the object's tag to Particle
-            // if it is not already set, but ensure the Player tag will not be overriden
-            if (!gameObject.CompareTag("Particle"))
+            // Upon Awake(), set the object's tag to 2D Particle
+            if (!gameObject.CompareTag("2D Particle"))
             {
-                gameObject.tag = "Particle";
+                gameObject.tag = "2D Particle";
             }
 
             movement = gameObject.GetComponent<Particle2DMovement>();

@@ -4,8 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Particle
-  - Enemy
+  - 2D Particle
+  - 3D Particle
   layers:
   - Default
   - TransparentFX

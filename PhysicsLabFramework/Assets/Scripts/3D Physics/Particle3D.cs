@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace Physics3D
@@ -16,23 +17,28 @@ namespace Physics3D
 
         // Lab 06 Step 01
         // Position, Velocity, Acceleration, and Force are 3D Vectors
-        public Vector3 position { get; private set; }
-        public Vector3 velocity { get; private set; }
-        public Vector3 acceleration { get; private set; }
-        public Vector3 force { get; private set; }
-
+        [Header("Position Integration")]
+        public Vector3 position;
+        public Vector3 velocity;
+        public Vector3 acceleration;
+        public Vector3 force;
+        
+        [Header("Rotation Integration")]
         // Rotation is a Quaternion (from a single float about the Z-Axis)
         // Implemented as an NQuaternion, my custom Quaternion class
-        public NQuaternion rotation { get; private set; }
+        public NQuaternion rotation;
 
+        public Quaternion orientation;
+        
         // Angular Velocity, Angular Acceleration, and Torque are 3D Vectors (from single floats about the Z-Axis)
-        public Vector3 angularVelocity { get; private set; }
-        public Vector3 angularAcceleration { get; private set; }
-        public Vector3 torque { get; private set; }
+        public Vector3 angularVelocity;
+        public Vector3 angularAcceleration;
+        // public Vector3 torque;
 
+        [Header("Force Integration")]
         // Mass & Inverse Mass are still floats
-        public float mass { get; private set; }
-        public float inverseMass { get; private set; }
+        public float mass;
+        public float inverseMass;
 
         // Update a particle's position based on Euler Explicit integration
         private void UpdatePositionEulerExplicit(float dt)
@@ -48,7 +54,8 @@ namespace Physics3D
         // Updates a Particle's position based on Kinematic integration
         private void UpdatePositionKinematic(float dt)
         {
-            position += velocity * dt;
+            // x(t+dt) = x(t) + v(t)dt + 1/2(a(t)dt^2)
+            position += velocity * dt + .5f * acceleration * (dt * dt);
         }
 
         public void UpdatePosition(float dt)
@@ -66,7 +73,7 @@ namespace Physics3D
                     break;
                 }
             }
-
+            
             velocity += acceleration * dt;
         }
 
@@ -75,13 +82,14 @@ namespace Physics3D
         {
             // q(t+dt) = q(t) + w(t)q(t) * dt/2
             // where w === angularVelocity
-            rotation += .5f * rotation * angularVelocity * dt;
+            rotation += angularVelocity * rotation  * (dt * .5f);
         }
 
         // Updates a particle's rotation based on Kinematic integration
         private void UpdateRotationKinematic(float dt)
         {
-            rotation += .5f * rotation * angularAcceleration * dt;
+            // Bonus, not yet implemented
+            throw new NotImplementedException();
         }
 
         public void UpdateRotation(float dt)
@@ -94,8 +102,9 @@ namespace Physics3D
                     break;
                 }
                 case IntegrationType.KINEMATIC:
+                default:
                 {
-                    UpdateRotationKinematic(dt);
+                    UpdateRotationEulerExplicit(dt);
                     break;
                 }
             }
@@ -112,6 +121,27 @@ namespace Physics3D
 
         public void UpdateAngularVelocityEulerExplicit()
         {
+        }
+
+        private void Awake()
+        {
+            // Upon Awake(), set the object's tag to 3D Particle
+            if (!gameObject.CompareTag("3D Particle"))
+            {
+                gameObject.tag = "3D Particle";
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            float dt = Time.fixedDeltaTime;
+            UpdatePosition(dt);
+            UpdateRotation(dt);
+
+            acceleration.x = -Mathf.Sin(Time.time);
+
+            transform.position = position;
+            transform.Rotate(rotation.x, rotation.y, rotation.z);
         }
     }
 }

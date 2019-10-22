@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 // Referenced the open-source game engine Acid for my Quaternion implementation:
@@ -9,29 +9,31 @@ using UnityEngine;
 namespace Physics3D
 {
     // Made my own Quaternion class because it was easier than using Unity's
-    public class NQuaternion
+    [Serializable]
+    public struct NQuaternion : IEquatable<UnityEngine.Quaternion>
     {
         // Basic identity Quaternion
         private static readonly NQuaternion identityNQuaternion = new NQuaternion(0.0f, 0.0f, 0.0f, 1f);
 
         // Do not modify these values directly unless you're Sir William Rowan Hamilton or Dan Buckstein
-        public float x;
-        public float y;
-        public float z;
-        public float w;
-
-        // Blank, Default constructor
-        public NQuaternion()
-        {
-        }
-
-        // Quaternion Specialized Constructor
+        public float x, y, z, w;
+        
+        // Quaternion Constructor
         public NQuaternion(float x, float y, float z, float w)
         {
             this.x = x;
             this.y = y;
             this.z = z;
             this.w = w;
+        }
+
+        // Quaternion Constructor w/o explicit W value
+        public NQuaternion(float x, float y, float z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.w = 0.0f;
         }
 
         // Returns the normalized version of NQuaternion this is called on
@@ -241,7 +243,7 @@ namespace Physics3D
         {
             return rhs.Scale(lhs);
         }
-
+        
         // Divides left-hand NQuaternion by right-hand NQuaternion
         public static NQuaternion operator /(NQuaternion lhs, NQuaternion rhs)
         {
@@ -256,18 +258,19 @@ namespace Physics3D
         // This is how Unity's Quaternion== works behind the scenes
         public static bool operator ==(NQuaternion lhs, NQuaternion rhs)
         {
-            // Only check if both NQuaternions are valid
-            if (lhs != null && rhs != null)
-                return Dot(lhs, rhs) > 0.999998986721039;
-
-            // Otherwise, throw a NullReferenceException
-            throw new NullReferenceException();
+            // Only check if both NQuaternions are validS
+            return Dot(lhs, rhs) > 0.999998986721039;
         }
 
         // Returns false if the == operation is true
         public static bool operator !=(NQuaternion lhs, NQuaternion rhs)
         {
             return !(lhs == rhs);
+        }
+
+        public bool Equals(UnityEngine.Quaternion other)
+        {
+            throw new NotImplementedException();
         }
     }
 }
