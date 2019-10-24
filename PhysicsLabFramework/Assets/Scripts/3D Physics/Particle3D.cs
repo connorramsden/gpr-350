@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEditor;
 using UnityEngine;
 
 namespace Physics3D
@@ -22,14 +21,12 @@ namespace Physics3D
         public Vector3 velocity;
         public Vector3 acceleration;
         public Vector3 force;
-        
+
         [Header("Rotation Integration")]
         // Rotation is a Quaternion (from a single float about the Z-Axis)
         // Implemented as an NQuaternion, my custom Quaternion class
         public NQuaternion rotation;
 
-        public Quaternion orientation;
-        
         // Angular Velocity, Angular Acceleration, and Torque are 3D Vectors (from single floats about the Z-Axis)
         public Vector3 angularVelocity;
         public Vector3 angularAcceleration;
@@ -63,17 +60,17 @@ namespace Physics3D
             switch (integrationType)
             {
                 case IntegrationType.EULER_EXPLICIT:
-                {
-                    UpdatePositionEulerExplicit(dt);
-                    break;
-                }
+                    {
+                        UpdatePositionEulerExplicit(dt);
+                        break;
+                    }
                 case IntegrationType.KINEMATIC:
-                {
-                    UpdatePositionKinematic(dt);
-                    break;
-                }
+                    {
+                        UpdatePositionKinematic(dt);
+                        break;
+                    }
             }
-            
+
             velocity += acceleration * dt;
         }
 
@@ -82,7 +79,7 @@ namespace Physics3D
         {
             // q(t+dt) = q(t) + w(t)q(t) * dt/2
             // where w === angularVelocity
-            rotation += angularVelocity * rotation  * (dt * .5f);
+            rotation += angularVelocity * rotation * (dt * .5f);
         }
 
         // Updates a particle's rotation based on Kinematic integration
@@ -97,16 +94,16 @@ namespace Physics3D
             switch (integrationType)
             {
                 case IntegrationType.EULER_EXPLICIT:
-                {
-                    UpdateRotationEulerExplicit(dt);
-                    break;
-                }
+                    {
+                        UpdateRotationEulerExplicit(dt);
+                        break;
+                    }
                 case IntegrationType.KINEMATIC:
                 default:
-                {
-                    UpdateRotationEulerExplicit(dt);
-                    break;
-                }
+                    {
+                        UpdateRotationEulerExplicit(dt);
+                        break;
+                    }
             }
 
             // Must normalize rotation in order to stop unwanted scaling

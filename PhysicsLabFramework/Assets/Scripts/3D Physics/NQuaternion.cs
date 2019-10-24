@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 // Referenced the open-source game engine Acid for my Quaternion implementation:
@@ -10,14 +9,14 @@ namespace Physics3D
 {
     // Made my own Quaternion class because it was easier than using Unity's
     [Serializable]
-    public struct NQuaternion : IEquatable<UnityEngine.Quaternion>
+    public struct NQuaternion : IEquatable<NQuaternion>
     {
         // Basic identity Quaternion
         private static readonly NQuaternion identityNQuaternion = new NQuaternion(0.0f, 0.0f, 0.0f, 1f);
 
         // Do not modify these values directly unless you're Sir William Rowan Hamilton or Dan Buckstein
         public float x, y, z, w;
-        
+
         // Quaternion Constructor
         public NQuaternion(float x, float y, float z, float w)
         {
@@ -38,6 +37,7 @@ namespace Physics3D
 
         // Returns the normalized version of NQuaternion this is called on
         public NQuaternion normalized => Normalize(this);
+        public NQuaternion identity => identityNQuaternion;
 
         // Adds this NQuaternion with the passed NQuaternion
         public NQuaternion Add(NQuaternion other)
@@ -46,13 +46,6 @@ namespace Physics3D
             y += other.y;
             z += other.z;
             w += other.w;
-
-            return this;
-        }
-
-        public NQuaternion Add(Vector3 other)
-        {
-            x += other.x;
 
             return this;
         }
@@ -79,15 +72,21 @@ namespace Physics3D
         }
 
         // Multiply this NQuaternion with the passed Vector3
-        public Vector3 Multiply(Vector3 other)
+        public NQuaternion Multiply(Vector3 other)
         {
-            Vector3 ret = new Vector3(x, y, z);
-            Vector3 crossOne = Vector3.Cross(ret, other);
-            Vector3 crossTwo = Vector3.Cross(ret, crossOne);
+            Vector3 quatVec = new Vector3(x, y, z);
+            Vector3 crossOne = Vector3.Cross(other, quatVec);
+            Vector3 crossTwo = Vector3.Cross(crossOne, quatVec);
+            Vector3 finalVec = other + 2.0f * (crossOne * w + crossTwo);
 
-            return other + 2.0f * (crossOne * w + crossTwo);
+            x = finalVec.x;
+            y = finalVec.y;
+            z = finalVec.z;
+
+            return this;
         }
 
+        // Returns the dot-product of this NQuaternion and the passed NQuaternion
         public float Dot(NQuaternion other)
         {
             return w * other.w + x * other.x + y * other.y + z * other.z;
@@ -128,6 +127,7 @@ namespace Physics3D
             return quat.Scale(scalar);
         }
 
+        // Returns the squared length of this NQuaternion
         public float GetLengthSquared()
         {
             return x * x + y * y + z * z + w * w;
@@ -139,9 +139,10 @@ namespace Physics3D
             return quat.GetLengthSquared();
         }
 
+        // Returns the length of this NQuaternion
         public float GetLength()
         {
-            return Mathf.Sqrt(this.GetLengthSquared());
+            return Mathf.Sqrt(GetLengthSquared());
         }
 
         // Returns the length of the passed NQuaternion
@@ -150,6 +151,7 @@ namespace Physics3D
             return quat.GetLength();
         }
 
+        // Normalizes this NQuaternion
         public NQuaternion Normalize()
         {
             float length = GetLength();
@@ -168,6 +170,7 @@ namespace Physics3D
             return quat.Normalize();
         }
 
+        // Converts this NQuaternion to its Euler Angle values
         public Vector3 ToEuler()
         {
             Vector3 result = new Vector3()
@@ -190,11 +193,6 @@ namespace Physics3D
 
         // Adds two passed NQuaternions together
         public static NQuaternion operator +(NQuaternion lhs, NQuaternion rhs)
-        {
-            return lhs.Add(rhs);
-        }
-
-        public static NQuaternion operator +(NQuaternion lhs, Vector3 rhs)
         {
             return lhs.Add(rhs);
         }
@@ -224,32 +222,38 @@ namespace Physics3D
         }
 
         // Multiplies passed NQuaternion by passed Vector3
-        public static Vector3 operator *(Vector3 lhs, NQuaternion rhs)
+        public static NQuaternion operator *(Vector3 lhs, NQuaternion rhs)
         {
             return rhs.Multiply(lhs);
         }
 
-        public static Vector3 operator *(NQuaternion lhs, Vector3 rhs)
+        // Multiplies passed NQuaternion by the passed Vector3
+        public static NQuaternion operator *(NQuaternion lhs, Vector3 rhs)
         {
             return lhs.Multiply(rhs);
         }
 
+        // Scales passed NQuaternion by the passed float-scalar
         public static NQuaternion operator *(NQuaternion lhs, float rhs)
         {
             return lhs.Scale(rhs);
         }
 
+        // Scales passed NQuaternion by the passed float-scalar
         public static NQuaternion operator *(float lhs, NQuaternion rhs)
         {
             return rhs.Scale(lhs);
         }
-        
+
         // Divides left-hand NQuaternion by right-hand NQuaternion
         public static NQuaternion operator /(NQuaternion lhs, NQuaternion rhs)
         {
             NQuaternion ret = new NQuaternion()
             {
-                x = lhs.x / rhs.x, y = lhs.y / rhs.y, z = lhs.z / rhs.z, w = lhs.w / rhs.w
+                x = lhs.x / rhs.x,
+                y = lhs.y / rhs.y,
+                z = lhs.z / rhs.z,
+                w = lhs.w / rhs.w
             };
 
             return ret;
@@ -266,9 +270,10 @@ namespace Physics3D
         public static bool operator !=(NQuaternion lhs, NQuaternion rhs)
         {
             return !(lhs == rhs);
-        }
+        }        
 
-        public bool Equals(UnityEngine.Quaternion other)
+        // Unity wants me to implement this
+        public bool Equals(NQuaternion other)
         {
             throw new NotImplementedException();
         }
