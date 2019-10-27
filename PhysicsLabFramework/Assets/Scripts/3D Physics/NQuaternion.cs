@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngineInternal;
 
 // Referenced the open-source game engine Acid for my Quaternion implementation:
 // https://github.com/EQMG/Acid
@@ -40,7 +41,7 @@ namespace Physics3D
         public NQuaternion identity => identityNQuaternion;
 
         // Adds this NQuaternion with the passed NQuaternion
-        public NQuaternion Add(NQuaternion other)
+        private NQuaternion Add(NQuaternion other)
         {
             x += other.x;
             y += other.y;
@@ -51,7 +52,7 @@ namespace Physics3D
         }
 
         // Subtract the passed NQuaternion from this NQuaternion
-        public NQuaternion Subtract(NQuaternion other)
+        private NQuaternion Subtract(NQuaternion other)
         {
             x -= other.x;
             y -= other.y;
@@ -61,7 +62,7 @@ namespace Physics3D
         }
 
         // Multiply this NQuaternion by the passed NQuaternion
-        public NQuaternion Multiply(NQuaternion other)
+        private NQuaternion Multiply(NQuaternion other)
         {
             x *= other.w + this.w * other.x + this.y * other.z - this.z * other.y;
             y *= other.w + this.w * other.y + this.z * other.x - this.x * other.z;
@@ -72,16 +73,14 @@ namespace Physics3D
         }
 
         // Multiply this NQuaternion with the passed Vector3
-        public NQuaternion Multiply(Vector3 other)
+        private NQuaternion Multiply(Vector3 other)
         {
-            Vector3 quatVec = new Vector3(x, y, z);
-            Vector3 crossOne = Vector3.Cross(other, quatVec);
-            Vector3 crossTwo = Vector3.Cross(crossOne, quatVec);
-            Vector3 finalVec = other + 2.0f * (crossOne * w + crossTwo);
+            Vector3 quatVec = this.ToEuler();
+            Vector3 newQuatVec = Vector3.Cross(quatVec, other);
 
-            x = finalVec.x;
-            y = finalVec.y;
-            z = finalVec.z;
+            x = newQuatVec.x;
+            y = newQuatVec.y;
+            z = newQuatVec.z;
 
             return this;
         }
@@ -171,15 +170,25 @@ namespace Physics3D
         }
 
         // Converts this NQuaternion to its Euler Angle values
+        // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
         public Vector3 ToEuler()
         {
+            // x-axis rotation
+            float sinr_cosp = 2.0f * (w * x + y * z);
+            float cosr_cosp = 1.0f - 2.0f * (x * x + y * y);
+            
+            // y-axis rotation
+            float sinp = 2.0f * (w * y - z * x);
+            
+            // z-axis rotation
+            float siny_cosp = 2.0f * (w * z + x * y);
+            float cosy_cosp = 1.0f - 2.0f * (y * y + z * z);
+            
             Vector3 result = new Vector3()
             {
-                x = Mathf.Atan2(2.0f * (x * w - y * z),
-                    1.0f - 2.0f * (x * x + y * y)),
-                y = Mathf.Asin(2.0f * (x * z + y * w)),
-                z = Mathf.Atan2(2.0f * (z * w - x * y),
-                    1.0f - 2.0f * (y * y + z * z))
+                x = Mathf.Atan2(sinr_cosp, cosr_cosp),
+                y = Mathf.Asin(sinp),
+                z = Mathf.Atan2(siny_cosp, cosy_cosp)
             };
 
             return result;

@@ -8,16 +8,10 @@ namespace Physics2D
     public class Particle2DComponent : MonoBehaviour
     {
         // Stores variables for a particle's movement
-        public Particle2DMovement movement
-        {
-            get; private set;
-        }
+        public Particle2DMovement movement { get; private set; }
 
         // Stores variables for a particle's rotation
-        public Particle2DRotation rotation
-        {
-            get; private set;
-        }
+        public Particle2DRotation rotation { get; private set; }
 
         // Shapes for Torque-based rotation in 2D
         public enum ParticleShape
@@ -30,30 +24,18 @@ namespace Physics2D
         public ParticleShape particleShape;
 
         // Particle's mass
-        public float mass
-        {
-            get; private set;
-        }
+        public float mass { get; private set; }
 
         // Particle's inverse mass
-        public float massInv
-        {
-            get; private set;
-        }
+        public float massInv { get; private set; }
 
         // Rotational Equivalent of Mass
         // Moment of Inertia
         // A measure of how difficult it is to change a particle's rotation speed (Millington p.198)
-        public float inertia
-        {
-            get; private set;
-        }
+        public float inertia { get; private set; }
 
         // Particle's inverse Moment of Inertia
-        public float inertiaInv
-        {
-            get; private set;
-        }
+        public float inertiaInv { get; private set; }
 
         // Values necessary for Torque / Inertia / Rotation
         public float length, width, height, radius;
@@ -80,22 +62,23 @@ namespace Physics2D
             {
                 // Inertia Formula for a Disk-like object
                 case ParticleShape.DISK:
-                    {
-                        // I = 1/2 * mass * radius * radius
-                        inertia = 0.5f * mass * radius * radius;
-                        break;
-                    }
+                {
+                    // I = 1/2 * mass * radius * radius
+                    inertia = 0.5f * mass * radius * radius;
+                    break;
+                }
                 // Inertia Formula for a Rectangle-like object
                 case ParticleShape.RECTANGLE:
-                    {
-                        // I = 1/12 * mass * (dx*dx + dy*dy) where dx = length and dy = height
-                        inertia = 0.083f * mass * length * length + height * height;
-                        break;
-                    }
+                {
+                    // I = 1/12 * mass * (dx*dx + dy*dy) where dx = length and dy = height
+                    inertia = 0.083f * mass * length * length + height * height;
+                    break;
+                }
                 // If the shape is invalid / default, log an Error for the user
                 case ParticleShape.INVALID_TYPE:
                 default:
-                    Debug.LogError($"Particle Shape is of type {ParticleShape.INVALID_TYPE}. Please set a valid Particle Shape");
+                    Debug.LogError(
+                        $"Particle Shape is of type {ParticleShape.INVALID_TYPE}. Please set a valid Particle Shape");
                     inertia = 0.0f;
                     break;
             }
@@ -131,7 +114,8 @@ namespace Physics2D
         public void ApplyForces()
         {
             // Calculate the surface normal based on the surface angle
-            Vector2 surfaceNormal = new Vector2(Mathf.Cos(movement.surfaceAngle * Mathf.Deg2Rad), Mathf.Sin(movement.surfaceAngle * Mathf.Deg2Rad));
+            Vector2 surfaceNormal = new Vector2(Mathf.Cos(movement.surfaceAngle * Mathf.Deg2Rad),
+                Mathf.Sin(movement.surfaceAngle * Mathf.Deg2Rad));
 
             if (movement.useGravity)
             {
@@ -165,7 +149,8 @@ namespace Physics2D
                 // Sliding used in this formula, must be ticked on, will tick-on Gravity & Normal
                 if (!movement.useSliding)
                     movement.useSliding = true;
-                f_friction = ForceGenerator2D.GenerateForce_Friction_Standard(f_normal, movement.velocity, f_sliding, movement.coeffStaticFriction, movement.coeffKineticFriction);
+                f_friction = ForceGenerator2D.GenerateForce_Friction_Standard(f_normal, movement.velocity, f_sliding,
+                    movement.coeffStaticFriction, movement.coeffKineticFriction);
                 AddForce(f_friction);
             }
         }
@@ -195,6 +180,7 @@ namespace Physics2D
             {
                 rotation.torque += momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
             }
+
             if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             {
                 rotation.torque -= momentArm.x * rotation.appliedForce.y - momentArm.y * rotation.appliedForce.x;
@@ -214,9 +200,9 @@ namespace Physics2D
             rotation.torque = 0.0f;
         }
 
-        [Header("Additional Movement Attributes")]
-        [Tooltip("Should the particle be able to move?")]
+        [Header("Additional Movement Attributes")] [Tooltip("Should the particle be able to move?")]
         public bool shouldMove;
+
         [Tooltip("Should the particle be able to rotate?")]
         public bool shouldRotate;
 

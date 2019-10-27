@@ -16,8 +16,7 @@ namespace Physics3D
 
         // Lab 06 Step 01
         // Position, Velocity, Acceleration, and Force are 3D Vectors
-        [Header("Position Integration")]
-        public Vector3 position;
+        [Header("Position Integration")] public Vector3 position;
         public Vector3 velocity;
         public Vector3 acceleration;
         public Vector3 force;
@@ -29,6 +28,7 @@ namespace Physics3D
 
         // Angular Velocity, Angular Acceleration, and Torque are 3D Vectors (from single floats about the Z-Axis)
         public Vector3 angularVelocity;
+
         public Vector3 angularAcceleration;
         // public Vector3 torque;
 
@@ -55,22 +55,23 @@ namespace Physics3D
             position += velocity * dt + .5f * acceleration * (dt * dt);
         }
 
-        public void UpdatePosition(float dt)
+        private void UpdatePosition(float dt)
         {
             switch (integrationType)
             {
                 case IntegrationType.EULER_EXPLICIT:
-                    {
-                        UpdatePositionEulerExplicit(dt);
-                        break;
-                    }
+                {
+                    UpdatePositionEulerExplicit(dt);
+                    break;
+                }
                 case IntegrationType.KINEMATIC:
-                    {
-                        UpdatePositionKinematic(dt);
-                        break;
-                    }
+                {
+                    UpdatePositionKinematic(dt);
+                    break;
+                }
             }
 
+            // Euler integration for updating velocity
             velocity += acceleration * dt;
         }
 
@@ -89,35 +90,28 @@ namespace Physics3D
             throw new NotImplementedException();
         }
 
-        public void UpdateRotation(float dt)
+        private void UpdateRotation(float dt)
         {
             switch (integrationType)
             {
                 case IntegrationType.EULER_EXPLICIT:
-                    {
-                        UpdateRotationEulerExplicit(dt);
-                        break;
-                    }
+                {
+                    UpdateRotationEulerExplicit(dt);
+                    break;
+                }
                 case IntegrationType.KINEMATIC:
                 default:
-                    {
-                        UpdateRotationEulerExplicit(dt);
-                        break;
-                    }
+                {
+                    UpdateRotationEulerExplicit(dt);
+                    break;
+                }
             }
 
             // Must normalize rotation in order to stop unwanted scaling
             rotation.Normalize();
-
+    
+            // Euler integration for updating angular velocity
             angularVelocity += angularAcceleration * dt;
-        }
-
-        public void UpdateVelocityEulerExplicit()
-        {
-        }
-
-        public void UpdateAngularVelocityEulerExplicit()
-        {
         }
 
         private void Awake()
@@ -131,12 +125,17 @@ namespace Physics3D
 
         private void FixedUpdate()
         {
+            // Acquire fixed DeltaTime
             float dt = Time.fixedDeltaTime;
+            
+            // Update position & rotation
             UpdatePosition(dt);
             UpdateRotation(dt);
 
+            // Oscillate movement
             acceleration.x = -Mathf.Sin(Time.time);
 
+            // Update position & rotation
             transform.position = position;
             transform.Rotate(rotation.x, rotation.y, rotation.z);
         }
