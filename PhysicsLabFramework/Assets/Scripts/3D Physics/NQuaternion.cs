@@ -43,10 +43,10 @@ namespace Physics3D
         // Adds this NQuaternion with the passed NQuaternion
         private NQuaternion Add(NQuaternion other)
         {
-            x += other.x;
-            y += other.y;
-            z += other.z;
-            w += other.w;
+            this.x += other.x;
+            this.y += other.y;
+            this.z += other.z;
+            this.w += other.w;
 
             return this;
         }
@@ -54,20 +54,20 @@ namespace Physics3D
         // Subtract the passed NQuaternion from this NQuaternion
         private NQuaternion Subtract(NQuaternion other)
         {
-            x -= other.x;
-            y -= other.y;
-            z -= other.z;
-            w -= other.w;
+            this.x -= other.x;
+            this.y -= other.y;
+            this.z -= other.z;
+            this.w -= other.w;
             return this;
         }
 
         // Multiply this NQuaternion by the passed NQuaternion
         private NQuaternion Multiply(NQuaternion other)
         {
-            x *= other.w + this.w * other.x + this.y * other.z - this.z * other.y;
-            y *= other.w + this.w * other.y + this.z * other.x - this.x * other.z;
-            z *= other.w + this.w * other.z + this.x * other.y - this.y * other.x;
-            w *= other.w - this.x * other.x - this.y * other.y - this.z * other.z;
+            this.x *= other.w + this.w * other.x + this.y * other.z - this.z * other.y;
+            this.y *= other.w + this.w * other.y + this.z * other.x - this.x * other.z;
+            this.z *= other.w + this.w * other.z + this.x * other.y - this.y * other.x;
+            this.w *= other.w - this.x * other.x - this.y * other.y - this.z * other.z;
 
             return this;
         }
@@ -75,13 +75,10 @@ namespace Physics3D
         // Multiply this NQuaternion with the passed Vector3
         private NQuaternion Multiply(Vector3 other)
         {
-            Vector3 quatVec = this.ToEuler();
-            Vector3 newQuatVec = Vector3.Cross(quatVec, other);
+            NQuaternion vecToQuat = new NQuaternion(other.x, other.y, other.z, 0.0f);
 
-            x = newQuatVec.x;
-            y = newQuatVec.y;
-            z = newQuatVec.z;
-
+            this *= vecToQuat;
+            
             return this;
         }
 
@@ -112,10 +109,10 @@ namespace Physics3D
         // Multiplies this NQuaternion by the passed Scalar value
         public NQuaternion Scale(float scalar)
         {
-            x *= scalar;
-            y *= scalar;
-            z *= scalar;
-            w *= scalar;
+            this.x *= scalar;
+            this.y *= scalar;
+            this.z *= scalar;
+            this.w *= scalar;
             return this;
         }
 
@@ -155,10 +152,10 @@ namespace Physics3D
         {
             float length = GetLength();
 
-            x /= length;
-            y /= length;
-            z /= length;
-            w /= length;
+            this.x /= length;
+            this.y /= length;
+            this.z /= length;
+            this.w /= length;
 
             return this;
         }
@@ -198,6 +195,24 @@ namespace Physics3D
         public static Vector3 ToEuler(NQuaternion quat)
         {
             return quat.ToEuler();
+        }
+
+        public Quaternion ToQuaternion()
+        {
+            Quaternion ret = new Quaternion()
+            {
+                x = this.x,
+                y = this.y,
+                z = this.z,
+                w = this.w
+            };
+
+            return ret;
+        }
+
+        public static Quaternion ToQuaternion(NQuaternion quat)
+        {
+            return quat.ToQuaternion();
         }
 
         // Adds two passed NQuaternions together

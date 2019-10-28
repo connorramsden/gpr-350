@@ -14,9 +14,10 @@ namespace Physics3D
 
         public IntegrationType integrationType;
 
+        [Header("Position Integration")]
         // Lab 06 Step 01
         // Position, Velocity, Acceleration, and Force are 3D Vectors
-        [Header("Position Integration")] public Vector3 position;
+        public Vector3 position;
         public Vector3 velocity;
         public Vector3 acceleration;
         public Vector3 force;
@@ -35,6 +36,7 @@ namespace Physics3D
         [Header("Force Integration")]
         // Mass & Inverse Mass are still floats
         public float mass;
+
         public float inverseMass;
 
         // Update a particle's position based on Euler Explicit integration
@@ -109,7 +111,7 @@ namespace Physics3D
 
             // Must normalize rotation in order to stop unwanted scaling
             rotation.Normalize();
-    
+
             // Euler integration for updating angular velocity
             angularVelocity += angularAcceleration * dt;
         }
@@ -127,7 +129,7 @@ namespace Physics3D
         {
             // Acquire fixed DeltaTime
             float dt = Time.fixedDeltaTime;
-            
+
             // Update position & rotation
             UpdatePosition(dt);
             UpdateRotation(dt);
@@ -137,7 +139,7 @@ namespace Physics3D
 
             // Update position & rotation
             transform.position = position;
-            transform.Rotate(rotation.x, rotation.y, rotation.z);
+            transform.rotation = rotation.ToQuaternion();
         }
     }
 }
