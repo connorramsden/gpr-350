@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngineInternal;
 
 // Referenced the open-source game engine Acid for my Quaternion implementation:
 // https://github.com/EQMG/Acid
@@ -83,7 +83,7 @@ namespace Physics3D
             NQuaternion vecToQuat = new NQuaternion(other.x, other.y, other.z, 0.0f);
 
             this *= vecToQuat;
-            
+
             return this;
         }
 
@@ -178,14 +178,14 @@ namespace Physics3D
             // x-axis rotation
             float sinr_cosp = 2.0f * (w * x + y * z);
             float cosr_cosp = 1.0f - 2.0f * (x * x + y * y);
-            
+
             // y-axis rotation
             float sinp = 2.0f * (w * y - z * x);
-            
+
             // z-axis rotation
             float siny_cosp = 2.0f * (w * z + x * y);
             float cosy_cosp = 1.0f - 2.0f * (y * y + z * z);
-            
+
             Vector3 result = new Vector3()
             {
                 x = Mathf.Atan2(sinr_cosp, cosr_cosp),
@@ -299,10 +299,25 @@ namespace Physics3D
         public static bool operator !=(NQuaternion lhs, NQuaternion rhs)
         {
             return !(lhs == rhs);
-        }        
+        }
 
-        // Unity wants me to implement this
+        // Unity wants me to implement these, don't really need them
         public bool Equals(NQuaternion other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool Equals(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string ToString()
         {
             throw new NotImplementedException();
         }
