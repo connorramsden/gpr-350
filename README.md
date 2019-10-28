@@ -3,11 +3,11 @@ Projects completed in GRP-350 (Game Physics) at Champlain College in the Fall of
 
 Topics Covered:
 - 2D Particles
-  - Forces
-  - Inertia & Torque
-  - Basic Rigidbodies
+  - Force Generation
+  - Inertia & Torque Integration
+  - 2D Rigidbodies
   - Collision Detection
   - Collision Response
-
-Upcoming Topics:
 - 3D Particles
+	- Quaternion Rotation
+	- Angular Dynamics
