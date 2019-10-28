@@ -250,10 +250,10 @@ MonoBehaviour:
   rotation:
     x: 1
     y: 0
-    z: 0
+    z: 1
     w: 1
-  angularVelocity: {x: 0, y: 0, z: 0}
-  angularAcceleration: {x: 1, y: 0, z: 0}
+  angularVelocity: {x: 1, y: 0, z: 0}
+  angularAcceleration: {x: 0, y: 0, z: 0}
   mass: 0
   inverseMass: 0
 --- !u!23 &701653671

@@ -82,7 +82,8 @@ namespace Physics3D
         {
             // q(t+dt) = q(t) + w(t)q(t) * dt/2
             // where w === angularVelocity
-            rotation += angularVelocity * rotation * (dt * .5f);
+            NQuaternion goFast = (angularVelocity * rotation);
+            rotation += goFast * (dt * .5f);
         }
 
         // Updates a particle's rotation based on Kinematic integration

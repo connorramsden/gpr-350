@@ -64,10 +64,15 @@ namespace Physics3D
         // Multiply this NQuaternion by the passed NQuaternion
         private NQuaternion Multiply(NQuaternion other)
         {
-            this.x *= other.w + this.w * other.x + this.y * other.z - this.z * other.y;
-            this.y *= other.w + this.w * other.y + this.z * other.x - this.x * other.z;
-            this.z *= other.w + this.w * other.z + this.x * other.y - this.y * other.x;
-            this.w *= other.w - this.x * other.x - this.y * other.y - this.z * other.z;
+
+            Vector3 thisVec = new Vector3(x, y, z);
+            Vector3 otherVec = new Vector3(other.x, other.y, other.z);
+            Vector3 vec = w * otherVec + other.w * thisVec + Vector3.Cross(thisVec, otherVec);
+
+            w = w * other.w - Vector3.Dot(thisVec, otherVec);
+            x = vec.x;
+            y = vec.y;
+            z = vec.z;
 
             return this;
         }
