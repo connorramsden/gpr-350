@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using static Physics3D.AngularMath;
 
 namespace Physics3D
 {
