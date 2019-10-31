@@ -30,8 +30,6 @@ namespace Physics3D
         public IntegrationType integrationType;
         public InertiaShape inertiaShape;
 
-        public bool shouldOscillate;
-
         [Header("Position Integration")]
         // Lab 06 Step 01
         // Position, Velocity, Acceleration, and Force are 3D Vectors
@@ -109,8 +107,8 @@ namespace Physics3D
         {
             // q(t+dt) = q(t) + w(t)q(t) * dt/2
             // where w === angularVelocity
-            NQuaternion goFast = (angularVelocity * rotation);
-            rotation += goFast * (dt * .5f);
+            NQuaternion rotTimesVel = (angularVelocity * rotation);
+            rotation += rotTimesVel * (dt * .5f);
         }
 
         // Updates a particle's rotation based on Kinematic integration
@@ -153,8 +151,6 @@ namespace Physics3D
             {
                 gameObject.tag = "3D Particle";
             }
-
-            shouldOscillate = true;
         }
 
         // Update in fixed-step time
@@ -166,10 +162,6 @@ namespace Physics3D
             // Update position & rotation
             UpdatePosition(dt);
             UpdateRotation(dt);
-
-            // Oscillate movement
-            if (shouldOscillate)
-                acceleration.x = -Mathf.Sin(Time.time);
 
             // Update position & rotation
             transform.position = position;

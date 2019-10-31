@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 // Referenced the open-source game engine Acid for my Quaternion implementation:
@@ -64,7 +63,6 @@ namespace Physics3D
         // Multiply this NQuaternion by the passed NQuaternion
         private NQuaternion Multiply(NQuaternion other)
         {
-
             Vector3 thisVec = new Vector3(x, y, z);
             Vector3 otherVec = new Vector3(other.x, other.y, other.z);
             Vector3 vec = w * otherVec + other.w * thisVec + Vector3.Cross(thisVec, otherVec);
@@ -200,6 +198,35 @@ namespace Physics3D
         public static Vector3 ToEuler(NQuaternion quat)
         {
             return quat.ToEuler();
+        }
+
+        public Matrix4x4 ToRotationMatrix()
+        {
+            Matrix4x4 ret = new Matrix4x4
+            {
+                // set first row
+                m00 = w * w + x * x - y * y - z * z,
+                m01 = 2f * (x * y - w * z),
+                m02 = 2f * (x * z + w * y),
+                m03 = 0f,
+                // set second row
+                m10 = 2f * (x * y + w * z),
+                m11 = w * w - x * x + y * y - z * z,
+                m12 = 2f * (y * z - w * x),
+                m13 = 0f,
+                // set third row
+                m20 = 2f * (x * z - w * y),
+                m21 = 2f * (y * z + w * x),
+                m22 = w * w - x * x - y * y + z * z,
+                m23 = 0f,
+                // set fourth row
+                m30 = 0f,
+                m31 = 0f,
+                m32 = 0f,
+                m33 = 1f
+            };
+
+            return ret;
         }
 
         public Quaternion ToQuaternion()
