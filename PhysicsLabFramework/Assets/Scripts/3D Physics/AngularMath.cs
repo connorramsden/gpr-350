@@ -27,7 +27,7 @@ namespace Physics3D
             worldMatrix[11] = vec.z;
         }
 
-        // Inverts the homogeneous world transformation matrix
+        // Optimized inversion of the homogeneous world transformation matrix
         public static void ConvertWorldToInverse(ref Particle3D p3d)
         {
         }
@@ -131,7 +131,32 @@ namespace Physics3D
                     throw new ArgumentOutOfRangeException(nameof(iShape), iShape, null);
             }
         }
-        
-        
+
+        // Update the world center of mass every frame by transformation
+        public static void UpdateWorldCenter()
+        {
+        }
+
+        // Update the world inertia tensor every frame by change of basis
+        public static void UpdateWorldInertia()
+        {
+        }
+
+        // Calculate torque based on inertia tensor
+        public static void CalculateTorque(Particle3D p3d, ref Vector3 torque)
+        {
+            // Torque = moment arm (vector) * Force
+            Vector3 momentArm = p3d.pointOfAppliedForce - p3d.worldMassCenter;
+            
+        }
+
+        // Update angular acceleration based on torque
+        public static void UpdateAngularAcceleration(Particle3D p3d, ref Vector3 torque, ref Vector3 angularAccel)
+        {
+            // Angular Acceleration = inverse inertia tensor * torque
+
+            // Kill torque, as it is re-calculated every frame
+            torque = Vector3.zero;
+        }
     }
 }

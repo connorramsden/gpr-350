@@ -38,7 +38,6 @@ namespace Physics3D
         public Vector3 position;
         public Vector3 velocity;
         public Vector3 acceleration;
-        // public Vector3 force;
 
         [Header("Rotation Integration")]
         // Rotation is a Quaternion (from a single float about the Z-Axis)
@@ -52,7 +51,7 @@ namespace Physics3D
         public Vector3 torque;
         
         // Lab 07 Step 01
-        [Header("Dynamics Integration")]
+        [Header("Angular Dynamics Integration")]
         // 3D Vectors; world center is updated every frame by transformation
         public Vector3 localMassCenter;
         public Vector3 worldMassCenter;
@@ -62,6 +61,10 @@ namespace Physics3D
         // Updates every frame by converting rotation & position into homogeneous matrices
         public Matrix4x4 worldTransformMatrix;
         public Matrix4x4 worldTransformInverse;
+        
+        // Necessary for Torque / Acceleration calculations
+        public Vector3 pointOfAppliedForce;
+        public Vector3 appliedForce;
         
         [Header("Inertia Tensor Integration")]
         // Float for radius
@@ -174,7 +177,7 @@ namespace Physics3D
             // Calculate the world transform matrix based on rotation & position
             CalculateTransformMatrix(ref worldTransformMatrix, rotation, position);
 
-            // Update position & rotation
+            // Update transform position & rotation
             transform.position = position;
             transform.rotation = rotation.ToQuaternion();
         }
