@@ -6,6 +6,7 @@ namespace Physics3D
 {
     public class Particle3D : MonoBehaviour
     {
+        // Lab 06 Step 02
         public enum IntegrationType
         {
             INVALID_INTEGRATION = -1,
@@ -13,6 +14,7 @@ namespace Physics3D
             KINEMATIC
         }
 
+        // Lab 07 Step 01
         public enum InertiaShape
         {
             INVALID_SHAPE = -1,
@@ -25,23 +27,18 @@ namespace Physics3D
             CYLINDER_SOLID,
             CONE_SOLID
         }
-
+    
         [Header("Integration Selection")]
         public IntegrationType integrationType;
         public InertiaShape inertiaShape;
 
-        [Header("Position Integration")]
         // Lab 06 Step 01
+        [Header("Position Integration")]
         // Position, Velocity, Acceleration, and Force are 3D Vectors
         public Vector3 position;
         public Vector3 velocity;
         public Vector3 acceleration;
-        public Vector3 force;
-
-        // Lab 07 Step 01
-        // Updates every frame by converting rotation & position into homogenous matrices
-        public Matrix4x4 worldTransformMatrix;
-        public Matrix4x4 worldTransformInverse;
+        // public Vector3 force;
 
         [Header("Rotation Integration")]
         // Rotation is a Quaternion (from a single float about the Z-Axis)
@@ -53,15 +50,24 @@ namespace Physics3D
         public Vector3 angularAcceleration;
         // Applied in world space using cross-product
         public Vector3 torque;
-
+        
         // Lab 07 Step 01
-        [Header("Force Integration")]
+        [Header("Dynamics Integration")]
         // 3D Vectors; world center is updated every frame by transformation
-        public Vector3 localMass;
-        public Vector3 worldMass;
+        public Vector3 localMassCenter;
+        public Vector3 worldMassCenter;
         // 3D Matrices; world is updated every frame by performing change of basis
         public Matrix4x4 localInertia;
         public Matrix4x4 worldInertia;
+        // Updates every frame by converting rotation & position into homogeneous matrices
+        public Matrix4x4 worldTransformMatrix;
+        public Matrix4x4 worldTransformInverse;
+        
+        [Header("Inertia Tensor Integration")]
+        // Float for radius
+        public float radius;
+        public float mass;
+        public float width, height, depth;
 
         // Updates a particle's position based on Euler Explicit integration
         private void UpdatePositionEulerExplicit(float dt)
@@ -128,7 +134,6 @@ namespace Physics3D
                         UpdateRotationEulerExplicit(dt);
                         break;
                     }
-                case IntegrationType.KINEMATIC:
                 default:
                     {
                         UpdateRotationEulerExplicit(dt);
@@ -146,11 +151,14 @@ namespace Physics3D
         // Initialize local variables here
         private void Awake()
         {
-            // Upon Awake(), set the object's tag to 3D Particle
+            // Set the object's tag to 3D Particle
             if (!gameObject.CompareTag("3D Particle"))
             {
                 gameObject.tag = "3D Particle";
             }
+            
+            // Set the particle's Inertia tensor based on its shape
+            SetInertia(ref localInertia, this);
         }
 
         // Update in fixed-step time
@@ -162,6 +170,9 @@ namespace Physics3D
             // Update position & rotation
             UpdatePosition(dt);
             UpdateRotation(dt);
+            
+            // Calculate the world transform matrix based on rotation & position
+            CalculateTransformMatrix(ref worldTransformMatrix, rotation, position);
 
             // Update position & rotation
             transform.position = position;

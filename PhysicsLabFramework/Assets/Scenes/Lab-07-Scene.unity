@@ -243,10 +243,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   integrationType: 0
+  inertiaShape: 0
   position: {x: 0, y: 0, z: 0}
   velocity: {x: 1, y: 0, z: 0}
   acceleration: {x: 0, y: 0, z: 0}
-  force: {x: 0, y: 0, z: 0}
   rotation:
     x: 1
     y: 0
@@ -254,8 +254,83 @@ MonoBehaviour:
     w: 1
   angularVelocity: {x: 1, y: 0, z: 0}
   angularAcceleration: {x: 0, y: 0, z: 0}
-  mass: 0
-  inverseMass: 0
+  torque: {x: 0, y: 0, z: 0}
+  localMassCenter: {x: 0, y: 0, z: 0}
+  worldMassCenter: {x: 0, y: 0, z: 0}
+  localInertia:
+    e00: 0
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 0
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 0
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 0
+  worldInertia:
+    e00: 0
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 0
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 0
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 0
+  worldTransformMatrix:
+    e00: 0
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 0
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 0
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 0
+  worldTransformInverse:
+    e00: 0
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 0
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 0
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 0
+  radius: 0.5
+  mass: 1
+  width: 0
+  height: 0
+  length: 0
+  depth: 0
 --- !u!23 &701653671
 MeshRenderer:
   m_ObjectHideFlags: 0
