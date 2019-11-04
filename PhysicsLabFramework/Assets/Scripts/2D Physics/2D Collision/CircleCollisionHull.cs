@@ -2,11 +2,11 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using Physics2D;
+using NS_Physics2D;
 
-namespace NS_Collision
+namespace NS_Collision_2D
 {
-    public class CircleCollisionHull2D : CollisionHull2D
+    public class CircleCollisionHull : CollisionHull2D
     {
         public float radius
         {
@@ -14,19 +14,19 @@ namespace NS_Collision
         }
 
         // Architecture Style 2 //
-        public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out NCollision collision)
+        public override bool TestCollisionVsCircle(CircleCollisionHull other, out NCollision2D collision2D)
         {
-            // collision if distance between centers is <= sum of radii
-            // optimized collision if (distance between centers)^2 <= (sum of radii)^2       
+            // collision2D if distance between centers is <= sum of radii
+            // optimized collision2D if (distance between centers)^2 <= (sum of radii)^2       
 
-            // Create a new NCollision
+            // Create a new NCollision2D
             // Assign hulls and instantiate the contact list
             // Status defaults to false
-            collision = new NCollision
+            collision2D = new NCollision2D
             {
                 hullOne = this,
                 hullTwo = other,
-                contact = new List<NCollision.Contact>(),
+                contact = new List<NCollision2D.Contact>(),
                 status = false
             };
 
@@ -43,36 +43,36 @@ namespace NS_Collision
             // Step 06: DO THE TEST: distSq <= sumSq
             if (distSq <= sumSq)
             {
-                collision.status = true;
+                collision2D.status = true;
             }
 
-            NCollision.Contact contact = new NCollision.Contact
+            NCollision2D.Contact contact = new NCollision2D.Contact
             {
-                
+
             };
 
-            collision.contact.Add(contact);
+            collision2D.contact.Add(contact);
 
-            // Finish setting up the collision
-            collision.contactCount = collision.contact.Count;
+            // Finish setting up the collision2D
+            collision2D.contactCount = collision2D.contact.Count;
 
-            return collision.status;
+            return collision2D.status;
         }
 
-        public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision collision)
+        public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision2D collision2D)
         {
             // find the closest point to the cicle on the box
             // done by clamping center of circle to be within box dimensions
-            // if closest point is within circle, pass (do point vs circle collision test)
+            // if closest point is within circle, pass (do point vs circle collision2D test)
 
-            // Create a new NCollision
+            // Create a new NCollision2D
             // Assign hulls and instantiate the contact list
             // Status defaults to false
-            collision = new NCollision
+            collision2D = new NCollision2D
             {
                 hullOne = this,
                 hullTwo = other,
-                contact = new List<NCollision.Contact>(),
+                contact = new List<NCollision2D.Contact>(),
                 status = false
             };
 
@@ -92,22 +92,27 @@ namespace NS_Collision
 
             // Step 05: Check to see if we're in contact
             if (distance < radius * radius)
-                collision.status = true;
+                collision2D.status = true;
 
-            NCollision.Contact contact = new NCollision.Contact
+            NCollision2D.Contact contact = new NCollision2D.Contact
             {
                 pointOfContact = closestPoint,
                 coeffRestitution = 0.25f,
-                normal = (collision.hullOne.particle.movement.position - collision.hullTwo.particle.movement.position).normalized,
+                normal = (collision2D.hullOne.particle.movement.position - collision2D.hullTwo.particle.movement.position).normalized,
                 depth = distance
             };
 
-            collision.contact.Add(contact);
+            collision2D.contact.Add(contact);
 
-            // Finish setting up the collision
-            collision.contactCount = collision.contact.Count;
+            // Finish setting up the collision2D
+            collision2D.contactCount = collision2D.contact.Count;
 
-            return collision.status;
+            return collision2D.status;
+        }
+
+        public override bool TestCollisisionVsOBB(OBBCollisionHull2D other, out NCollision2D c)
+        {
+            throw new System.NotImplementedException();
         }
 
         // Initialize local variables
@@ -126,11 +131,6 @@ namespace NS_Collision
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(center, radius);
-        }
-
-        public override bool TestCollisisionVsOBB(OBBCollisionHull2D other, out NCollision c)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

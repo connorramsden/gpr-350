@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using NS_Collision;
+using NS_Collision_2D;
 
-namespace Physics2D
+namespace NS_Physics2D
 {
     public class Particle2DSystem : MonoBehaviour
     {
@@ -32,14 +32,14 @@ namespace Physics2D
         }
 
         // Check a the passed particle against all other particles for Circle Collisions
-        private bool CheckCircleCollision(GameObject particleOne, out NCollision collision)
+        private bool CheckCircleCollision(GameObject particleOne, out NCollision2D collision2D)
         {
-            CircleCollisionHull2D cch2d = particleOne.GetComponent<CircleCollisionHull2D>();
+            CircleCollisionHull cch2d = particleOne.GetComponent<CircleCollisionHull>();
             Particle2DComponent p2dOne = particleOne.GetComponent<Particle2DComponent>();
 
             bool isColliding = false;
 
-            collision = new NCollision();
+            collision2D = new NCollision2D();
 
             // Iterate over the particleList and check vs all objects
             foreach (GameObject particleTwo in particleList)
@@ -49,16 +49,16 @@ namespace Physics2D
 
                 Particle2DComponent p2dTwo = particleTwo.GetComponent<Particle2DComponent>();
 
-                if (particleTwo.TryGetComponent(out CircleCollisionHull2D otherCircle))
+                if (particleTwo.TryGetComponent(out CircleCollisionHull otherCircle))
                 {
-                    isColliding = cch2d.TestCollisionVsCircle(otherCircle, out collision);
+                    isColliding = cch2d.TestCollisionVsCircle(otherCircle, out collision2D);
                 }
                 else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
                 {
-                    isColliding = cch2d.TestCollisionVsAABB(otherAABB, out collision);
+                    isColliding = cch2d.TestCollisionVsAABB(otherAABB, out collision2D);
                 }
 
-                collision.closingVelocity = CollisionResolutionManager.CalcClosingVel(p2dOne, p2dTwo);
+                collision2D.closingVelocity = CollisionResolutionManager.CalcClosingVel(p2dOne, p2dTwo);
             }
 
             // If none of the above are true, will return false
@@ -66,14 +66,14 @@ namespace Physics2D
         }
 
         // Check the passed particle against all other particles for Box Collisions (AABB & OBB)
-        private bool CheckAABBCollision(GameObject particleOne, out NCollision collision)
+        private bool CheckAABBCollision(GameObject particleOne, out NCollision2D collision2D)
         {
             AABBCollisionHull2D aabb2d = particleOne.GetComponent<AABBCollisionHull2D>();
             Particle2DComponent p2dOne = particleOne.GetComponent<Particle2DComponent>();
 
             bool isColliding = false;
 
-            collision = new NCollision();
+            collision2D = new NCollision2D();
 
             foreach (GameObject particleTwo in particleList)
             {
@@ -82,16 +82,16 @@ namespace Physics2D
 
                 Particle2DComponent p2dTwo = particleTwo.GetComponent<Particle2DComponent>();
 
-                if (particleTwo.TryGetComponent(out CircleCollisionHull2D otherCircle))
+                if (particleTwo.TryGetComponent(out CircleCollisionHull otherCircle))
                 {
-                    isColliding = aabb2d.TestCollisionVsCircle(otherCircle, out collision);
+                    isColliding = aabb2d.TestCollisionVsCircle(otherCircle, out collision2D);
                 }
                 else if (particleTwo.TryGetComponent(out AABBCollisionHull2D otherAABB))
                 {
-                    isColliding = aabb2d.TestCollisionVsAABB(otherAABB, out collision);
+                    isColliding = aabb2d.TestCollisionVsAABB(otherAABB, out collision2D);
                 }
 
-                collision.closingVelocity = CollisionResolutionManager.CalcClosingVel(p2dOne, p2dTwo);
+                collision2D.closingVelocity = CollisionResolutionManager.CalcClosingVel(p2dOne, p2dTwo);
             }
 
             // If none of the above are true, will return false
@@ -102,13 +102,13 @@ namespace Physics2D
         {
             foreach (GameObject particle in particleList)
             {
-                NCollision collisionToResolve = new NCollision();
+                NCollision2D collisionToResolve = new NCollision2D();
 
                 // Establish a local boolean
                 bool isColliding = false;
 
                 // If the particle has a circle hull, check circle-collisions
-                if (particle.TryGetComponent(out CircleCollisionHull2D circleHull))
+                if (particle.TryGetComponent(out CircleCollisionHull circleHull))
                 {
                     circleHull.UpdateCenterPos();
                     isColliding = CheckCircleCollision(particle, out collisionToResolve);

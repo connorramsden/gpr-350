@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Physics2D
+namespace NS_Physics2D
 {
     // Class containing Methods relevant to Force Generation
     public class ForceGenerator2D : MonoBehaviour

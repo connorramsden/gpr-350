@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Physics2D
+namespace NS_Physics2D
 {
     // Class containing Variables and Methods relevant to General Particle Operation
     // Require a Particle2D Movement & Rotation component on Particle2D objects

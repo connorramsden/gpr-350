@@ -3,9 +3,9 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using Physics2D;
+using NS_Physics2D;
 
-namespace NS_Collision
+namespace NS_Collision_2D
 {
     public class AABBCollisionHull2D : CollisionHull2D
     {
@@ -21,19 +21,18 @@ namespace NS_Collision
         {
             get; private set;
         }
-
-        public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out NCollision collision)
+        
+        /// <see cref="CircleCollisionHull.TestCollisionVsAABB(AABBCollisionHull2D)"/>
+        public override bool TestCollisionVsCircle(CircleCollisionHull other, out NCollision2D collision2D)
         {
-            /// <see cref="CircleCollisionHull2D.TestCollisionVsAABB(AABBCollisionHull2D)"/>
-
-            // Create a new NCollision
+            // Create a new NCollision2D
             // Assign hulls and instantiate the contact list
             // Status defaults to false
-            collision = new NCollision
+            collision2D = new NCollision2D
             {
                 hullOne = this,
                 hullTwo = other,
-                contact = new List<NCollision.Contact>(),
+                contact = new List<NCollision2D.Contact>(),
                 status = false
             };
 
@@ -53,36 +52,36 @@ namespace NS_Collision
 
             // Step 05: Check that the closest point is within the AABB box
             if (distance < otherRadSqr)
-                collision.status = true;
+                collision2D.status = true;
 
-            NCollision.Contact contact = new NCollision.Contact
+            NCollision2D.Contact contact = new NCollision2D.Contact
             {
                 pointOfContact = closestPoint,
                 coeffRestitution = 0.25f,
-                normal = (collision.hullOne.particle.movement.position - collision.hullTwo.particle.movement.position).normalized,
+                normal = (collision2D.hullOne.particle.movement.position - collision2D.hullTwo.particle.movement.position).normalized,
                 depth = distance
             };
 
-            collision.contact.Add(contact);
+            collision2D.contact.Add(contact);
 
-            // Finish setting up the collision
-            collision.contactCount = collision.contact.Count;
+            // Finish setting up the collision2D
+            collision2D.contactCount = collision2D.contact.Count;
 
-            return collision.status;
+            return collision2D.status;
         }
 
-        public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision collision)
+        public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision2D collision2D)
         {
             // Pass Condition: If, for all axes (X & Y), the MaxExtent of This is overlapping the MinExtent of Other
 
-            // Create a new NCollision
+            // Create a new NCollision2D
             // Assign hulls and instantiate the contact list
             // Status defaults to false
-            collision = new NCollision
+            collision2D = new NCollision2D
             {
                 hullOne = this,
                 hullTwo = other,
-                contact = new List<NCollision.Contact>(),
+                contact = new List<NCollision2D.Contact>(),
                 status = false
             };
 
@@ -97,31 +96,31 @@ namespace NS_Collision
             // Check that all extents are passing properly
             // If yes, return true, else, return false
             if (diffX && diffY)
-                collision.status = true;
+                collision2D.status = true;
 
-            NCollision.Contact contactOne = new NCollision.Contact
+            NCollision2D.Contact contactOne = new NCollision2D.Contact
             {
                 pointOfContact = (minExtent - otherMin),
                 coeffRestitution = 0.25f,
                 depth = (minExtent - otherMin).sqrMagnitude,
-                normal = (collision.hullOne.particle.movement.position - collision.hullTwo.particle.movement.position).normalized
+                normal = (collision2D.hullOne.particle.movement.position - collision2D.hullTwo.particle.movement.position).normalized
             };
 
-            NCollision.Contact contactTwo = new NCollision.Contact
+            NCollision2D.Contact contactTwo = new NCollision2D.Contact
             {
                 pointOfContact = (maxExtent - otherMax),
                 coeffRestitution = 0.25f,
                 depth = (maxExtent - otherMax).sqrMagnitude,
-                normal = (collision.hullOne.particle.movement.position - collision.hullTwo.particle.movement.position).normalized
+                normal = (collision2D.hullOne.particle.movement.position - collision2D.hullTwo.particle.movement.position).normalized
             };
 
-            collision.contact.Add(contactOne);
-            collision.contact.Add(contactTwo);
+            collision2D.contact.Add(contactOne);
+            collision2D.contact.Add(contactTwo);
 
-            // Finish setting up the collision
-            collision.contactCount = collision.contact.Count;
+            // Finish setting up the collision2D
+            collision2D.contactCount = collision2D.contact.Count;
 
-            return collision.status;
+            return collision2D.status;
         }
 
         // Called in an Update loop to re-define min & max extents
@@ -136,7 +135,7 @@ namespace NS_Collision
         // Initialize local variables
         private void Awake()
         {
-            type = CollisionHullType2D.HULL_AABB;
+            type = CollisionHullType2D.HULL_AABB_2D;
 
             particle = GetComponent<Particle2DComponent>();
 
@@ -144,7 +143,7 @@ namespace NS_Collision
             UpdateExtents();
         }
 
-        public override bool TestCollisisionVsOBB(OBBCollisionHull2D other, out NCollision c)
+        public override bool TestCollisisionVsOBB(OBBCollisionHull2D other, out NCollision2D c)
         {
             throw new System.NotImplementedException();
         }

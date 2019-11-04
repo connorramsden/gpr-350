@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Physics2D;
+using NS_Physics2D;
 
-namespace NS_Collision
+namespace NS_Collision_2D
 {
-    // A collision is an event (two objects touching)
+    // A collision2D is an event (two objects touching)
     // Lab 05 Step 01
-    // Called NCollision b/c Collision & Collision2D are Unity types
-    public struct NCollision
+    // Called NCollision2D b/c Collision & Collision2D are Unity types
+    public struct NCollision2D
     {
         // References to hulls involved
         public CollisionHull2D hullOne, hullTwo;
@@ -15,7 +15,7 @@ namespace NS_Collision
         // Collision Status (did it happen?)
         public bool status;
 
-        // A contact is the point(s) at which a collision occurs
+        // A contact is the point(s) at which a collision2D occurs
         public struct Contact
         {
             // Contact Location
@@ -28,7 +28,7 @@ namespace NS_Collision
             public float depth;
         }
 
-        // List of contacts for this collision
+        // List of contacts for this collision2D
         public List<Contact> contact;
 
         // Number of contacts (size of contact list)
@@ -53,15 +53,15 @@ namespace NS_Collision
         }
 
         // Formulae from Millington 2nd Ed. pg. 120-121
-        private static void ResolveVelocity(NCollision c, float duration)
+        private static void ResolveVelocity(NCollision2D c, float duration)
         {
             Particle2DComponent partOne = c.hullOne.particle;
             Particle2DComponent partTwo = c.hullTwo.particle;
 
             // Assuming one point of contact
-            NCollision.Contact contact = c.contact[0];
+            NCollision2D.Contact contact = c.contact[0];
 
-            // Check if the collision needs to be resolved
+            // Check if the collision2D needs to be resolved
             if (c.closingVelocity > 0)
             {
                 // If the contact is separating or stationary, no impulse is required
@@ -104,10 +104,10 @@ namespace NS_Collision
             partTwo.movement.velocity = partTwo.movement.velocity + impulsePerInvMass * -partTwo.massInv;
         }
 
-        private static void ResolveInterpenetration(NCollision collision, float duration)
+        private static void ResolveInterpenetration(NCollision2D collision2D, float duration)
         {
-            Particle2DComponent partOne = collision.hullOne.particle;
-            Particle2DComponent partTwo = collision.hullTwo.particle;
+            Particle2DComponent partOne = collision2D.hullOne.particle;
+            Particle2DComponent partTwo = collision2D.hullTwo.particle;
 
             // The movement of each object is based on their inverse mass
             // So, total that value
@@ -117,8 +117,8 @@ namespace NS_Collision
             if (totalInverseMass <= 0)
                 return;
 
-            // Check out results for each contact in the collision contact list
-            foreach (NCollision.Contact contact in collision.contact)
+            // Check out results for each contact in the collision2D contact list
+            foreach (NCollision2D.Contact contact in collision2D.contact)
             {
                 // Continue to the next contact if we have no penetration
                 if (contact.depth <= 0)
@@ -137,29 +137,29 @@ namespace NS_Collision
 
         }
 
-        // Check to ensure that a collision has been properly set up.
-        private static bool VerifyCollision(NCollision collision)
+        // Check to ensure that a collision2D has been properly set up.
+        private static bool VerifyCollision(NCollision2D collision2D)
         {
-            // ensure the collision has a valid closing velocity
-            if (collision.closingVelocity.Equals(null))
+            // ensure the collision2D has a valid closing velocity
+            if (collision2D.closingVelocity.Equals(null))
             {
                 Debug.LogError("Collision invalid: no closing velocity");
                 return false;
             }
-            // Ensure the collision has both hulls assigned
-            if (!collision.hullOne && !collision.hullTwo)
+            // Ensure the collision2D has both hulls assigned
+            if (!collision2D.hullOne && !collision2D.hullTwo)
             {
                 Debug.LogError("Collision invalid: hulls not properly assigned");
                 return false;
             }
-            // Ensure the collision has at least one contact point
-            if (collision.contactCount <= 0)
+            // Ensure the collision2D has at least one contact point
+            if (collision2D.contactCount <= 0)
             {
                 Debug.LogError("Collision invalid: no contact points assigned");
                 return false;
             }
             
-            foreach(NCollision.Contact contact in collision.contact)
+            foreach(NCollision2D.Contact contact in collision2D.contact)
             {
                 if(contact.depth.Equals(null))
                 {
@@ -182,14 +182,14 @@ namespace NS_Collision
             return true;
         }
 
-        public static void ResolveCollision(NCollision collision, float duration)
+        public static void ResolveCollision(NCollision2D collision2D, float duration)
         {
-            // Ensure the collision is valid
-            if (!VerifyCollision(collision))
+            // Ensure the collision2D is valid
+            if (!VerifyCollision(collision2D))
                 return;
 
-            ResolveVelocity(collision, duration);
-            ResolveInterpenetration(collision, duration);
+            ResolveVelocity(collision2D, duration);
+            ResolveInterpenetration(collision2D, duration);
         }
     }
 }

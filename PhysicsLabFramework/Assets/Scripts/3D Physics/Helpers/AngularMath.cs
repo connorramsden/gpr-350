@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Physics3D
+namespace NS_Physics3D
 {
     public static class AngularMath
     {
@@ -36,6 +36,7 @@ namespace Physics3D
         public static void SetInertia(ref Matrix4x4 inertiaTensor, Particle3D p3d)
         {
             Particle3D.InertiaShape iShape = p3d.inertiaShape;
+
             // Allows for single retrieval & reuse
             float radius = p3d.radius;
             float mass = p3d.mass;

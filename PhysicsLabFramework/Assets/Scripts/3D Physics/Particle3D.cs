@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
-using static Physics3D.AngularMath;
+using static NS_Physics3D.AngularMath;
 
-namespace Physics3D
+namespace NS_Physics3D
 {
     public class Particle3D : MonoBehaviour
     {

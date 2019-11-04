@@ -2,9 +2,9 @@
 // Same Axes as Local Axes
 
 using UnityEngine;
-using Physics2D;
+using NS_Physics2D;
 
-namespace NS_Collision
+namespace NS_Collision_2D
 {
     public class OBBCollisionHull2D : CollisionHull2D
     {
@@ -31,9 +31,9 @@ namespace NS_Collision
             get; private set;
         }
 
-        public override bool TestCollisionVsCircle(CircleCollisionHull2D other, out NCollision c)
+        public override bool TestCollisionVsCircle(CircleCollisionHull other, out NCollision2D c)
         {
-            /// <see cref="CircleCollisionHull2D.TestCollisionVsOBB(OBBCollisionHull2D)"/>
+            /// <see cref="CircleCollisionHull.TestCollisionVsOBB(OBBCollisionHull2D)"/>
 
             // Step 01: Get center & sqrRadius of other
             Vector3 origCenter = other.center;
@@ -53,7 +53,7 @@ namespace NS_Collision
             // Step 05: Establish distance of contact
             float distance = (closestPoint - newCenter).sqrMagnitude;
 
-            c = new NCollision();
+            c = new NCollision2D();
 
             // Step 06: Check to see if we're in contact
             if (distance < radiusSqr)
@@ -62,7 +62,7 @@ namespace NS_Collision
                 return false;
         }
 
-        public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision c)
+        public override bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision2D c)
         {
             /// <see cref="AABBCollisionHull2D.TestCollisionVsOBB(OBBCollisionHull2D)"/>
 
@@ -76,7 +76,7 @@ namespace NS_Collision
 
             Vector3 transBox = Vector3.Project(particle.GetPosition(), other.particle.GetPosition());
 
-            c = new NCollision();
+            c = new NCollision2D();
 
             // Honestly, no idea what I'm doing here, and I need to move on to Project 5
             return false;
@@ -91,13 +91,13 @@ namespace NS_Collision
 
         private void Awake()
         {
-            type = CollisionHullType2D.HULL_OBB;
+            type = CollisionHullType2D.HULL_OBB_2D;
             particle = GetComponent<Particle2DComponent>();
             center = particle.transform.position;
             halfSize = 0.5f * particle.transform.localScale;
         }
 
-        public override bool TestCollisisionVsOBB(OBBCollisionHull2D other, out NCollision c)
+        public override bool TestCollisisionVsOBB(OBBCollisionHull2D other, out NCollision2D c)
         {
             throw new System.NotImplementedException();
         }

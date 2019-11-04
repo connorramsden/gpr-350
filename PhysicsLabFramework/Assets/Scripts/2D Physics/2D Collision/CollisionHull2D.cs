@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using Physics2D;
+﻿using UnityEngine;
+using NS_Physics2D;
 
-namespace NS_Collision
+namespace NS_Collision_2D
 {
     [RequireComponent(typeof(Particle2DComponent))]
     public abstract class CollisionHull2D : MonoBehaviour
@@ -12,8 +11,8 @@ namespace NS_Collision
         {
             INVALID_TYPE = -1,
             HULL_CIRCLE,
-            HULL_AABB,
-            HULL_OBB,
+            HULL_AABB_2D,
+            HULL_OBB_2D,
         }
 
         // Holds the CH2D's type
@@ -34,11 +33,11 @@ namespace NS_Collision
             get; protected set;
         }
 
-        public abstract bool TestCollisionVsCircle(CircleCollisionHull2D other, out NCollision c);
+        public abstract bool TestCollisionVsCircle(CircleCollisionHull other, out NCollision2D c);
 
-        public abstract bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision c);
+        public abstract bool TestCollisionVsAABB(AABBCollisionHull2D other, out NCollision2D c);
 
-        public abstract bool TestCollisisionVsOBB(OBBCollisionHull2D other, out NCollision c);
+        public abstract bool TestCollisisionVsOBB(OBBCollisionHull2D other, out NCollision2D c);
 
         public virtual void UpdateCenterPos()
         {

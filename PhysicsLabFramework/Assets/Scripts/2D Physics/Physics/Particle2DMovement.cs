@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Physics2D
+namespace NS_Physics2D
 {
     // Class containing Variables relevant to Particle Movement
     public class Particle2DMovement : MonoBehaviour

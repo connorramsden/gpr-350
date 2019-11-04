@@ -5,7 +5,7 @@ using UnityEngine;
 // https://github.com/EQMG/Acid
 // As well as some Unity documentation about their Quaternion implementation
 
-namespace Physics3D
+namespace NS_Physics3D
 {
     // Made my own Quaternion class because it was easier than using Unity's
     [Serializable]
