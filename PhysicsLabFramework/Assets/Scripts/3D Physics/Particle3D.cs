@@ -22,8 +22,6 @@ namespace NS_Physics3D
             SPHERE_HOLLOW,
             BOX_SOLID,
             BOX_HOLLOW,
-            CUBE_SOLID,
-            CUBE_HOLLOW,
             CYLINDER_SOLID,
             CONE_SOLID
         }
@@ -47,31 +45,30 @@ namespace NS_Physics3D
         public Vector3 angularVelocity;
         // Converted from torque using Newton-2 for rotation
         public Vector3 angularAcceleration;
-        // Applied in world space using cross-product
-        public Vector3 torque;
         
         // Lab 07 Step 01
         [Header("Angular Dynamics Integration")]
-        // 3D Vectors; world center is updated every frame by transformation
-        public Vector3 localMassCenter;
-        public Vector3 worldMassCenter;
-        // 3D Matrices; world is updated every frame by performing change of basis
-        public Matrix4x4 localInertia;
-        public Matrix4x4 worldInertia;
         // Updates every frame by converting rotation & position into homogeneous matrices
         public Matrix4x4 worldTransformMatrix;
         public Matrix4x4 worldTransformInverse;
-        
-        // Necessary for Torque / Acceleration calculations
+        // Particle mass & mass inverse
+        public float mass, massInverse;
+        // 3D Vectors; world center is updated every frame by transformation
+        public Vector3 localMassCenter;
+        public Vector3 worldMassCenter;
+        // 3D Matrices representing a particle's inertia & inverse inertia tensors
+        public Matrix4x4 inertia, inertiaInverse;
+        // Twist-force applied to a particle
+        public Vector3 torque;
+        // Necessary for Torque / Angular Acceleration calculations
         public Vector3 pointOfAppliedForce;
         public Vector3 appliedForce;
         
-        [Header("Inertia Tensor Integration")]
+        [Header("Inertia Shape Integration")]
         // Float for radius
         public float radius;
-        public float mass;
         public float width, height, depth;
-
+        
         // Updates a particle's position based on Euler Explicit integration
         private void UpdatePositionEulerExplicit(float dt)
         {
@@ -161,7 +158,7 @@ namespace NS_Physics3D
             }
             
             // Set the particle's Inertia tensor based on its shape
-            SetInertia(ref localInertia, this);
+            SetInertia(out inertia, this);
         }
 
         // Update in fixed-step time
@@ -169,17 +166,21 @@ namespace NS_Physics3D
         {
             // Acquire fixed DeltaTime
             float dt = Time.fixedDeltaTime;
+            
+            // Calculate torque so it can be applied
+            CalculateTorque(this, ref torque);
 
             // Update position & rotation
             UpdatePosition(dt);
             UpdateRotation(dt);
-            
-            // Calculate the world transform matrix based on rotation & position
+            // Calculate the world transform matrix based on updated rotation & position
             CalculateTransformMatrix(ref worldTransformMatrix, rotation, position);
 
-            // Update transform position & rotation
+            // Update Game Object position & rotation
             transform.position = position;
             transform.rotation = rotation.ToQuaternion();
+            
+            UpdateAngularAcceleration(this, ref torque, out angularAcceleration);
         }
     }
 }
