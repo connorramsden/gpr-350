@@ -173,13 +173,15 @@ namespace NS_Physics3D
             // Update position & rotation
             UpdatePosition(dt);
             UpdateRotation(dt);
-            // Calculate the world transform matrix based on updated rotation & position
+            // Calculate the world transform matrix & its inverse based on updated rotation & position
             CalculateTransformMatrix(ref worldTransformMatrix, rotation, position);
+            Invert4x4Matrix(worldTransformInverse, out worldTransformInverse);
 
             // Update Game Object position & rotation
             transform.position = position;
             transform.rotation = rotation.ToQuaternion();
             
+            // Update angular acceleration using torque and change-of-basis
             UpdateAngularAcceleration(this, ref torque, out angularAcceleration);
         }
     }
