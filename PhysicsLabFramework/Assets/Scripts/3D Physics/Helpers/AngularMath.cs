@@ -303,9 +303,9 @@ namespace NS_Physics3D
             // Step 01: Convert torque into local space
             Vector3 localSpaceTorque = WorldToLocal(torque, p3d.worldTransformMatrix);
             // Step 02: Cross-Product inverse inertia tensor and previously calculated local-space torque
-            
+            Vector3 worldSpaceTorque = MulVec3x3Mat(localSpaceTorque, p3d.inertiaInverse);
             // Step 03: Bring newly calculated torque into world space
-            angularAccel = LocalToWorld(localSpaceTorque, p3d.worldTransformMatrix);
+            angularAccel = LocalToWorld(worldSpaceTorque, p3d.worldTransformMatrix);
 
             // Step 04: Kill torque, as it is re-calculated every frame
             torque = Vector3.zero;
