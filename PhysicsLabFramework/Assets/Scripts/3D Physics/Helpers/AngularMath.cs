@@ -6,7 +6,7 @@ namespace NS_Physics3D
     public static class AngularMath
     {
         // -------------------------- 3x3 Matrix Math -------------------------- //
-        
+
         // Transforms a Vector3 by the passed Matrix3x3 | Millington 2nd Ed. pg. 176-177
         public static Vector3 MulVec3x3Mat(Vector3 vec, Matrix4x4 mat)
         {
@@ -17,7 +17,7 @@ namespace NS_Physics3D
                 z = vec.x * mat[2, 0] + vec.y * mat[2, 1] + vec.z * mat[2, 2]
             };
         }
-        
+
         // Inverts the passed 3x3 Matrix | Millington 2nd Ed. pg. 186
         public static void Invert3x3Matrix(Matrix4x4 orig, ref Matrix4x4 inverse)
         {
@@ -152,12 +152,12 @@ namespace NS_Physics3D
         {
             return new Vector3
             {
-                x = vec.x * mat[0] + vec.y * mat[1] + vec.z * mat[2] + mat[3],
-                y = vec.x * mat[4] + vec.y * mat[5] + vec.z * mat[6] + mat[7],
-                z = vec.x * mat[8] + vec.y * mat[9] + vec.z * mat[10] + mat[11]
+                x = vec.x * mat[0, 0] + vec.y * mat[0, 1] + vec.z * mat[0, 2] + mat[0, 3],
+                y = vec.x * mat[1, 0] + vec.y * mat[1, 1] + vec.z * mat[1, 2] + mat[1, 3],
+                z = vec.x * mat[2, 0] + vec.y * mat[2, 1] + vec.z * mat[2, 2] + mat[2, 3]
             };
         }
-        
+
         // Returns the determinant of the passed 4x4 matrix | Millington 2nd Ed. pg. 188
         public static float GetDeterminant(Matrix4x4 mat)
         {
@@ -247,7 +247,7 @@ namespace NS_Physics3D
             Invert4x4Matrix(transform, out Matrix4x4 inverse);
             return MulVec4x4Mat(world, inverse);
         }
-        
+
         // Transforms a Vector3 by the inverse of the passed Matrix 4x4 | Millington 2nd Ed. pg. 194
         public static Vector3 TransformVectorInverse(Vector3 vec, Matrix4x4 mat)
         {
@@ -287,7 +287,7 @@ namespace NS_Physics3D
         }
 
         // -------------------------- Dynamics Integration -------------------------- //
-        
+
         // Calculate torque based on inertia tensor
         public static void CalculateTorque(Particle3D p3d, ref Vector3 torque)
         {

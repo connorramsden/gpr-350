@@ -245,14 +245,14 @@ MonoBehaviour:
   integrationType: 0
   inertiaShape: 0
   position: {x: 0, y: 0, z: 0}
-  velocity: {x: 1, y: 0, z: 0}
+  velocity: {x: 0, y: 0, z: 0}
   acceleration: {x: 0, y: 0, z: 0}
   rotation:
     x: 1
     y: 0
     z: 1
     w: 1
-  angularVelocity: {x: 1, y: 0, z: 0}
+  angularVelocity: {x: 0, y: 0, z: 0}
   angularAcceleration: {x: 0, y: 0, z: 0}
   worldTransformMatrix:
     e00: 0
@@ -288,7 +288,7 @@ MonoBehaviour:
     e31: 0
     e32: 0
     e33: 0
-  mass: 9.78
+  mass: 5
   massInverse: 0
   localMassCenter: {x: 0, y: 0, z: 0}
   worldMassCenter: {x: 0, y: 0, z: 0}
