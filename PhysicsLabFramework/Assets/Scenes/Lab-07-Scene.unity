@@ -243,14 +243,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   integrationType: 0
-  inertiaShape: 0
+  inertiaShape: 2
   position: {x: 0, y: 0, z: 0}
   velocity: {x: 0, y: 0, z: 0}
   acceleration: {x: 0, y: 0, z: 0}
   rotation:
-    x: 1
+    x: 0
     y: 0
-    z: 1
+    z: 0
     w: 1
   angularVelocity: {x: 0, y: 0, z: 0}
   angularAcceleration: {x: 0, y: 0, z: 0}
@@ -327,12 +327,12 @@ MonoBehaviour:
     e32: 0
     e33: 0
   torque: {x: 0, y: 0, z: 0}
-  pointOfAppliedForce: {x: 0, y: 0, z: 0}
-  appliedForce: {x: 0, y: 0, z: 0}
-  radius: 0.5
-  width: 4.85
-  height: 6.68
-  depth: 1.83
+  pointOfAppliedForce: {x: 0, y: 1, z: 0}
+  appliedForce: {x: 1, y: 0, z: 0}
+  radius: 0
+  width: 2
+  height: 2
+  depth: 2
 --- !u!23 &701653671
 MeshRenderer:
   m_ObjectHideFlags: 0

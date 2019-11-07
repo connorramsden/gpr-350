@@ -49,6 +49,13 @@ namespace NS_Physics3D
             inverse[2, 1] = (t1 - t3) * invd;
         }
 
+        // Transposes the passed 3x3 Rotation Matrix | Dan Buckstein Math Slide 28
+        public static void TransposeRotation(Matrix4x4 orig, out Matrix4x4 transpose)
+        {
+            transpose = orig.transpose;
+            Debug.Log(transpose);
+        }
+
         // Set the inertia tensor of a Particle based on its shape | Dan Buckstein Angular Dynamics Slides
         public static void SetInertia(out Matrix4x4 inertiaTensor, Particle3D p3d)
         {
@@ -71,7 +78,7 @@ namespace NS_Physics3D
                 {
                     // Solid Sphere of radius r & mass m
                     // I = 2/5 * m * r^2
-                    float tensor = 0.4f * mass * radius * radius;
+                    float tensor = (2f / 5f) * mass * radius * radius;
                     inertiaTensor.m00 = inertiaTensor.m11 = inertiaTensor.m22 = tensor;
                     break;
                 }
@@ -80,7 +87,7 @@ namespace NS_Physics3D
                     // Hollow Sphere of radius r & mass m
                     // I = 2/3 * m * r^2
                     // Some loss of precision, but better than fraction
-                    float tensor = 0.667f * mass * radius * radius;
+                    float tensor = (2f / 3f) * mass * radius * radius;
                     inertiaTensor.m00 = inertiaTensor.m11 = inertiaTensor.m22 = tensor;
                     break;
                 }
@@ -88,11 +95,11 @@ namespace NS_Physics3D
                 {
                     // Solid box of width w, height h, depth d , and mass m
                     // Iw = 1/12 * m * (h^2 * d^2)
-                    float inertiaWidth = 0.833f * mass * (height * height * depth * depth);
+                    float inertiaWidth = (1f / 12f) * mass * (height * height * depth * depth);
                     // Ih = 1/12 * m * (d^2 * w^2)
-                    float inertiaHeight = 0.833f * mass * (depth * depth * width * width);
+                    float inertiaHeight = (1f / 12f) * mass * (depth * depth * width * width);
                     // Id = 1/12 * m * (w^2 * h^2)
-                    float inertiaDepth = 0.833f * mass * (width * width * height * height);
+                    float inertiaDepth = (1f / 12f) * mass * (width * width * height * height);
 
                     inertiaTensor.m00 = inertiaWidth;
                     inertiaTensor.m11 = inertiaHeight;
@@ -103,11 +110,11 @@ namespace NS_Physics3D
                 {
                     // Hollow box (inferred) of width w, height h, depth d , and mass m
                     // Iw = 5/3 * m * (h^2 * d^2)
-                    float inertiaWidth = 1.667f * mass * (height * height * depth * depth);
+                    float inertiaWidth = (5f/3f) * mass * (height * height * depth * depth);
                     // Ih = 5/3 * m * (d^2 * w^2)
-                    float inertiaHeight = 1.667f * mass * (depth * depth * width * width);
+                    float inertiaHeight = (5f/3f) * mass * (depth * depth * width * width);
                     // Id = 5/3 * m * (w^2 * h^2)
-                    float inertiaDepth = 1.667f * mass * (width * width * height * height);
+                    float inertiaDepth = (5f/3f) * mass * (width * width * height * height);
 
                     inertiaTensor.m00 = inertiaWidth;
                     inertiaTensor.m11 = inertiaHeight;
@@ -119,8 +126,8 @@ namespace NS_Physics3D
                     // Solid cylinder of radius r, height h, and mass m
                     // I = 1/12 * m * (3 * r^2 + h^2)
                     // Im = 1/12 * m * r^2
-                    float tensor = 0.833f * mass * (3f * radius * radius + height * height);
-                    float tensorMod = 0.833f * mass * radius * radius;
+                    float tensor = (1f / 12f) * mass * (3f * radius * radius + height * height);
+                    float tensorMod = (1f / 12f) * mass * radius * radius;
 
                     inertiaTensor.m00 = inertiaTensor.m11 = tensor;
                     inertiaTensor.m22 = tensorMod;
@@ -131,8 +138,8 @@ namespace NS_Physics3D
                     // Solid cone of radius r, height h, and mass m about apex
                     // I = 3/5 * m * h^2 + 3/20 * m * r^2
                     // Im = 3/10 * m * r^2
-                    float tensor = 0.6f * mass * height * height + 0.15f * mass * radius * radius;
-                    float tensorMod = 0.3f * mass * radius * radius;
+                    float tensor = (3f / 5f) * mass * height * height + (3f/20f) * mass * radius * radius;
+                    float tensorMod = (3f/10f) * mass * radius * radius;
                     inertiaTensor.m00 = inertiaTensor.m11 = tensor;
                     inertiaTensor.m22 = tensorMod;
                     break;
@@ -161,12 +168,12 @@ namespace NS_Physics3D
         // Returns the determinant of the passed 4x4 matrix | Millington 2nd Ed. pg. 188
         public static float GetDeterminant(Matrix4x4 mat)
         {
-            return mat[8] * mat[5] * mat[2] +
-                   mat[4] * mat[9] * mat[2] +
-                   mat[8] * mat[1] * mat[6] -
-                   mat[0] * mat[9] * mat[6] -
-                   mat[4] * mat[1] * mat[10] +
-                   mat[0] * mat[5] * mat[10];
+            return mat[2,0] * mat[1,1] * mat[0,2] +
+                   mat[1,0] * mat[2,1] * mat[0,2] +
+                   mat[2,0] * mat[0,1] * mat[1, 2] -
+                   mat[0,0] * mat[2,1] * mat[1, 2] -
+                   mat[1,0] * mat[0,1] * mat[2, 2] +
+                   mat[0,0] * mat[1,1] * mat[2, 2];
         }
 
         // Inverts the passed 4x4 matrix | Millington 2nd. Ed. pg. 188-189
@@ -219,20 +226,20 @@ namespace NS_Physics3D
         public static void CalculateTransformMatrix(ref Matrix4x4 worldMatrix, NQuaternion quat, Vector3 vec)
         {
             // i,j,k,r = x,y,z,w
-            worldMatrix[0] = 1f - (2f * quat.y * quat.y + 2f * quat.z * quat.z);
-            worldMatrix[1] = 2f * quat.x * quat.y + 2f * quat.z * quat.w;
-            worldMatrix[2] = 2f * quat.x * quat.z - 2f * quat.y * quat.w;
-            worldMatrix[3] = vec.x;
+            worldMatrix[0,0] = 1f - (2f * quat.y * quat.y + 2f * quat.z * quat.z);
+            worldMatrix[0,1] = 2f * quat.x * quat.y + 2f * quat.z * quat.w;
+            worldMatrix[0,2] = 2f * quat.x * quat.z - 2f * quat.y * quat.w;
+            worldMatrix[0,3] = vec.x;
 
-            worldMatrix[4] = 2f * quat.x * quat.y - 2f * quat.z * quat.w;
-            worldMatrix[5] = 1f - (2f * quat.x * quat.x + 2f * quat.z * quat.z);
-            worldMatrix[6] = 2f * quat.y * quat.z + 2f * quat.x * quat.w;
-            worldMatrix[7] = vec.y;
+            worldMatrix[1,0] = 2f * quat.x * quat.y - 2f * quat.z * quat.w;
+            worldMatrix[1,1] = 1f - (2f * quat.x * quat.x + 2f * quat.z * quat.z);
+            worldMatrix[1,2] = 2f * quat.y * quat.z + 2f * quat.x * quat.w;
+            worldMatrix[1,3] = vec.y;
 
-            worldMatrix[8] = 2f * quat.x * quat.z + 2f * quat.y * quat.w;
-            worldMatrix[9] = 2f * quat.y * quat.z - 2f * quat.x * quat.w;
-            worldMatrix[10] = 1f - (2f * quat.x * quat.x - 2f * quat.y * quat.y);
-            worldMatrix[11] = vec.z;
+            worldMatrix[2,0] = 2f * quat.x * quat.z + 2f * quat.y * quat.w;
+            worldMatrix[2,1] = 2f * quat.y * quat.z - 2f * quat.x * quat.w;
+            worldMatrix[2,2] = 1f - (2f * quat.x * quat.x - 2f * quat.y * quat.y);
+            worldMatrix[2,3] = vec.z;
         }
 
         // Bring the passed local Vector3 into world-space | Millington 2nd Ed. pg. 193
