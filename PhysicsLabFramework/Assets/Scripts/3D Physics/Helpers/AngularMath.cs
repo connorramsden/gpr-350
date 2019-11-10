@@ -110,11 +110,11 @@ namespace NS_Physics3D
                 {
                     // Hollow box (inferred) of width w, height h, depth d , and mass m
                     // Iw = 5/3 * m * (h^2 * d^2)
-                    float inertiaWidth = (5f/3f) * mass * (height * height * depth * depth);
+                    float inertiaWidth = (5f / 3f) * mass * (height * height * depth * depth);
                     // Ih = 5/3 * m * (d^2 * w^2)
-                    float inertiaHeight = (5f/3f) * mass * (depth * depth * width * width);
+                    float inertiaHeight = (5f / 3f) * mass * (depth * depth * width * width);
                     // Id = 5/3 * m * (w^2 * h^2)
-                    float inertiaDepth = (5f/3f) * mass * (width * width * height * height);
+                    float inertiaDepth = (5f / 3f) * mass * (width * width * height * height);
 
                     inertiaTensor.m00 = inertiaWidth;
                     inertiaTensor.m11 = inertiaHeight;
@@ -138,8 +138,8 @@ namespace NS_Physics3D
                     // Solid cone of radius r, height h, and mass m about apex
                     // I = 3/5 * m * h^2 + 3/20 * m * r^2
                     // Im = 3/10 * m * r^2
-                    float tensor = (3f / 5f) * mass * height * height + (3f/20f) * mass * radius * radius;
-                    float tensorMod = (3f/10f) * mass * radius * radius;
+                    float tensor = (3f / 5f) * mass * height * height + (3f / 20f) * mass * radius * radius;
+                    float tensorMod = (3f / 10f) * mass * radius * radius;
                     inertiaTensor.m00 = inertiaTensor.m11 = tensor;
                     inertiaTensor.m22 = tensorMod;
                     break;
@@ -168,78 +168,39 @@ namespace NS_Physics3D
         // Returns the determinant of the passed 4x4 matrix | Millington 2nd Ed. pg. 188
         public static float GetDeterminant(Matrix4x4 mat)
         {
-            return mat[2,0] * mat[1,1] * mat[0,2] +
-                   mat[1,0] * mat[2,1] * mat[0,2] +
-                   mat[2,0] * mat[0,1] * mat[1, 2] -
-                   mat[0,0] * mat[2,1] * mat[1, 2] -
-                   mat[1,0] * mat[0,1] * mat[2, 2] +
-                   mat[0,0] * mat[1,1] * mat[2, 2];
+            return mat[2, 0] * mat[1, 1] * mat[0, 2] +
+                   mat[1, 0] * mat[2, 1] * mat[0, 2] +
+                   mat[2, 0] * mat[0, 1] * mat[1, 2] -
+                   mat[0, 0] * mat[2, 1] * mat[1, 2] -
+                   mat[1, 0] * mat[0, 1] * mat[2, 2] +
+                   mat[0, 0] * mat[1, 1] * mat[2, 2];
         }
 
         // Inverts the passed 4x4 matrix | Millington 2nd. Ed. pg. 188-189
         public static void Invert4x4Matrix(Matrix4x4 orig, out Matrix4x4 inverse)
         {
             inverse = Matrix4x4.zero;
-
-            float det = GetDeterminant(orig);
-
-            if (det == 0.0f)
-                return;
-
-            det = 1.0f / det;
-
-            inverse[0] = (-orig[9] * orig[6] + orig[5] * orig[10]) * det;
-            inverse[4] = (orig[8] * orig[6] - orig[4] * orig[10]) * det;
-            inverse[8] = (-orig[8] * orig[5] + orig[4] * orig[9] * orig[15]) * det;
-
-            inverse[1] = (orig[9] * orig[2] - orig[1] * orig[10]) * det;
-            inverse[5] = (-orig[8] * orig[2] + orig[0] * orig[10]) * det;
-            inverse[9] = (orig[8] * orig[1] - orig[0] * orig[9] * orig[15]) * det;
-
-            inverse[2] = (-orig[5] * orig[2] + orig[1] * orig[6] * orig[15]) * det;
-            inverse[6] = (orig[4] * orig[2] - orig[0] * orig[6] * orig[15]) * det;
-            inverse[10] = (-orig[4] * orig[1] + orig[0] * orig[5] * orig[15]) * det;
-
-            inverse[3] = (orig[9] * orig[6] * orig[3]
-                          - orig[5] * orig[10] * orig[3]
-                          - orig[9] * orig[2] * orig[7]
-                          + orig[1] * orig[10] * orig[7]
-                          + orig[5] * orig[2] * orig[11]
-                          - orig[1] * orig[6] * orig[11]) * det;
-
-            inverse[7] = (-orig[8] * orig[6] * orig[3]
-                          + orig[4] * orig[10] * orig[3]
-                          + orig[8] * orig[2] * orig[7]
-                          - orig[0] * orig[10] * orig[7]
-                          - orig[4] * orig[2] * orig[11]
-                          + orig[0] * orig[6] * orig[11]) * det;
-
-            inverse[11] = (orig[8] * orig[5] * orig[3]
-                           - orig[4] * orig[9] * orig[3]
-                           - orig[8] * orig[1] * orig[7]
-                           + orig[0] * orig[9] * orig[7]
-                           + orig[4] * orig[1] * orig[11]
-                           - orig[0] * orig[5] * orig[11]) * det;
+            // TODO: Optimize matrix inversion, see Buckstein math slides
         }
 
         // Converts Quaternion rotation & Vector3 position into a homogeneous matrix | Millington 2nd End. pg. 192-193
         public static void CalculateTransformMatrix(ref Matrix4x4 worldMatrix, NQuaternion quat, Vector3 vec)
         {
             // i,j,k,r = x,y,z,w
-            worldMatrix[0,0] = 1f - (2f * quat.y * quat.y + 2f * quat.z * quat.z);
-            worldMatrix[0,1] = 2f * quat.x * quat.y + 2f * quat.z * quat.w;
-            worldMatrix[0,2] = 2f * quat.x * quat.z - 2f * quat.y * quat.w;
-            worldMatrix[0,3] = vec.x;
+            worldMatrix[0, 0] = 1f - (2f * quat.y * quat.y + 2f * quat.z * quat.z);
+            worldMatrix[0, 1] = 2f * quat.x * quat.y + 2f * quat.z * quat.w;
+            worldMatrix[0, 2] = 2f * quat.x * quat.z - 2f * quat.y * quat.w;
+            worldMatrix[0, 3] = vec.x;
 
-            worldMatrix[1,0] = 2f * quat.x * quat.y - 2f * quat.z * quat.w;
-            worldMatrix[1,1] = 1f - (2f * quat.x * quat.x + 2f * quat.z * quat.z);
-            worldMatrix[1,2] = 2f * quat.y * quat.z + 2f * quat.x * quat.w;
-            worldMatrix[1,3] = vec.y;
+            worldMatrix[1, 0] = 2f * quat.x * quat.y - 2f * quat.z * quat.w;
+            worldMatrix[1, 1] = 1f - (2f * quat.x * quat.x + 2f * quat.z * quat.z);
+            worldMatrix[1, 2] = 2f * quat.y * quat.z + 2f * quat.x * quat.w;
+            worldMatrix[1, 3] = vec.y;
 
-            worldMatrix[2,0] = 2f * quat.x * quat.z + 2f * quat.y * quat.w;
-            worldMatrix[2,1] = 2f * quat.y * quat.z - 2f * quat.x * quat.w;
-            worldMatrix[2,2] = 1f - (2f * quat.x * quat.x - 2f * quat.y * quat.y);
-            worldMatrix[2,3] = vec.z;
+            worldMatrix[2, 0] = 2f * quat.x * quat.z + 2f * quat.y * quat.w;
+            worldMatrix[2, 1] = 2f * quat.y * quat.z - 2f * quat.x * quat.w;
+            worldMatrix[2, 2] = 1f - (2f * quat.x * quat.x - 2f * quat.y * quat.y);
+            worldMatrix[2, 3] = vec.z;
         }
 
         // Bring the passed local Vector3 into world-space | Millington 2nd Ed. pg. 193
@@ -260,13 +221,13 @@ namespace NS_Physics3D
         {
             Vector3 outVec = vec;
 
-            outVec.x -= mat[3];
-            outVec.y -= mat[7];
-            outVec.z -= mat[11];
+            outVec.x -= mat[0, 3];
+            outVec.y -= mat[1, 3];
+            outVec.z -= mat[2, 3];
 
-            outVec.x = vec.x * mat[0] + vec.y * mat[4] + vec.z * mat[8];
-            outVec.y = vec.x * mat[1] + vec.y * mat[5] + vec.z * mat[9];
-            outVec.z = vec.x * mat[2] + vec.y * mat[6] + vec.z * mat[10];
+            outVec.x = vec.x * mat[0, 0] + vec.y * mat[1, 0] + vec.z * mat[2, 0];
+            outVec.y = vec.x * mat[0, 1] + vec.y * mat[1, 1] + vec.z * mat[2, 1];
+            outVec.z = vec.x * mat[0, 2] + vec.y * mat[1, 2] + vec.z * mat[2, 2];
 
             return outVec;
         }
@@ -276,9 +237,9 @@ namespace NS_Physics3D
         {
             return new Vector3
             {
-                x = vec.x * mat[0] + vec.y * mat[1] + vec.z * mat[2],
-                y = vec.x * mat[4] + vec.y * mat[5] + vec.z * mat[6],
-                z = vec.x * mat[8] + vec.y * mat[9] + vec.z * mat[10]
+                x = vec.x * mat[0, 0] + vec.y * mat[0, 1] + vec.z * mat[0, 2],
+                y = vec.x * mat[1, 0] + vec.y * mat[1, 1] + vec.z * mat[1, 2],
+                z = vec.x * mat[2, 0] + vec.y * mat[2, 1] + vec.z * mat[2, 2]
             };
         }
 
@@ -287,9 +248,9 @@ namespace NS_Physics3D
         {
             return new Vector3
             {
-                x = vec.x * mat[0] + vec.y * mat[4] + vec.z * mat[8],
-                y = vec.x * mat[1] + vec.y * mat[5] + vec.z * mat[9],
-                z = vec.x * mat[2] + vec.y * mat[6] + vec.z * mat[10]
+                x = vec.x * mat[0, 0] + vec.y * mat[1, 0] + vec.z * mat[2, 0],
+                y = vec.x * mat[0, 1] + vec.y * mat[1, 1] + vec.z * mat[2, 1],
+                z = vec.x * mat[0, 2] + vec.y * mat[1, 2] + vec.z * mat[2, 2]
             };
         }
 
