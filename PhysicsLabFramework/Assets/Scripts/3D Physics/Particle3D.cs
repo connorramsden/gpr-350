@@ -164,9 +164,7 @@ namespace NS_Physics3D
         // Update in fixed-step time
         private void FixedUpdate()
         {
-            MyUnityPlugin.initFoo(1);
-            Debug.Log( MyUnityPlugin.doFoo(2));
-            MyUnityPlugin.termFoo();
+            Debug.Log(MyUnityPlugin_Rust.double_input(2));
 
             // Acquire fixed DeltaTime
             float dt = Time.fixedDeltaTime;
