@@ -20,8 +20,11 @@ namespace NS_Collision_3D
 
         public virtual Vector3 hullCenter { get; protected set; }
 
-        public bool isColliding = false;
-
+        public bool isCollidingVsSphere = false;
+        public bool isCollidingVsAABB = false;
+        public bool isCollidingVsOBB = false;
+        
+        
         public abstract bool TestCollisionVsSphere(SphereCollisionHull other);
         public abstract bool TestCollisionVsAABB(AABBCollisionHull3D other);
         public abstract bool TestCollisionVsOBB(OBBCollisionHull3D other);

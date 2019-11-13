@@ -7,6 +7,7 @@ namespace NS_Collision_3D
     {
         public override bool TestCollisionVsSphere(SphereCollisionHull other)
         {
+            Debug.Log("Call from inside SphereVsSphere");
             Vector3 distance = hullCenter - other.hullCenter;
 
             float distSq = Vector3.Dot(distance, distance);
@@ -18,6 +19,7 @@ namespace NS_Collision_3D
 
         public override bool TestCollisionVsAABB(AABBCollisionHull3D other)
         {
+            Debug.Log("Call from inside SphereVsAABB");
             Vector3 min = other.minExtent;
             Vector3 max = other.maxExtent;
 
@@ -25,7 +27,7 @@ namespace NS_Collision_3D
             float yPosClamp = Mathf.Clamp(hullCenter.y, min.y, max.y);
             float zPosClamp = Mathf.Clamp(hullCenter.z, min.z, max.z);
 
-            var closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
+            Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
 
             float distance = (closestPoint - hullCenter).sqrMagnitude;
 
@@ -41,7 +43,6 @@ namespace NS_Collision_3D
         {
             hullType = CollisionHullType3D.HULL_SPHERE;
             p3d = GetComponent<Particle3D>();
-
             UpdateCenterPos();
         }
     }

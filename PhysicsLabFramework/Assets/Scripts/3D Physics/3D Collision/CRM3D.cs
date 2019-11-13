@@ -29,27 +29,49 @@ namespace NS_Collision_3D
 
         private List<CollisionHull3D> collisionList;
 
+        public void AddHullToList(CollisionHull3D hull)
+        {
+            collisionList.Add(hull);
+        }
+
+        private void CheckCollisions()
+        {
+            // Loop over collision list once
+            foreach (CollisionHull3D hull in collisionList)
+            {
+                hull.UpdateCenterPos();
+                if (hull.hullType == CollisionHull3D.CollisionHullType3D.HULL_AABB_3D)
+                    (hull as AABBCollisionHull3D)?.UpdateExtents();
+
+                // Loop over collision list (all OTHER hulls)
+                foreach (CollisionHull3D otherHull in collisionList)
+                {
+                    if (hull == otherHull) continue;
+
+                    switch (otherHull.hullType)
+                    {
+                        case CollisionHull3D.CollisionHullType3D.HULL_SPHERE:
+                            hull.isCollidingVsSphere = hull.TestCollisionVsSphere(otherHull as SphereCollisionHull);
+                            break;
+                        case CollisionHull3D.CollisionHullType3D.HULL_AABB_3D:
+                            hull.isCollidingVsAABB = hull.TestCollisionVsAABB(otherHull as AABBCollisionHull3D);
+                            break;
+                        case CollisionHull3D.CollisionHullType3D.HULL_OBB_3D:
+                            hull.isCollidingVsOBB = hull.TestCollisionVsOBB(otherHull as OBBCollisionHull3D);
+                            break;
+                    }
+                }
+            }
+        }
+
         private void Awake()
         {
             collisionList = new List<CollisionHull3D>();
         }
 
-        public void Start()
-        {
-            CollisionHull3D[] collisionHulls = FindObjectsOfType<CollisionHull3D>();
-
-            foreach (CollisionHull3D collisionHull in collisionHulls)
-            {
-                collisionList.Add(collisionHull);
-            }
-        }
-
         public void FixedUpdate()
         {
-            foreach (CollisionHull3D hull in collisionList)
-            {
-                hull.isColliding = Input.GetKey(KeyCode.Space);
-            }
+            CheckCollisions();
         }
     }
 }

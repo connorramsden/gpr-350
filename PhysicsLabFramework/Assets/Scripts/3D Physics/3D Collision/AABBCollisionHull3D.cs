@@ -5,7 +5,7 @@ namespace NS_Collision_3D
 {
     public class AABBCollisionHull3D : CollisionHull3D
     {
-        public Vector3 halfSize { get; private set; }
+        private Vector3 halfSize { get; set; }
         public Vector3 minExtent { get; private set; }
         public Vector3 maxExtent { get; private set; }
 
@@ -17,7 +17,7 @@ namespace NS_Collision_3D
             float yPosClamp = Mathf.Clamp(otherCenter.y, minExtent.y, maxExtent.y);
             float zPosClamp = Mathf.Clamp(otherCenter.z, minExtent.z, maxExtent.z);
 
-            var closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
+            Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
             float distance = (closestPoint - otherCenter).sqrMagnitude;
 
             return distance < other.GetRadiusSqr();

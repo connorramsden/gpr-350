@@ -201,6 +201,11 @@ namespace NS_Physics3D
             SetInertia(out inertia, this);
         }
 
+        private void Start()
+        {
+            CRM3D.Instance.AddHullToList(this.GetComponent<CollisionHull3D>());
+        }
+
         // Update in fixed-step time
         private void FixedUpdate()
         {
