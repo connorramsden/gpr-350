@@ -164,8 +164,6 @@ namespace NS_Physics3D
         // Update in fixed-step time
         private void FixedUpdate()
         {
-            Debug.Log(MyUnityPlugin_Rust.double_input(2));
-
             // Acquire fixed DeltaTime
             float dt = Time.fixedDeltaTime;
             
