@@ -1,4 +1,5 @@
 ﻿using System;
+using NS_Collision_3D;
 using UnityEngine;
 using static NS_Physics3D.AngularMath;
 
@@ -25,15 +26,15 @@ namespace NS_Physics3D
             CYLINDER_SOLID,
             CONE_SOLID
         }
-    
-        [Header("Integration Selection")]
-        public IntegrationType integrationType;
+
+        [Header("Integration Selection")] public IntegrationType integrationType;
         public InertiaShape inertiaShape;
 
         // Lab 06 Step 01
         [Header("Position Integration")]
         // Position, Velocity, Acceleration, and Force are 3D Vectors
         public Vector3 position;
+
         public Vector3 velocity;
         public Vector3 acceleration;
 
@@ -41,34 +42,44 @@ namespace NS_Physics3D
         // Rotation is a Quaternion (from a single float about the Z-Axis)
         // Implemented as an NQuaternion, my custom Quaternion class
         public NQuaternion rotation;
+
         // Angular Velocity, Angular Acceleration, and Torque are 3D Vectors (from single floats about the Z-Axis)
         public Vector3 angularVelocity;
+
         // Converted from torque using Newton-2 for rotation
         public Vector3 angularAcceleration;
-        
+
         // Lab 07 Step 01
         [Header("Angular Dynamics Integration")]
         // Updates every frame by converting rotation & position into homogeneous matrices
         public Matrix4x4 worldTransformMatrix;
+
         public Matrix4x4 worldTransformInverse;
+
         // Particle mass & mass inverse
         public float mass, massInverse;
+
         // 3D Vectors; world center is updated every frame by transformation
         public Vector3 localMassCenter;
+
         public Vector3 worldMassCenter;
+
         // 3D Matrices representing a particle's inertia & inverse inertia tensors
         public Matrix4x4 inertia, inertiaInverse;
+
         // Twist-force applied to a particle
         public Vector3 torque;
+
         // Necessary for Torque / Angular Acceleration calculations
         public Vector3 pointOfAppliedForce;
         public Vector3 appliedForce;
-        
+
         [Header("Inertia Shape Integration")]
         // Float for radius
         public float radius;
+
         public float width, height, depth;
-        
+
         // Updates a particle's position based on Euler Explicit integration
         private void UpdatePositionEulerExplicit(float dt)
         {
@@ -93,15 +104,15 @@ namespace NS_Physics3D
             switch (integrationType)
             {
                 case IntegrationType.EULER_EXPLICIT:
-                    {
-                        UpdatePositionEulerExplicit(dt);
-                        break;
-                    }
+                {
+                    UpdatePositionEulerExplicit(dt);
+                    break;
+                }
                 case IntegrationType.KINEMATIC:
-                    {
-                        UpdatePositionKinematic(dt);
-                        break;
-                    }
+                {
+                    UpdatePositionKinematic(dt);
+                    break;
+                }
             }
 
             // Euler integration for updating velocity
@@ -130,15 +141,20 @@ namespace NS_Physics3D
             switch (integrationType)
             {
                 case IntegrationType.EULER_EXPLICIT:
-                    {
-                        UpdateRotationEulerExplicit(dt);
-                        break;
-                    }
+                {
+                    UpdateRotationEulerExplicit(dt);
+                    break;
+                }
+                case IntegrationType.KINEMATIC:
+                {
+                    UpdateRotationKinematic(dt);
+                    break;
+                }
                 default:
-                    {
-                        UpdateRotationEulerExplicit(dt);
-                        break;
-                    }
+                {
+                    UpdateRotationEulerExplicit(dt);
+                    break;
+                }
             }
 
             // Must normalize rotation in order to stop unwanted scaling
@@ -148,25 +164,11 @@ namespace NS_Physics3D
             angularVelocity += angularAcceleration * dt;
         }
 
-        // Initialize local variables here
-        private void Awake()
-        {
-            // Set the object's tag to 3D Particle
-            if (!gameObject.CompareTag("3D Particle"))
-            {
-                gameObject.tag = "3D Particle";
-            }
-            
-            // Set the particle's Inertia tensor based on its shape
-            SetInertia(out inertia, this);
-        }
-
-        // Update in fixed-step time
-        private void FixedUpdate()
+        private void UpdateParticle()
         {
             // Acquire fixed DeltaTime
             float dt = Time.fixedDeltaTime;
-            
+
             // Calculate torque so it can be applied
             CalculateTorque(this, ref torque);
 
@@ -181,9 +183,28 @@ namespace NS_Physics3D
             // Update Game Object position & rotation
             transform.position = position;
             transform.rotation = rotation.ToQuaternion();
-            
+
             // Update angular acceleration using torque and change-of-basis
             UpdateAngularAcceleration(this, ref torque, out angularAcceleration);
+        }
+        
+        // Initialize local variables here
+        private void Awake()
+        {
+            // Set the object's tag to 3D Particle
+            if (!gameObject.CompareTag("3D Particle"))
+            {
+                gameObject.tag = "3D Particle";
+            }
+
+            // Set the particle's Inertia tensor based on its shape
+            SetInertia(out inertia, this);
+        }
+
+        // Update in fixed-step time
+        private void FixedUpdate()
+        {
+            UpdateParticle();
         }
     }
 }

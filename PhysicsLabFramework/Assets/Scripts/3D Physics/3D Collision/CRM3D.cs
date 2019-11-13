@@ -8,25 +8,48 @@ namespace NS_Collision_3D
     // 3D Collision Resolution Manager
     public class CRM3D : MonoBehaviour
     {
-        public List<Particle3D> particleList;
+        private static CRM3D instance;
 
-        private void Awake()
+        public static CRM3D Instance
         {
-            particleList = new List<Particle3D>();
-        }
-
-        private void Start()
-        {
-            var particles = GameObject.FindGameObjectsWithTag("3D Particle");
-
-            foreach (GameObject particle in particles)
+            get
             {
-                particleList.Add(particle.GetComponent<Particle3D>());
+                if (instance == null)
+                {
+                    instance = FindObjectOfType<CRM3D>();
+                }
+                else if (instance != FindObjectOfType<CRM3D>())
+                {
+                    Destroy(FindObjectOfType<CRM3D>());
+                }
+
+                return instance;
             }
         }
 
-        private void FixedUpdate()
+        private List<CollisionHull3D> collisionList;
+
+        private void Awake()
         {
+            collisionList = new List<CollisionHull3D>();
+        }
+
+        public void Start()
+        {
+            CollisionHull3D[] collisionHulls = FindObjectsOfType<CollisionHull3D>();
+
+            foreach (CollisionHull3D collisionHull in collisionHulls)
+            {
+                collisionList.Add(collisionHull);
+            }
+        }
+
+        public void FixedUpdate()
+        {
+            foreach (CollisionHull3D hull in collisionList)
+            {
+                hull.isColliding = Input.GetKey(KeyCode.Space);
+            }
         }
     }
 }
