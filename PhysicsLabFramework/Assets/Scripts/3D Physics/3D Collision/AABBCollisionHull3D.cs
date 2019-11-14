@@ -11,16 +11,8 @@ namespace NS_Collision_3D
 
         public override bool TestCollisionVsSphere(SphereCollisionHull other)
         {
-            Vector3 otherCenter = other.hullCenter;
-
-            float xPosClamp = Mathf.Clamp(otherCenter.x, minExtent.x, maxExtent.x);
-            float yPosClamp = Mathf.Clamp(otherCenter.y, minExtent.y, maxExtent.y);
-            float zPosClamp = Mathf.Clamp(otherCenter.z, minExtent.z, maxExtent.z);
-
-            Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
-            float distance = (closestPoint - otherCenter).sqrMagnitude;
-
-            return distance < other.GetRadiusSqr();
+            // Utilize the Sphere's test vs AABB against this Box
+            return other.TestCollisionVsAABB(this);
         }
 
         public override bool TestCollisionVsAABB(AABBCollisionHull3D other)

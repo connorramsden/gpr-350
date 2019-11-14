@@ -51,7 +51,7 @@ namespace NS_Collision_3D
             // Step 01: Retrieve the Box's minimum and maximum extents
             Vector3 min = other.minExtentLocal;
             Vector3 max = other.maxExtentLocal;
-            
+
             // Step 02: Transform this Sphere's center into the Box's local space
             Vector3 circleCenter = other.transform.InverseTransformPoint(hullCenter);
 
@@ -62,7 +62,7 @@ namespace NS_Collision_3D
             float xPosClamp = Mathf.Clamp(circleCenter.x, min.x, max.x);
             float yPosClamp = Mathf.Clamp(circleCenter.y, min.y, max.y);
             float zPosClamp = Mathf.Clamp(circleCenter.z, min.z, max.z);
-            
+
             // Step 05: Calculate the closest point between this Sphere and the Box utilizing the clamped points
             Vector3 closestPoint = new Vector3(xPosClamp, yPosClamp, zPosClamp);
 

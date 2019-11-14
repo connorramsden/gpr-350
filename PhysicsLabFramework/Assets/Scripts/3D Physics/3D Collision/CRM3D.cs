@@ -45,16 +45,8 @@ namespace NS_Collision_3D
                 // Update the hull's center position
                 hull.UpdateCenterPos();
 
-                // If the hull is a Box, update its extents
-                switch (hull.hullType)
-                {
-                    case CollisionHull3D.CollisionHullType3D.HULL_AABB_3D:
-                        (hull as AABBCollisionHull3D)?.UpdateExtents();
-                        break;
-                    case CollisionHull3D.CollisionHullType3D.HULL_OBB_3D:
-                        (hull as OBBCollisionHull3D)?.UpdateExtents();
-                        break;
-                }
+                if(hull.hullType == CollisionHull3D.CollisionHullType3D.HULL_AABB_3D)
+                    (hull as AABBCollisionHull3D).UpdateExtents();
 
                 // Loop over collision list (all OTHER hulls)
                 foreach (CollisionHull3D otherHull in collisionList)
@@ -76,6 +68,8 @@ namespace NS_Collision_3D
                             break;
                     }
                 }
+
+                hull.isColliding = hull.isCollidingVsSphere || hull.isCollidingVsAABB || hull.isCollidingVsOBB;
             }
         }
 

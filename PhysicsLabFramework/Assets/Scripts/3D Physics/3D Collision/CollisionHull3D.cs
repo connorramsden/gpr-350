@@ -20,11 +20,12 @@ namespace NS_Collision_3D
 
         public Vector3 hullCenter { get; private set; }
 
-        public bool isCollidingVsSphere = false;
-        public bool isCollidingVsAABB = false;
-        public bool isCollidingVsOBB = false;
-        
-        
+        public bool isCollidingVsSphere;
+        public bool isCollidingVsAABB;
+        public bool isCollidingVsOBB;
+
+        public bool isColliding;
+
         public abstract bool TestCollisionVsSphere(SphereCollisionHull other);
         public abstract bool TestCollisionVsAABB(AABBCollisionHull3D other);
         public abstract bool TestCollisionVsOBB(OBBCollisionHull3D other);
@@ -34,7 +35,7 @@ namespace NS_Collision_3D
             return p3d.radius;
         }
 
-        public float GetRadiusSqr()
+        protected float GetRadiusSqr()
         {
             return p3d.radius * p3d.radius;
         }
