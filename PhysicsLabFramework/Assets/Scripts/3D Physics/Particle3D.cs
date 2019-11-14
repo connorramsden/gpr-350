@@ -203,7 +203,7 @@ namespace NS_Physics3D
 
         private void Start()
         {
-            CRM3D.Instance.AddHullToList(this.GetComponent<CollisionHull3D>());
+            CRM3D.Instance.AddHullToList(GetComponent<CollisionHull3D>());
         }
 
         // Update in fixed-step time

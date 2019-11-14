@@ -1,15 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using NS_Physics3D;
 using UnityEngine;
-using NS_Physics3D;
 
 namespace NS_Collision_3D
 {
     public class OBBCollisionHull3D : CollisionHull3D
     {
+        private Vector3 halfSize { get; set; }
+        public Vector3 minExtentLocal { get; private set; }
+        public Vector3 maxExtentLocal { get; private set; }
+        public Vector3 minExtentWorld { get; private set; }
+        public Vector3 maxExtentWorld { get; private set; }
+        
         public override bool TestCollisionVsSphere(SphereCollisionHull other)
         {
-            throw new System.NotImplementedException();
+            return other.TestCollisionVsOBB(this);
         }
 
         public override bool TestCollisionVsAABB(AABBCollisionHull3D other)
@@ -20,7 +24,11 @@ namespace NS_Collision_3D
         public override bool TestCollisionVsOBB(OBBCollisionHull3D other)
         {
             throw new System.NotImplementedException();
+        }
 
+        public void UpdateExtents()
+        {
+            
         }
 
         private void Awake()
@@ -29,6 +37,7 @@ namespace NS_Collision_3D
             p3d = GetComponent<Particle3D>();
 
             UpdateCenterPos();
+            UpdateExtents();
         }
     }
 }

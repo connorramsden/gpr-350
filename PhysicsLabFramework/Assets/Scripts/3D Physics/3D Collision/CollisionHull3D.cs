@@ -18,7 +18,7 @@ namespace NS_Collision_3D
 
         protected Particle3D p3d;
 
-        public virtual Vector3 hullCenter { get; protected set; }
+        public Vector3 hullCenter { get; private set; }
 
         public bool isCollidingVsSphere = false;
         public bool isCollidingVsAABB = false;
@@ -29,17 +29,17 @@ namespace NS_Collision_3D
         public abstract bool TestCollisionVsAABB(AABBCollisionHull3D other);
         public abstract bool TestCollisionVsOBB(OBBCollisionHull3D other);
 
-        public virtual float GetRadius()
+        protected float GetRadius()
         {
             return p3d.radius;
         }
 
-        public virtual float GetRadiusSqr()
+        public float GetRadiusSqr()
         {
             return p3d.radius * p3d.radius;
         }
 
-        public virtual void UpdateCenterPos()
+        public void UpdateCenterPos()
         {
             if (p3d)
                 hullCenter = p3d.position;
