@@ -45,7 +45,7 @@ namespace NS_Collision_3D
                 // Update the hull's center position
                 hull.UpdateCenterPos();
 
-                if(hull.hullType == CollisionHull3D.CollisionHullType3D.HULL_AABB_3D)
+                if (hull.hullType == CollisionHull3D.CollisionHullType3D.HULL_AABB_3D)
                     (hull as AABBCollisionHull3D).UpdateExtents();
 
                 // Loop over collision list (all OTHER hulls)
@@ -70,8 +70,9 @@ namespace NS_Collision_3D
                 }
 
                 hull.isColliding = hull.isCollidingVsSphere || hull.isCollidingVsAABB || hull.isCollidingVsOBB;
-                
+
                 PhysicsSerializer.SerializeHull(hull);
+                Debug.Log(RustPlugin.test_bool());
             }
         }
 

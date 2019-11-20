@@ -11,7 +11,9 @@ namespace NS_Collision_3D
         public Vector3 minExtent { get; private set; }
         public Vector3 maxExtent { get; private set; }
 
+        [HideInInspector]
         public SVector3 Min;
+        [HideInInspector]
         public SVector3 Max;
 
         public override bool TestCollisionVsSphere(SphereCollisionHull other)
