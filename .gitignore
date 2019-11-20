@@ -22,6 +22,7 @@
 **/.vscode/
 **/.idea/
 **/x64/
+**/target/
 
 # Gradle cache directory
 .gradle/

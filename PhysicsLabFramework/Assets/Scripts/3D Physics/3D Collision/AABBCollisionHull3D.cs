@@ -1,13 +1,18 @@
-﻿using NS_Physics3D;
+﻿using System;
+using NS_Physics3D;
 using UnityEngine;
 
 namespace NS_Collision_3D
 {
+    [Serializable]
     public class AABBCollisionHull3D : CollisionHull3D
     {
         private Vector3 halfSize { get; set; }
         public Vector3 minExtent { get; private set; }
         public Vector3 maxExtent { get; private set; }
+
+        public SVector3 Min;
+        public SVector3 Max;
 
         public override bool TestCollisionVsSphere(SphereCollisionHull other)
         {
@@ -29,7 +34,7 @@ namespace NS_Collision_3D
 
         public override bool TestCollisionVsOBB(OBBCollisionHull3D other)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void UpdateExtents()
@@ -38,6 +43,9 @@ namespace NS_Collision_3D
 
             minExtent = hullCenter - halfSize;
             maxExtent = hullCenter + halfSize;
+
+            Min = minExtent;
+            Max = maxExtent;
         }
 
         private void Awake()

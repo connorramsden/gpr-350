@@ -1,8 +1,10 @@
-﻿using NS_Physics3D;
+﻿using System;
+using NS_Physics3D;
 using UnityEngine;
 
 namespace NS_Collision_3D
 {
+    [Serializable]
     public class SphereCollisionHull : CollisionHull3D
     {
         // Test collision between this Sphere and another Sphere

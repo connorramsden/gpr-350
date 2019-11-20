@@ -1,9 +1,11 @@
-﻿using NS_Physics3D;
+﻿using System;
+using NS_Physics3D;
 using UnityEngine;
 
 namespace NS_Collision_3D
 {
     [RequireComponent(typeof(Particle3D))]
+    [Serializable]
     public abstract class CollisionHull3D : MonoBehaviour
     {
         public enum CollisionHullType3D
@@ -19,11 +21,10 @@ namespace NS_Collision_3D
         protected Particle3D p3d;
 
         public Vector3 hullCenter { get; private set; }
-
+        
         public bool isCollidingVsSphere;
         public bool isCollidingVsAABB;
         public bool isCollidingVsOBB;
-
         public bool isColliding;
 
         public abstract bool TestCollisionVsSphere(SphereCollisionHull other);

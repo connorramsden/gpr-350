@@ -1,8 +1,10 @@
-﻿using NS_Physics3D;
+﻿using System;
+using NS_Physics3D;
 using UnityEngine;
 
 namespace NS_Collision_3D
 {
+    [Serializable]
     public class OBBCollisionHull3D : CollisionHull3D
     {
         private Vector3 halfSize { get; set; }

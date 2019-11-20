@@ -1,0 +1,15 @@
+[package]
+name = "UnityLib"
+version = "0.1.0"
+authors = ["Connor Ramsden <connor.ramsden@mymail.champlain.edu>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rayon = "1.2.0"
+json = "0.12.0"
+
+[lib]
+name = "unity_ffi"
+crate-type = ["dylib"]
