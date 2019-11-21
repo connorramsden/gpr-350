@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace NS_Collision_3D
@@ -73,10 +73,8 @@ namespace NS_Collision_3D
                 hull.isColliding = hull.isCollidingVsSphere || hull.isCollidingVsAABB || hull.isCollidingVsOBB;
 
                 PhysicsSerializer.SerializeHull(hull);
-
-                StringBuilder sb = new StringBuilder($"{hull.name}.json");
                 
-                Debug.Log(RustPlugin.test_bool(sb));
+                Debug.Log(RustPlugin.test_bool($"{hull.name}.json"));
             }
         }
 

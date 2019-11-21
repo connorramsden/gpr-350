@@ -6,17 +6,18 @@ using NS_Collision_3D;
 
 public static class PhysicsSerializer
 {
-    public static async void SerializeHull(CollisionHull3D hull)
+    public static void SerializeHull(CollisionHull3D hull)
     {
         var hullType = hull.hullType;
 
         string hullData;
-        
+
         switch (hullType)
         {
             case CollisionHull3D.CollisionHullType3D.HULL_SPHERE:
             {
-                SphereCollisionHull tempHull = hull as SphereCollisionHull;;
+                SphereCollisionHull tempHull = hull as SphereCollisionHull;
+                ;
                 hullData = JsonUtility.ToJson(tempHull);
                 break;
             }
@@ -24,7 +25,7 @@ public static class PhysicsSerializer
             {
                 AABBCollisionHull3D tempHull = hull as AABBCollisionHull3D;
                 hullData = JsonUtility.ToJson(tempHull);
-                
+
                 break;
             }
             case CollisionHull3D.CollisionHullType3D.HULL_OBB_3D:
@@ -36,16 +37,17 @@ public static class PhysicsSerializer
                 throw new ArgumentOutOfRangeException();
         }
 
-        await SaveJson(hull.name, hullData);
+        string hullName = hull.name;
+
+        var t = Task.Run(() => SaveJson(hullName, hullData));
+
+        t.Wait();
     }
-    
-    private static async Task SaveJson(string name, string objData)
+
+    private static void SaveJson(string name, string objData)
     {
-        await Task.Run(() =>
-        {
-            var writer = new BinaryWriter(File.OpenWrite($"{name}.json"));
-            writer.Write(objData);
-            writer.Close();
-        });
+        var writer = new BinaryWriter(File.OpenWrite($"{name}.json"));
+        writer.Write(objData);
+        writer.Close();
     }
 }
