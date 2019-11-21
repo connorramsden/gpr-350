@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using NS_Collision_3D;
-using Object = UnityEngine.Object;
 
 public static class PhysicsSerializer
 {
