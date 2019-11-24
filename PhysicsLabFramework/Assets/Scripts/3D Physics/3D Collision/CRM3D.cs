@@ -72,9 +72,9 @@ namespace NS_Collision_3D
 
                 hull.isColliding = hull.isCollidingVsSphere || hull.isCollidingVsAABB || hull.isCollidingVsOBB;
 
-                PhysicsSerializer.SerializeHull(hull);
-                
-                Debug.Log(RustPlugin.test_bool($"{hull.name}.json"));
+                string hullData = PhysicsSerializer.SerializeHull(hull);
+                Debug.Log(hullData);
+                Debug.Log(RustPlugin.test_bool(hullData));
             }
         }
 

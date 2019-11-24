@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using System.Text;
+using System.Runtime.InteropServices.ComTypes;
 
 public static class RustPlugin
 {
