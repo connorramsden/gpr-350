@@ -48,17 +48,15 @@ namespace NS_Collision_3D
             // Loop over collision list once
             foreach (CH3D hull in collisionList)
             {
-                byte[] bytes;
-                
-                
-                
+                string serialized_hull;
+
                 using (MemoryStream stream = new MemoryStream())
                 {
                     hull.WriteTo(stream);
-                    bytes = stream.ToArray();
+                    serialized_hull = stream.ToString();
                 }
 
-                Debug.Log(RustPlugin.check_collisions(bytes));
+                Debug.Log(RustPlugin.check_collisions(serialized_hull));
 
                 /*
                 // Update the hull's center position
