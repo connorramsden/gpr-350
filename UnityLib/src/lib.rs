@@ -1,44 +1,48 @@
-extern crate rayon;
-extern crate serde_json;
+#![allow(unused)]
+extern crate prost;
+extern crate prost_build;
+extern crate prost_derive;
 
-use std::fs::{File};
-use std::io::{BufReader};
 use std::os::raw::{c_int, c_char};
-use std::ffi::{CStr};
+use std::ffi::CStr;
+use std::borrow::Borrow;
 
-use serde_derive::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq)]
 struct CollisionHull {
     vs_sphere: bool,
     vs_aabb: bool,
     vs_obb: bool,
-    is_coll: bool
+    is_coll: bool,
+    min: Vec<f64>,
+    max: Vec<f64>,
 }
 
-fn deserialize_hull(path: *const c_char) -> String {
-    let local_path;
-    unsafe { local_path = CStr::from_ptr(path).to_string_lossy().into_owned(); }
+fn deserialize_hull(data: &str) -> CollisionHull {
+    let vec: Vec<f64> = Vec::new();
+    
+    let v: CollisionHull = CollisionHull {vs_sphere: false, vs_aabb: false, vs_obb: false, is_coll: false, min: Vec::from(vec.borrow()), max: Vec::from(vec.borrow()) };
 
-    if local_path == "Cube.json"{
-        return local_path;
-    }
-
-    let file = File::open(local_path);
-    let buf_reader: BufReader<File> = BufReader::new(file.unwrap());
-
-    let some_hull: CollisionHull = serde_json::from_reader(buf_reader).unwrap();
-
-    return String::new();
+    v
 }
 
-#[no_mangle]
-pub fn test_bool(path: *const c_char) -> c_int {
-    let some_result = deserialize_hull(path);
+unsafe fn to_owned(unowned: *const c_char) -> String {
+    CStr::from_ptr(unowned).to_string_lossy().into_owned()
+}
 
-    if some_result == "Cube.json" {
-        return 0;
+/// # Safety
+/// This function is being called  from C#.
+/// Don't expect the usual Rust safety, but at least some!
+#[no_mangle] // Ensures that we can call this from C#
+pub unsafe fn test_bool(foreign_data: *const c_char) -> c_int {
+    // Convert foreign_data into a Rust-safe string
+    let local_data: String = to_owned(foreign_data);
+
+    // Lend the local_data to deserialize_hull
+    let hull: CollisionHull = deserialize_hull(local_data.borrow());
+
+    if hull.is_coll {
+        0
     } else {
-        return 1;
+        1
     }
 }
