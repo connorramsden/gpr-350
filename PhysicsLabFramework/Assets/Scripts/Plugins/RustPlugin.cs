@@ -1,8 +1,8 @@
 ﻿using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
+using Phys;
 
 public static class RustPlugin
 {
     [DllImport("unity_ffi.dll")]
-    public static extern int test_bool(string str);
+    public static extern int check_collisions(byte[] bytes);
 }

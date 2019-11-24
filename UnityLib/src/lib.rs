@@ -1,17 +1,15 @@
+extern crate bytes;
 extern crate prost;
 extern crate prost_derive;
+extern crate ffi_support;
 
-use std::os::raw::c_char;
 use std::os::raw::c_int;
+use ffi_support::*;
 
-pub mod hulls {
-    include!(concat!(env!("OUT_DIR"), "/phys.hulls.rs"));
+pub mod phys {
+    include!(concat!(env!("OUT_DIR"), "/phys.rs"));
 }
 
-/// # Safety
-/// This function is being called  from C#.
-/// Don't expect the usual Rust safety, but at least some!
 #[no_mangle] // Ensures that we can call this from C#
-pub fn check_collisions(_foreign_data: *const c_char) -> c_int {
-    0
+pub extern "C" fn check_collisions() {
 }

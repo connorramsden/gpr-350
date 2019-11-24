@@ -1,12 +1,14 @@
 ﻿using System;
 using NS_Physics3D;
 using UnityEngine;
+using static Phys.CH3D.Types;
 
 namespace NS_Collision_3D
 {
     [Serializable]
     public class OBBCollisionHull3D : CollisionHull3D
     {
+        /*
         private Vector3 halfSize { get; set; }
         public Vector3 minExtentLocal { get; private set; }
         public Vector3 maxExtentLocal { get; private set; }
@@ -35,11 +37,12 @@ namespace NS_Collision_3D
 
         private void Awake()
         {
-            hullType = CollisionHullType3D.HULL_OBB_3D;
+            hullType = HullType.HullObb;
             p3d = GetComponent<Particle3D>();
 
             UpdateCenterPos();
             UpdateExtents();
         }
+        */
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.IO;
+using Phys;
 using UnityEngine;
+using Google.Protobuf;
+using Google.Protobuf.Collections;
 
 namespace NS_Collision_3D
 {
@@ -29,10 +32,12 @@ namespace NS_Collision_3D
         }
 
         // A list to store all 3D Collision Hulls in a scene
-        private List<CollisionHull3D> collisionList;
+        // private List<CollisionHull3D> collisionList;
+
+        private List<CH3D> collisionList;
 
         // Add a hull to the hull list; called from every 3D Hull's Start()
-        public void AddHullToList(CollisionHull3D hull)
+        public void AddHullToList(CH3D hull)
         {
             collisionList.Add(hull);
         }
@@ -41,47 +46,57 @@ namespace NS_Collision_3D
         private void CheckCollisions()
         {
             // Loop over collision list once
-            foreach (CollisionHull3D hull in collisionList)
+            foreach (CH3D hull in collisionList)
             {
+                byte[] bytes;
+                
+                
+                
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    hull.WriteTo(stream);
+                    bytes = stream.ToArray();
+                }
+
+                Debug.Log(RustPlugin.check_collisions(bytes));
+
+                /*
                 // Update the hull's center position
                 hull.UpdateCenterPos();
 
-                if (hull.hullType == CollisionHull3D.CollisionHullType3D.HULL_AABB_3D)
+                if (hull.HullType == HullType.HullAabb)
                     (hull as AABBCollisionHull3D).UpdateExtents();
 
                 // Loop over collision list (all OTHER hulls)
-                foreach (CollisionHull3D otherHull in collisionList)
+                foreach (CH3D otherHull in collisionList)
                 {
                     // Never check this hull for collisions with itself
-                    if (hull == otherHull) continue;
+                    if (hull.Equals(otherHull)) continue;
 
                     // Run specific collision detection depending on the otherHull's type
-                    switch (otherHull.hullType)
+                    switch (otherHull.HullType)
                     {
-                        case CollisionHull3D.CollisionHullType3D.HULL_SPHERE:
+                        case HullType.HullSphere:
                             hull.isCollidingVsSphere = hull.TestCollisionVsSphere(otherHull as SphereCollisionHull);
                             break;
-                        case CollisionHull3D.CollisionHullType3D.HULL_AABB_3D:
+                        case HullType.HullAabb:
                             hull.isCollidingVsAABB = hull.TestCollisionVsAABB(otherHull as AABBCollisionHull3D);
                             break;
-                        case CollisionHull3D.CollisionHullType3D.HULL_OBB_3D:
+                        case HullType.HullObb:
                             hull.isCollidingVsOBB = hull.TestCollisionVsOBB(otherHull as OBBCollisionHull3D);
                             break;
                     }
                 }
 
-                hull.isColliding = hull.isCollidingVsSphere || hull.isCollidingVsAABB || hull.isCollidingVsOBB;
-
-                string hullData = PhysicsSerializer.SerializeHull(hull);
-                Debug.Log(hullData);
-                Debug.Log(RustPlugin.test_bool(hullData));
+                hull.IsColliding = hull.IsCollidingVsSphere || hull.IsCollidingVsAABB || hull.IsCollidingVSOBB;
+                */
             }
         }
 
         // Initialize local variables
         private void Awake()
         {
-            collisionList = new List<CollisionHull3D>();
+            collisionList = new List<CH3D>();
         }
 
         // Perform operations on a fixed-time basis

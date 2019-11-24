@@ -1,5 +1,6 @@
 ﻿using System;
 using NS_Physics3D;
+using static Phys.CH3D.Types;
 using UnityEngine;
 
 namespace NS_Collision_3D
@@ -8,16 +9,9 @@ namespace NS_Collision_3D
     [Serializable]
     public abstract class CollisionHull3D : MonoBehaviour
     {
-        public enum CollisionHullType3D
-        {
-            INVALID_TYPE = -1,
-            HULL_SPHERE,
-            HULL_AABB_3D,
-            HULL_OBB_3D
-        }
-
-        public CollisionHullType3D hullType { get; protected set; }
-
+        /*
+        public HullType hullType { get; protected set; }
+        
         protected Particle3D p3d;
 
         public Vector3 hullCenter { get; private set; }
@@ -45,6 +39,8 @@ namespace NS_Collision_3D
         {
             if (p3d)
                 hullCenter = p3d.position;
-        }
+        }*/
+        
+        
     }
 }

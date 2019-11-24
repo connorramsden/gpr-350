@@ -1,5 +1,6 @@
 ﻿using System;
 using NS_Physics3D;
+using static Phys.CH3D.Types;
 using UnityEngine;
 
 namespace NS_Collision_3D
@@ -7,6 +8,7 @@ namespace NS_Collision_3D
     [Serializable]
     public class SphereCollisionHull : CollisionHull3D
     {
+        /*
         // Test collision between this Sphere and another Sphere
         public override bool TestCollisionVsSphere(SphereCollisionHull other)
         {
@@ -78,9 +80,10 @@ namespace NS_Collision_3D
         // Initialize internal variables
         private void Awake()
         {
-            hullType = CollisionHullType3D.HULL_SPHERE;
+            hullType = HullType.HullSphere;
             p3d = GetComponent<Particle3D>();
             UpdateCenterPos();
         }
+        */
     }
 }

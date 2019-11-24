@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package phys;
+
+message CH3D {
+    enum HullType {
+        HULL_SPHERE = 0;
+        HULL_AABB = 1;
+        HULL_OBB = 2;
+    }
+    
+    HullType hullType = 1;
+    repeated float hullCenter = 2;
+    bool isCollidingVsSphere = 3;
+    bool isCollidingVsAABB = 4;
+    bool isCollidingVSOBB = 5;
+    bool isColliding = 6;
+}
+
+message SphereHull {
+    CH3D base = 1;
+}
+
+message AABBHull {
+    CH3D base = 1;
+    repeated float halfSize = 2;
+    repeated float minExtent = 3;
+    repeated float maxExtent = 4;
+}
