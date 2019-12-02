@@ -1,6 +1,5 @@
 ﻿using System;
 using NS_Collision_3D;
-using Phys;
 using UnityEngine;
 using static NS_Physics3D.AngularMath;
 
@@ -28,7 +27,7 @@ namespace NS_Physics3D
             CONE_SOLID
         }
 
-        public CH3D hull;
+        // public CH3D hull;
 
         [Header("Integration Selection")] public IntegrationType integrationType;
         public InertiaShape inertiaShape;
@@ -206,7 +205,7 @@ namespace NS_Physics3D
 
         private void Start()
         {
-            CRM3D.Instance.AddHullToList(hull);
+            // CRM3D.Instance.AddHullToList(hull);
         }
 
         // Update in fixed-step time

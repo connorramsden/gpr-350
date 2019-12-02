@@ -1,7 +1,6 @@
 ﻿using System;
 using NS_Physics3D;
 using UnityEngine;
-using static Phys.CH3D.Types;
 
 namespace NS_Collision_3D
 {

@@ -1,8 +1,8 @@
 ﻿using System.Runtime.InteropServices;
-using Phys;
+using NS_Collision_3D;
 
 public static class RustPlugin
 {
     [DllImport("unity_ffi.dll")]
-    public static extern int check_collisions(string bytes);
+    public static extern int testEnum(ref CH3D.SphereHull obj);
 }

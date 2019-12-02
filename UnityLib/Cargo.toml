@@ -3,19 +3,11 @@ name = 'UnityLib'
 version = '0.1.0'
 authors = ['Connor Ramsden <connor.ramsden@mymail.champlain.edu>']
 edition = '2018'
-build = 'build.rs'
-
-[features]
-default = []
 
 [dependencies]
 ffi-support = '0.3.5'
-prost = '0.5.0'
-prost-derive = '0.5.0'
-bytes = '0.4.12'
-
-[build-dependencies]
-prost-build = '0.5.0'
+bindgen = "0.52.0"
+cgmath = "0.17.0"
 
 [lib]
 name = 'unity_ffi'

@@ -1,0 +1,20 @@
+// Flatbuffer Source for 3D Collision Detection
+
+namespace Phys;
+
+enum HullType:byte {
+    HULL_SPHERE = 0,
+    HULL_AABB,
+    HULL_OBB = 2
+}
+
+struct Vector3 {
+    x:float;
+    y:float;
+    z:float;
+}
+
+table CH3D { 
+    hullType: HullType;
+    hullCenter: Vector3;
+}

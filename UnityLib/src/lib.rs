@@ -1,42 +1,42 @@
-extern crate bytes;
-extern crate ffi_support;
-extern crate prost;
-extern crate prost_derive;
+#![allow(non_snake_case, dead_code)]
 
-use ffi_support::ExternError;
-use std::os::raw::c_int;
+extern crate cgmath;
 
-pub mod phys {
-    include!(concat!(env!("OUT_DIR"), "/phys.rs"));
+use std::os::raw::{c_int, c_double};
+use cgmath::{Vector3, InnerSpace};
+
+#[repr(C)]
+pub struct SphereHull {
+    radius: f64,
+    center: Vector3<f64>
 }
 
-/// # Safety
-/// This is dealing with pointers, and its unsafe!
-/// Don't expect usual Rust safety coming into this function
-#[no_mangle] // Ensures that we can call this from C#
-pub unsafe extern "C" fn ulib_check_collisions(data: *const u8, len: i32, error: &mut ExternError){
+impl SphereHull {
+    pub fn check_vs_sphere(self, other: SphereHull) -> bool {
+        let distance: Vector3<f64> = self.center - other.center;
+        let dist_squared = distance.dot(distance);
 
-    assert!(len >= 0, "Bad buffer len: {}", len);
-    let bytes = if len == 0 {
-        &[]
-    } else {
-        assert!(!data.is_null(), "Unexpected null data pointer");
-        std::slice::from_raw_parts(data, len as usize);
-    };
+        false
+    }
+}
 
-    let my_thing: phys::Ch3d = prost::Message::decode(bytes)?;
+// TESTING STUFF FOR REFERENCE //
+#[repr(C)]
+pub struct TestStruct {
+    val: i32,
+    pos: Vector3<f64>,
+}
 
-//    ffi_support::call_with_result(error, || {
-//        assert!(len >= 0, "Bad buffer len: {}", len);
-//        let bytes = if len == 0 {
-//            &[]
-//        } else {
-//            assert!(!data.is_null(), "Unexpected null data pointer");
-//            std::slice::from_raw_parts(data, len as usize)
-//        };
-//
-//        let my_thing: phys::Ch3d = prost::Message::decode(bytes)?;
-//
-//        Ok(())
-//    })
+#[no_mangle]
+pub extern "C" fn testFunc(args: &mut TestStruct) -> c_int {
+    // args.val.add_assign(10);
+
+    args.val
+}
+
+#[no_mangle]
+pub extern "C" fn testFuncTwo(args: &mut TestStruct) -> c_double {
+    // args.pos.x.add_assign(1.0);
+
+    args.pos.x
 }
