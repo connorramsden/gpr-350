@@ -1,5 +1,0 @@
-namespace Phys;
-
-table Test {
-    val: byte;
-}

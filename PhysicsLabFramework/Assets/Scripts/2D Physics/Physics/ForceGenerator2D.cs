@@ -3,7 +3,7 @@
 namespace NS_Physics2D
 {
     // Class containing Methods relevant to Force Generation
-    public class ForceGenerator2D : MonoBehaviour
+    public static class ForceGenerator2D
     {
         const float GRAVITY = 9.8f;
 

@@ -231,20 +231,26 @@ namespace NS_Physics3D
 
         public Quaternion ToQuaternion()
         {
-            Quaternion ret = new Quaternion()
+            return new Quaternion()
             {
                 x = this.x,
                 y = this.y,
                 z = this.z,
                 w = this.w
             };
-
-            return ret;
         }
 
         public static Quaternion ToQuaternion(NQuaternion quat)
         {
             return quat.ToQuaternion();
+        }
+
+        public void FromQuaternion(Quaternion quat)
+        {
+            x = quat.x;
+            y = quat.y;
+            z = quat.z;
+            w = quat.w;
         }
 
         // Adds two passed NQuaternions together

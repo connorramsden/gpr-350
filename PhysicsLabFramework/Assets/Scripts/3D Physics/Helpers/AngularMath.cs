@@ -53,7 +53,6 @@ namespace NS_Physics3D
         public static void TransposeRotation(Matrix4x4 orig, out Matrix4x4 transpose)
         {
             transpose = orig.transpose;
-            Debug.Log(transpose);
         }
 
         // Set the inertia tensor of a Particle based on its shape | Dan Buckstein Angular Dynamics Slides

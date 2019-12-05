@@ -14,7 +14,6 @@ namespace NS_Physics3D
             EULER_EXPLICIT,
             KINEMATIC
         }
-
         // Lab 07 Step 01
         public enum InertiaShape
         {
@@ -27,8 +26,6 @@ namespace NS_Physics3D
             CONE_SOLID
         }
 
-        // public CH3D hull;
-
         [Header("Integration Selection")] public IntegrationType integrationType;
         public InertiaShape inertiaShape;
 
@@ -36,7 +33,6 @@ namespace NS_Physics3D
         [Header("Position Integration")]
         // Position, Velocity, Acceleration, and Force are 3D Vectors
         public Vector3 position;
-
         public Vector3 velocity;
         public Vector3 acceleration;
 
@@ -44,10 +40,8 @@ namespace NS_Physics3D
         // Rotation is a Quaternion (from a single float about the Z-Axis)
         // Implemented as an NQuaternion, my custom Quaternion class
         public NQuaternion rotation;
-
         // Angular Velocity, Angular Acceleration, and Torque are 3D Vectors (from single floats about the Z-Axis)
         public Vector3 angularVelocity;
-
         // Converted from torque using Newton-2 for rotation
         public Vector3 angularAcceleration;
 
@@ -55,7 +49,6 @@ namespace NS_Physics3D
         [Header("Angular Dynamics Integration")]
         // Updates every frame by converting rotation & position into homogeneous matrices
         public Matrix4x4 worldTransformMatrix;
-
         public Matrix4x4 worldTransformInverse;
 
         // Particle mass & mass inverse
@@ -63,7 +56,6 @@ namespace NS_Physics3D
 
         // 3D Vectors; world center is updated every frame by transformation
         public Vector3 localMassCenter;
-
         public Vector3 worldMassCenter;
 
         // 3D Matrices representing a particle's inertia & inverse inertia tensors
@@ -79,8 +71,9 @@ namespace NS_Physics3D
         [Header("Inertia Shape Integration")]
         // Float for radius
         public float radius;
-
         public float width, height, depth;
+
+        protected Vector3 force;
 
         // Updates a particle's position based on Euler Explicit integration
         private void UpdatePositionEulerExplicit(float dt)
@@ -166,6 +159,20 @@ namespace NS_Physics3D
             angularVelocity += angularAcceleration * dt;
         }
 
+        // Converts accumulated force and inverse mass to acceleration
+        private void UpdateAcceleration()
+        {
+            acceleration = force * massInverse;
+            force = Vector3.zero;
+        }
+
+        // Add the passed force to the current force vector
+        public void AddForce(Vector3 newForce)
+        {
+            force += newForce;
+        }
+
+        // Calls the above functions on this particle
         private void UpdateParticle()
         {
             // Acquire fixed DeltaTime
@@ -186,13 +193,18 @@ namespace NS_Physics3D
             transform.position = position;
             transform.rotation = rotation.ToQuaternion();
 
+            // update acceleration
+            UpdateAcceleration();
             // Update angular acceleration using torque and change-of-basis
             UpdateAngularAcceleration(this, ref torque, out angularAcceleration);
         }
-        
+
         // Initialize local variables here
         private void Awake()
         {
+            // Initialize the custom position & rotation to the declared transform position          
+            position = transform.position;
+
             // Set the object's tag to 3D Particle
             if (!gameObject.CompareTag("3D Particle"))
             {
@@ -201,11 +213,6 @@ namespace NS_Physics3D
 
             // Set the particle's Inertia tensor based on its shape
             SetInertia(out inertia, this);
-        }
-
-        private void Start()
-        {
-            // CRM3D.Instance.AddHullToList(hull);
         }
 
         // Update in fixed-step time
